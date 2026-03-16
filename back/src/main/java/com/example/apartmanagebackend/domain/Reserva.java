@@ -56,7 +56,7 @@ public class Reserva {
     @Column(name = "creado_en", updatable = false)
     private LocalDateTime creadoEn;
 
-    // RELACIÓN 1:N con Recibos
+    // 1:N con Recibos
     @OneToMany(mappedBy = "reserva", cascade = CascadeType.ALL)
     @Builder.Default
     @ToString.Exclude

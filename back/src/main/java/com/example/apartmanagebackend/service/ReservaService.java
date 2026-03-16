@@ -63,14 +63,14 @@ public class ReservaService {
         }
 
         reserva.setInquilino(inquilino);
-        reserva.setEstado(EstadoReserva.CONFIRMADA); // Cambiamos el estado
+        reserva.setEstado(EstadoReserva.CONFIRMADA);
 
         return mapToResponse(reservaRepository.save(reserva));
     }
 
     // OBTENER LA LISTA DE RESERVAS DE UN APARTAMENTO (Para el propietario)
     public List<ReservaResponse> listarReservasPorApartamento(Long apartamentoId, String emailPropietario) {
-        // Validar seguridad: ¿Eres el dueño del piso?
+        // Comprobamos si es realmente el propietario del piso
         Propietario propietario = (Propietario) usuarioRepository.findByEmail(emailPropietario).orElseThrow();
 
         boolean esSuPiso = apartamentoRepository.findById(apartamentoId)
@@ -81,7 +81,6 @@ public class ReservaService {
             throw new RuntimeException("No tienes permisos para ver las reservas de este apartamento");
         }
 
-        // Devolvemos la lista mapeada a DTO
         return reservaRepository.findByApartamentoId(apartamentoId)
                 .stream()
                 .map(this::mapToResponse)

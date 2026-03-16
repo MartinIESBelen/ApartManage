@@ -25,19 +25,18 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
 
     public AuthResponse register(RegisterRequest request) {
-        // Validar si el email ya existe (Opcional pero recomendado)
+        // Validar si el email ya existe
         if (usuarioRepository.findByEmail(request.email()).isPresent()) {
             throw new RuntimeException("El email ya está registrado");
         }
 
         Usuario user;
 
-        //  Lógica de Herencia: Creamos la instancia correcta según el rol
         if (request.rol() == RolUsuario.PROPIETARIO) {
-            user = Propietario.builder() // Usamos el builder de la clase hija
+            user = Propietario.builder()
                     .nombreCompleto(request.nombreCompleto())
                     .email(request.email())
-                    .password(passwordEncoder.encode(request.password())) // ¡IMPORTANTE! Encriptar
+                    .password(passwordEncoder.encode(request.password()))
                     .rol(RolUsuario.PROPIETARIO)
                     .build();
         } else {
@@ -50,7 +49,7 @@ public class AuthService {
                     .build();
         }
 
-        // Guardar en BD (Hibernate se encarga de las tablas 'usuarios' y 'propietarios'/'inquilinos')
+        // Guardar en BD
         usuarioRepository.save(user);
 
         // Generar Token
@@ -65,7 +64,7 @@ public class AuthService {
                 new UsernamePasswordAuthenticationToken(request.email(), request.password())
         );
 
-        // Si pasa la línea anterior, es que es correcto. Buscamos al usuario.
+        // Buscamos al usuario.
         var user = usuarioRepository.findByEmail(request.email())
                 .orElseThrow();
 

@@ -15,7 +15,7 @@ export class ApartamentoDetails implements OnInit {
   // Usamos Signal para guardar los detalles
   apartamento = signal<ApartamentoModel | undefined>(undefined);
 
-  // Temporal: Simulamos que somos el propietario para ver el botón.
+  // se simula que soy el propietario para ver el botón.
   // Más adelante sacaremos esto leyendo el Token JWT.
   esPropietario = signal<boolean>(true);
 
@@ -23,12 +23,12 @@ export class ApartamentoDetails implements OnInit {
   private apartamentoService = inject(ApartamentoService);
 
   ngOnInit() {
-    // 1. Leemos la ID de la URL (ej: /apartamento/1)
+    // Leo la ID de la URL (ej: /apartamento/1)
     const idParam = this.route.snapshot.paramMap.get('id');
 
     if (idParam) {
       const id = Number(idParam);
-      // 2. Pedimos los datos a Spring Boot
+      // Pido los datos a Spring Boot
       this.apartamentoService.getApartamentoById(id).subscribe({
         next: (data) => {
           this.apartamento.set(data);

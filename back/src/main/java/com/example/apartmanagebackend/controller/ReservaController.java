@@ -19,7 +19,7 @@ public class ReservaController {
 
     private final ReservaService reservaService;
 
-    // ACCIÓN DEL PROPIETARIO: Crear la reserva para un apartamento
+    // POST-propietario: Crear la reserva para un apartamento
     @PostMapping("/apartamentos/{apartamentoId}/reservas")
     public ResponseEntity<ReservaResponse> crearReserva(
             @PathVariable Long apartamentoId,
@@ -30,7 +30,7 @@ public class ReservaController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    // ACCIÓN DEL INQUILINO: Usar el código para vincularse
+    // POST-Inquilino: Usar el código para vincularse
     @PostMapping("/reservas/vincular")
     public ResponseEntity<ReservaResponse> vincularReserva(
             @RequestBody VincularRequest request,
@@ -40,7 +40,7 @@ public class ReservaController {
         return ResponseEntity.ok(response);
     }
 
-    // ACCIÓN DEL PROPIETARIO: Ver las reservas/contratos de un piso
+    // POST-propietario: Ver las reservas/contratos de un piso
     @GetMapping("/apartamentos/{apartamentoId}/reservas")
     public ResponseEntity<List<ReservaResponse>> listarReservas(
             @PathVariable Long apartamentoId,

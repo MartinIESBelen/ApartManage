@@ -22,8 +22,7 @@ public class ElementoInventario {
     @EqualsAndHashCode.Include
     private Long id;
 
-    // Relación N:1 con Apartamento
-    // Usamos @ToString.Exclude para evitar bucles infinitos al imprimir logs
+    // N:1 con Apartamento
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "apartamento_id", nullable = false)
     @ToString.Exclude

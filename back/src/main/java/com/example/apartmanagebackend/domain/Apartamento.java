@@ -44,27 +44,28 @@ public class Apartamento {
     private String descripcion;
 
     @Enumerated(EnumType.STRING)
-    @Builder.Default // Para que el Builder use este valor por defecto
+    @Builder.Default
     private EstadoApartamento estado = EstadoApartamento.ACTIVO;
 
     @CreationTimestamp
     @Column(name = "creado_en", updatable = false)
     private LocalDateTime creadoEn;
 
-    // RELACIÓN 1:N con Inventario
+    //1:N con Inventario
     @OneToMany(mappedBy = "apartamento", cascade = CascadeType.ALL)
     @Builder.Default
     @ToString.Exclude
     @JsonIgnore
     private Set<ElementoInventario> inventario = new HashSet<>();
 
-    // RELACIÓN 1:N con Reservas
+    //1:N con Reservas
     @OneToMany(mappedBy = "apartamento")
     @Builder.Default
     @ToString.Exclude
     @JsonIgnore
     private Set<Reserva> reservas = new HashSet<>();
 
+    //1:N con incidencias
     @OneToMany(mappedBy = "apartamento", cascade = CascadeType.ALL)
     @Builder.Default
     @ToString.Exclude

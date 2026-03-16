@@ -17,6 +17,6 @@ import lombok.experimental.SuperBuilder;
 public class Administrador extends Usuario {
 
     @Column(name = "nivel_acceso", length = 50)
-    @Builder.Default // Valor por defecto si no se especifica
+    @Builder.Default
     private String nivelAcceso = "total";
 }

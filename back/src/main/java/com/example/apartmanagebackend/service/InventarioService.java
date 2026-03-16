@@ -42,13 +42,12 @@ public class InventarioService {
                 .fechaCompra(request.fechaCompra())
                 .build();
 
-        // Guardar y mapear a DTO
         ElementoInventario guardado = inventarioRepository.save(nuevoItem);
         return mapToResponse(guardado);
     }
 
     public List<InventarioResponse> listarInventarioPorApartamento(Long apartamentoId, String emailPropietario) {
-        // Misma validación de seguridad: ¿Es tu piso?
+        // Volvemos validar el piso (comprobar)
         Propietario propietario = (Propietario) usuarioRepository.findByEmail(emailPropietario).orElseThrow();
 
         boolean esSuPiso = apartamentoRepository.findById(apartamentoId)

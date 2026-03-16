@@ -22,6 +22,7 @@ public class Recibo {
     @EqualsAndHashCode.Include
     private Long id;
 
+    //N:1 con reserva
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reserva_id", nullable = false)
     @ToString.Exclude

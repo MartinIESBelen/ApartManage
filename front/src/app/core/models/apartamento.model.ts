@@ -6,6 +6,6 @@ export interface ApartamentoModel {
   descripcion: string;
   estado: string;
   alertas?: string[];
-  // Nota: Omitimos el Propietario entero aquí para no sobrecargar los datos,
-  // con esta info nos sobra para pintar las tarjetas.
+  // Omitimos el Propietario entero aquí para no sobrecargar los datos,
+  // con esta info me sobra para pintar las tarjetas por ahora.
 }

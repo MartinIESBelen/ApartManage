@@ -22,7 +22,7 @@ import java.util.List;
 @AllArgsConstructor
 @SuperBuilder // Usamos SuperBuilder en lugar de Builder normal por la herencia
 @ToString
-@EqualsAndHashCode(onlyExplicitlyIncluded = true) // Compara solo por ID
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Usuario implements UserDetails {
 
     @Id

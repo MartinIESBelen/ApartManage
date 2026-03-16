@@ -20,11 +20,13 @@ public class AuthController {
         this.authService = authService;
     }
 
+    // POST: /api/v1/auth/register -> Crea un nuevo registro de usuario en el sistema
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request) {
         return ResponseEntity.ok(authService.register(request));
     }
 
+    // POST: /api/v1/auth/login -> Autentica a un usuario existente y permite el inicio de sesión
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
         return ResponseEntity.ok(authService.login(request));

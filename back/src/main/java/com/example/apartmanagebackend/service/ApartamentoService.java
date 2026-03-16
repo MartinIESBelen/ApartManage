@@ -67,13 +67,13 @@ public class ApartamentoService {
         return mapToResponse(apartamento);
     }
 
-    // MÉTODO DE FILTRADO CON ALERTAS
+    // METODO DE FILTRADO POR ALERTAS
     @Transactional(readOnly = true)
     public List<ApartamentoResponse> filtrarMisApartamentos(
             String emailPropietario,
             String nombre,
             EstadoApartamento estado,
-            Boolean conAlertas) { // <-- Cambiado de pagado a conAlertas
+            Boolean conAlertas) {
 
         Propietario propietario = (Propietario) usuarioRepository.findByEmail(emailPropietario)
                 .orElseThrow(() -> new RuntimeException("Propietario no encontrado"));
@@ -81,19 +81,19 @@ public class ApartamentoService {
         List<Apartamento> misApartamentos = apartamentoRepository.findByPropietarioId(propietario.getId());
 
         return misApartamentos.stream()
-                // Filtro 1: Por nombre
+                // Filtro: Por nombre
                 .filter(apto -> nombre == null || nombre.isBlank() ||
                         apto.getNombreInterno().toLowerCase().contains(nombre.toLowerCase()))
 
-                // Filtro 2: Por estado (ACTIVO / INACTIVO)
+                // Filtro: Por estado (ACTIVO / INACTIVO)
                 .filter(apto -> estado == null || apto.getEstado() == estado)
 
-                // Filtro 3: Solo pisos con alertas (si marcan la casilla)
+                // Filtro: Solo pisos con alertas (si marcan la casilla)
                 .filter(apto -> {
                     if (conAlertas == null || !conAlertas) return true;
-                    return !detectarAlertas(apto).isEmpty(); // Pasa si hay al menos 1 alerta
+                    return !detectarAlertas(apto).isEmpty();
                 })
-                .map(this::mapToResponse) // Convertimos a DTO (esto ya incluye las alertas)
+                .map(this::mapToResponse)
                 .collect(Collectors.toList());
     }
 
@@ -120,7 +120,7 @@ public class ApartamentoService {
         if (tieneDesperfectos) alertas.add("Incidencia: Hay elementos dañados en el inventario.");
 
         // Dentro de detectarAlertas en ApartamentoService
-        boolean tieneIncidenciasAbiertas = apto.getIncidencias().stream() // Necesitas añadir @OneToMany en Apartamento.java
+        boolean tieneIncidenciasAbiertas = apto.getIncidencias().stream()
                 .anyMatch(i -> i.getEstado() != EstadoIncidencia.SOLUCIONADA);
         if (tieneIncidenciasAbiertas) alertas.add("Mantenimiento: Hay incidencias pendientes de solución.");
 
@@ -137,7 +137,7 @@ public class ApartamentoService {
                 apartamento.getDescripcion(),
                 apartamento.getEstado(),
                 apartamento.getCreadoEn(),
-                detectarAlertas(apartamento) // <-- Metemos las alertas aquí
+                detectarAlertas(apartamento)
         );
     }
 }

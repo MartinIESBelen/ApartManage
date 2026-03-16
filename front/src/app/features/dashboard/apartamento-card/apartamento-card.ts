@@ -10,6 +10,6 @@ import { ApartamentoModel } from '../../../core/models/apartamento.model';
   templateUrl: './apartamento-card.html'
 })
 export class ApartamentoCard {
-  // Con { required: true } Angular nos avisará si olvidamos pasarle el apartamento
+  // Con { required: true } Angular avisa si no le pasamos el apartamento al usuario
   @Input({ required: true }) apartamento!: ApartamentoModel;
 }

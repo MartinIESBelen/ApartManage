@@ -18,7 +18,6 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 public class DataLoader implements CommandLineRunner {
 
-    // Inyectamos todos los repositorios necesarios
     private final PropietarioRepository propietarioRepository;
     private final InquilinoRepository inquilinoRepository;
     private final ApartamentoRepository apartamentoRepository;

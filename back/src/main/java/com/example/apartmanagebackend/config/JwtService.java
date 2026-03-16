@@ -16,7 +16,7 @@ import java.util.function.Function;
 //Se encarga de crear y leer los tokens. Contiene la clave secreta y la lógica de encriptación
 @Service
 public class JwtService {
-    // IMPORTANTE: En producción esta clave debe estar en environment variables.
+    //En producción esta clave debe estar en environment variables.
     // Debe ser una cadena larga (256 bits) codificada en Hex o Base64.
     private static final String SECRET_KEY = "404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970";
 

@@ -5,15 +5,14 @@ import { routes } from './app.routes';
 // Importamos el cliente HTTP y la herramienta de interceptores
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 
-// Importamos tu interceptor (ajusta la ruta y nombre según lo creaste)
+// Importamos el interceptor
 import { authInterceptor } from './core/interceptors/auth-interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideBrowserGlobalErrorListeners(), // <-- Tu configuración original
-    provideRouter(routes),                // <-- Tus rutas
+    provideBrowserGlobalErrorListeners(),
+    provideRouter(routes),
 
-    // 👇 Solo modificamos esta línea para añadir el interceptor
     provideHttpClient(withInterceptors([authInterceptor]))
   ]
 };

@@ -26,6 +26,7 @@ public class ReciboScheduler {
     /**
      * Se ejecuta el día 1 de cada mes a las 00:00:00
      * Expresión cron: Segundos Minutos Horas Día Mes Día_Semana
+     * Por ahora esta así por "estandar" pero pretendo que la fecha pueda ser escogida por el propietario
      */
     @Scheduled(cron = "0 0 0 1 * *")
     public void generarRecibosMensuales() {
@@ -33,7 +34,7 @@ public class ReciboScheduler {
 
         LocalDate hoy = LocalDate.now();
 
-        // 1. Buscamos reservas CONFIRMADAS donde hoy esté dentro del rango de fechas
+        // Buscamos reservas CONFIRMADAS donde hoy esté dentro del rango de fechas
         List<Reserva> reservasActivas = reservaRepository.findAll().stream()
                 .filter(r -> r.getEstado() == EstadoReserva.CONFIRMADA)
                 .filter(r -> !hoy.isBefore(r.getFechaEntrada()) && !hoy.isAfter(r.getFechaSalida()))
@@ -41,8 +42,7 @@ public class ReciboScheduler {
 
         int creados = 0;
         for (Reserva reserva : reservasActivas) {
-            // 2. Opcional: Verificar si ya existe un recibo para esta reserva en este mes/año
-            // (Para evitar duplicados si reinicias el servidor el día 1)
+
 
             Recibo nuevoRecibo = Recibo.builder()
                     .reserva(reserva)

@@ -21,7 +21,6 @@ public class IncidenciaService {
         Apartamento apto = apartamentoRepository.findById(request.apartamentoId())
                 .orElseThrow(() -> new RuntimeException("Apartamento no encontrado"));
 
-        // Opcional: Validar que el inquilino realmente vive en ese apartamento
 
         Incidencia nueva = Incidencia.builder()
                 .apartamento(apto)

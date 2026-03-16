@@ -17,6 +17,7 @@ public class Incidencia {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    //N:1 con apartamento
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "apartamento_id", nullable = false)
     private Apartamento apartamento;

@@ -67,7 +67,7 @@ export class ApartamentoEdit implements OnInit {
     }
 
     this.guardando = true;
-    this.cd.detectChanges(); // Para que el botón cambie a "Guardando..." al instante
+    this.cd.detectChanges();
 
     this.apartamentoService.actualizarApartamento(this.apartamentoId, this.formApartamento.value).subscribe({
       next: () => {

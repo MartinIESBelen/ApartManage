@@ -35,11 +35,9 @@ export class ApartamentoCreate {
 
     this.guardando = true;
 
-    // Llamamos al POST
     this.apartamentoService.crearApartamento(this.formApartamento.value).subscribe({
       next: (nuevoApto) => {
         this.guardando = false;
-        // Si va bien, viajamos directamente a ver los detalles del piso recién creado
         this.router.navigate(['/apartamento', nuevoApto.id]);
       },
       error: (err) => {

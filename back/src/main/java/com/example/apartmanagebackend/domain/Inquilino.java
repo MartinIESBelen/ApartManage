@@ -26,7 +26,7 @@ public class Inquilino extends Usuario {
     @Column(name = "direccion_habitual", columnDefinition = "TEXT")
     private String direccionHabitual;
 
-    // RELACIÓN 1:N (Un inquilino tiene muchas reservas/viajes)
+    // 1:N (Un inquilino puede serlo en vario apartamentos)
     @OneToMany(mappedBy = "inquilino")
     @Builder.Default
     @ToString.Exclude
