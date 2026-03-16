@@ -1,4 +1,4 @@
-package com.example.apartmanagebackend.dto;
+package com.example.apartmanagebackend.dto.auth;
 
 import com.example.apartmanagebackend.domain.enums.RolUsuario;
 import jakarta.validation.constraints.Email;

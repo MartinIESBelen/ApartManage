@@ -1,0 +1,57 @@
+<div class="min-h-screen bg-gray-50 p-8">
+  <div class="max-w-7xl mx-auto">
+
+    <div class="flex justify-between items-center mb-8">
+      <h1 class="text-3xl font-bold text-gray-900">Mis Apartamentos</h1>
+      <button routerLink="/apartamento/nuevo" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow">
+        + Añadir Vivienda
+      </button>
+    </div>
+
+    <div class="bg-white p-6 rounded-lg shadow-md mb-8 flex flex-col md:flex-row gap-4 items-end border-t-4 border-blue-600">
+
+      <div class="flex-1 w-full">
+        <label class="block text-sm font-medium text-gray-700 mb-1">Buscar por nombre</label>
+        <input type="text" [(ngModel)]="filtroNombre" placeholder="Ej. Ático Sol..."
+               class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2 border">
+      </div>
+
+      <div class="w-full md:w-48">
+        <label class="block text-sm font-medium text-gray-700 mb-1">Estado</label>
+        <select [(ngModel)]="filtroEstado" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2 border bg-white">
+          <option value="">Todos</option>
+          <option value="ACTIVO">Activos</option>
+          <option value="INACTIVO">Inactivos</option>
+        </select>
+      </div>
+
+      <div class="flex items-center w-full md:w-auto pb-2">
+        <input type="checkbox" id="alertas" [(ngModel)]="filtroAlertas"
+               class="h-5 w-5 text-red-600 focus:ring-red-500 border-gray-300 rounded cursor-pointer">
+        <label for="alertas" class="ml-2 block text-sm font-bold text-red-600 cursor-pointer">
+          🚨 Mostrar solo con Alertas
+        </label>
+      </div>
+
+      <button (click)="buscar()" class="w-full md:w-auto bg-gray-800 hover:bg-black text-white font-bold py-2 px-6 rounded shadow transition-colors">
+        Filtrar
+      </button>
+
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      @for (apto of apartamentosList; track apto.id) {
+
+        <app-apartamento-card [apartamento]="apto"></app-apartamento-card>
+
+      } @empty {
+
+        <div class="col-span-full text-center py-12 bg-white rounded-lg shadow border border-gray-200">
+          <p class="text-gray-500 text-lg">No se encontraron apartamentos con esos filtros.</p>
+        </div>
+
+      }
+    </div>
+
+  </div>
+</div>

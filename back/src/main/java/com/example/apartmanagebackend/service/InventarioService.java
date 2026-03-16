@@ -21,17 +21,18 @@ public class InventarioService {
     private final ApartamentoRepository apartamentoRepository;
     private final UsuarioRepository usuarioRepository;
 
+    //CREAR UN ELEMENTO
     public InventarioResponse agregarItem(Long apartamentoId, InventarioRequest request, String emailPropietario) {
-        // 1. Obtener al propietario logueado
+        //  Obtener al propietario logueado
         Propietario propietario = (Propietario) usuarioRepository.findByEmail(emailPropietario)
                 .orElseThrow(() -> new RuntimeException("Propietario no encontrado"));
 
-        // 2. Buscar el apartamento Y verificar que pertenece a este propietario (Seguridad)
+        //  Buscar el apartamento Y verificar que pertenece a este propietario (Seguridad)
         Apartamento apartamento = apartamentoRepository.findById(apartamentoId)
                 .filter(apt -> apt.getPropietario().getId().equals(propietario.getId()))
                 .orElseThrow(() -> new RuntimeException("Apartamento no encontrado o no tienes permisos"));
 
-        // 3. Crear el elemento de inventario
+        //  Crear el elemento de inventario
         ElementoInventario nuevoItem = ElementoInventario.builder()
                 .apartamento(apartamento)
                 .nombre(request.nombre())
@@ -41,7 +42,7 @@ public class InventarioService {
                 .fechaCompra(request.fechaCompra())
                 .build();
 
-        // 4. Guardar y mapear a DTO
+        // Guardar y mapear a DTO
         ElementoInventario guardado = inventarioRepository.save(nuevoItem);
         return mapToResponse(guardado);
     }
@@ -62,6 +63,26 @@ public class InventarioService {
                 .stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
+    }
+
+    // ELIMINAR UN ELEMENTO
+    public void eliminarItem(Long apartamentoId, Long itemId, String emailPropietario) {
+        //  Validamos al propietario
+        Propietario propietario = (Propietario) usuarioRepository.findByEmail(emailPropietario)
+                .orElseThrow(() -> new RuntimeException("Propietario no encontrado"));
+
+        //  Buscamos el item
+        ElementoInventario item = inventarioRepository.findById(itemId)
+                .orElseThrow(() -> new RuntimeException("Elemento no encontrado"));
+
+        //  Comprobar si el item pertenece al apartamento
+        if (!item.getApartamento().getId().equals(apartamentoId) ||
+                !item.getApartamento().getPropietario().getId().equals(propietario.getId())) {
+            throw new RuntimeException("No tienes permisos para borrar este elemento");
+        }
+
+        // Borramos
+        inventarioRepository.delete(item);
     }
 
     private InventarioResponse mapToResponse(ElementoInventario item) {

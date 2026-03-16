@@ -5,6 +5,7 @@ import com.example.apartmanagebackend.domain.Recibo;
 import com.example.apartmanagebackend.domain.Reserva;
 import com.example.apartmanagebackend.domain.Usuario;
 import com.example.apartmanagebackend.domain.enums.EstadoRecibo;
+import com.example.apartmanagebackend.domain.enums.MetodoPago;
 import com.example.apartmanagebackend.dto.recibo.ReciboRequest;
 import com.example.apartmanagebackend.dto.recibo.ReciboResponse;
 import com.example.apartmanagebackend.repository.ReciboRepository;
@@ -26,15 +27,14 @@ public class ReciboService {
     private final ReservaRepository reservaRepository;
     private final UsuarioRepository usuarioRepository;
 
-    // CREAR RECIBO
     public ReciboResponse crearRecibo(Long reservaId, ReciboRequest request, String emailPropietario) {
-        Propietario propietario = (Propietario) usuarioRepository.findByEmail(emailPropietario).orElseThrow();
+        Propietario propietario = (Propietario) usuarioRepository.findByEmail(emailPropietario)
+                .orElseThrow(() -> new RuntimeException("Propietario no encontrado"));
 
         Reserva reserva = reservaRepository.findById(reservaId)
                 .filter(r -> r.getApartamento().getPropietario().getId().equals(propietario.getId()))
-                .orElseThrow(() -> new RuntimeException("Reserva no encontrada o no tienes permisos"));
+                .orElseThrow(() -> new RuntimeException("Reserva no encontrada o acceso denegado"));
 
-        // Calculamos el total automáticamente
         BigDecimal total = request.montoAlquiler()
                 .add(request.montoLuz())
                 .add(request.montoAgua());
@@ -46,19 +46,18 @@ public class ReciboService {
                 .montoAlquiler(request.montoAlquiler())
                 .montoLuz(request.montoLuz())
                 .montoAgua(request.montoAgua())
-                .totalPagar(total) // Guardamos la suma
-                .estado(EstadoRecibo.PENDIENTE) // O el estado inicial que tú prefieras
+                .totalPagar(total)
+                .estado(EstadoRecibo.PENDIENTE)
+                .metodoPago(MetodoPago.NO_ESPECIFICADO)
                 .build();
 
         return mapToResponse(reciboRepository.save(nuevoRecibo));
     }
 
-    // VER RECIBOS DE UNA RESERVA (Propietarios e Inquilinos)
     public List<ReciboResponse> obtenerRecibosPorReserva(Long reservaId, String emailUsuario) {
         Usuario usuario = usuarioRepository.findByEmail(emailUsuario).orElseThrow();
         Reserva reserva = reservaRepository.findById(reservaId).orElseThrow();
 
-        // Seguridad: ¿Es el dueño del piso o es el inquilino que vive ahí?
         boolean esPropietario = reserva.getApartamento().getPropietario().getId().equals(usuario.getId());
         boolean esInquilino = reserva.getInquilino() != null && reserva.getInquilino().getId().equals(usuario.getId());
 
@@ -72,18 +71,27 @@ public class ReciboService {
                 .collect(Collectors.toList());
     }
 
-    // PAGAR RECIBO (Acción del inquilino - Simulación)
-    public ReciboResponse pagarRecibo(Long reciboId, String emailInquilino) {
-        Usuario inquilino = usuarioRepository.findByEmail(emailInquilino).orElseThrow();
+    public ReciboResponse pagarRecibo(Long reciboId, MetodoPago metodo, String emailInquilino) {
+        Usuario inquilino = usuarioRepository.findByEmail(emailInquilino)
+                .orElseThrow(() -> new RuntimeException("Inquilino no encontrado"));
 
         Recibo recibo = reciboRepository.findById(reciboId)
-                .filter(r -> r.getReserva().getInquilino() != null && r.getReserva().getInquilino().getId().equals(inquilino.getId()))
+                .filter(r -> r.getReserva().getInquilino() != null &&
+                        r.getReserva().getInquilino().getId().equals(inquilino.getId()))
                 .orElseThrow(() -> new RuntimeException("Recibo no encontrado o no te pertenece"));
 
-        recibo.setEstado(EstadoRecibo.PAGADO); // Ajusta el nombre al de tu enum
-        recibo.setFechaPago(LocalDate.now()); // Registramos que se ha pagado HOY
+        recibo.setEstado(EstadoRecibo.PAGADO);
+        recibo.setMetodoPago(metodo);
+        recibo.setFechaPago(LocalDate.now());
 
         return mapToResponse(reciboRepository.save(recibo));
+    }
+
+    public List<ReciboResponse> obtenerRecibosPorEstado(EstadoRecibo estado) {
+        return reciboRepository.findByEstado(estado)
+                .stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
     }
 
     private ReciboResponse mapToResponse(Recibo recibo) {

@@ -1,5 +1,7 @@
-package com.example.apartmanagebackend.config;
+package com.example.apartmanagebackend.controller;
 
+import com.example.apartmanagebackend.domain.enums.EstadoRecibo;
+import com.example.apartmanagebackend.domain.enums.MetodoPago;
 import com.example.apartmanagebackend.dto.recibo.ReciboRequest;
 import com.example.apartmanagebackend.dto.recibo.ReciboResponse;
 import com.example.apartmanagebackend.service.ReciboService;
@@ -18,7 +20,7 @@ public class ReciboController {
 
     private final ReciboService reciboService;
 
-    // POST: El propietario emite un recibo
+    // POST: El propietario emite un recibo manualmente
     @PostMapping("/reservas/{reservaId}/recibos")
     public ResponseEntity<ReciboResponse> crearRecibo(
             @PathVariable Long reservaId,
@@ -29,7 +31,7 @@ public class ReciboController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    // GET: Ver todos los recibos de una reserva (Lo usan ambos)
+    // GET: Ver todos los recibos de una reserva específica
     @GetMapping("/reservas/{reservaId}/recibos")
     public ResponseEntity<List<ReciboResponse>> obtenerRecibos(
             @PathVariable Long reservaId,
@@ -38,12 +40,19 @@ public class ReciboController {
         return ResponseEntity.ok(reciboService.obtenerRecibosPorReserva(reservaId, principal.getName()));
     }
 
-    // PUT: El inquilino marca el recibo como pagado
+    // PUT: El inquilino marca el recibo como pagado especificando el método
     @PutMapping("/recibos/{reciboId}/pagar")
     public ResponseEntity<ReciboResponse> pagarRecibo(
             @PathVariable Long reciboId,
+            @RequestParam MetodoPago metodo,
             Principal principal
     ) {
-        return ResponseEntity.ok(reciboService.pagarRecibo(reciboId, principal.getName()));
+        return ResponseEntity.ok(reciboService.pagarRecibo(reciboId, metodo, principal.getName()));
+    }
+
+    // GET: Obtener recibos por estado (útil para ver deudores/pendientes)
+    @GetMapping("/recibos/estado/{estado}")
+    public ResponseEntity<List<ReciboResponse>> obtenerPorEstado(@PathVariable EstadoRecibo estado) {
+        return ResponseEntity.ok(reciboService.obtenerRecibosPorEstado(estado));
     }
 }

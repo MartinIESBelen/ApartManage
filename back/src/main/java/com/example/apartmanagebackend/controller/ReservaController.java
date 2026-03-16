@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -37,5 +38,14 @@ public class ReservaController {
     ) {
         ReservaResponse response = reservaService.vincularInquilino(request, principal.getName());
         return ResponseEntity.ok(response);
+    }
+
+    // ACCIÓN DEL PROPIETARIO: Ver las reservas/contratos de un piso
+    @GetMapping("/apartamentos/{apartamentoId}/reservas")
+    public ResponseEntity<List<ReservaResponse>> listarReservas(
+            @PathVariable Long apartamentoId,
+            Principal principal
+    ) {
+        return ResponseEntity.ok(reservaService.listarReservasPorApartamento(apartamentoId, principal.getName()));
     }
 }

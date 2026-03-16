@@ -38,4 +38,15 @@ public class InventarioController {
         return ResponseEntity.ok(inventarioService.listarInventarioPorApartamento(apartamentoId, principal.getName()));
     }
 
+    // DELETE: Eliminar un Elemento del inventario
+    @DeleteMapping("/{itemId}")
+    public ResponseEntity<Void> eliminarItem(
+            @PathVariable Long apartamentoId,
+            @PathVariable Long itemId,
+            Principal principal
+    ) {
+        inventarioService.eliminarItem(apartamentoId, itemId, principal.getName());
+        return ResponseEntity.noContent().build(); // Devuelve 204 No Content (es el estándar para Delete)
+    }
+
 }

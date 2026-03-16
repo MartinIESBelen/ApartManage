@@ -1,8 +1,8 @@
 package com.example.apartmanagebackend.controller;
 
-import com.example.apartmanagebackend.dto.AuthResponse;
-import com.example.apartmanagebackend.dto.LoginRequest;
-import com.example.apartmanagebackend.dto.RegisterRequest;
+import com.example.apartmanagebackend.dto.auth.AuthResponse;
+import com.example.apartmanagebackend.dto.auth.LoginRequest;
+import com.example.apartmanagebackend.dto.auth.RegisterRequest;
 import com.example.apartmanagebackend.service.AuthService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

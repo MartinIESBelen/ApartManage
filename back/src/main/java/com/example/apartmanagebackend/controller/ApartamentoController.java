@@ -1,5 +1,6 @@
 package com.example.apartmanagebackend.controller;
 
+import com.example.apartmanagebackend.domain.enums.EstadoApartamento;
 import com.example.apartmanagebackend.dto.apartamento.ApartamentoRequest;
 import com.example.apartmanagebackend.dto.apartamento.ApartamentoResponse;
 import com.example.apartmanagebackend.service.ApartamentoService;
@@ -32,5 +33,27 @@ public class ApartamentoController {
     @GetMapping
     public ResponseEntity<List<ApartamentoResponse>> obtenerMisApartamentos(Principal principal) {
         return ResponseEntity.ok(apartamentoService.obtenerMisApartamentos(principal.getName()));
+    }
+
+    // GET: /api/v1/apartamentos/{id} -> Devuelve los detalles de 1 piso
+    @GetMapping("/{id}")
+    public ResponseEntity<ApartamentoResponse> obtenerApartamentoPorId(
+            @PathVariable Long id,
+            Principal principal
+    ) {
+        return ResponseEntity.ok(apartamentoService.obtenerApartamentoPorId(id, principal.getName()));
+    }
+
+    // GET: /api/v1/apartamentos/filtrar -> Busca pisos según filtros
+    @GetMapping("/filtrar")
+    public ResponseEntity<List<ApartamentoResponse>> filtrarMisApartamentos(
+            @RequestParam(required = false) String nombre,
+            @RequestParam(required = false) EstadoApartamento estado,
+            @RequestParam(required = false) Boolean conAlertas,
+            Principal principal
+    ) {
+        List<ApartamentoResponse> resultados = apartamentoService.filtrarMisApartamentos(
+                principal.getName(), nombre, estado, conAlertas);
+        return ResponseEntity.ok(resultados);
     }
 }

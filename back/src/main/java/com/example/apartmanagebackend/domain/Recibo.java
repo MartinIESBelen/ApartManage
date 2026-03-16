@@ -1,6 +1,7 @@
 package com.example.apartmanagebackend.domain;
 
 import com.example.apartmanagebackend.domain.enums.EstadoRecibo;
+import com.example.apartmanagebackend.domain.enums.MetodoPago;
 import jakarta.persistence.*;
 import lombok.*;
 import java.math.BigDecimal;
@@ -41,9 +42,13 @@ public class Recibo {
     @Column(name = "total_pagar")
     private BigDecimal totalPagar;
 
+
     @Enumerated(EnumType.STRING)
     @Builder.Default
     private EstadoRecibo estado = EstadoRecibo.PENDIENTE;
+
+    @Enumerated(EnumType.STRING)
+    private MetodoPago metodoPago = MetodoPago.NO_ESPECIFICADO;
 
     @Column(name = "fecha_pago")
     private LocalDate fechaPago;

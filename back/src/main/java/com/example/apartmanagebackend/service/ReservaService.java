@@ -14,7 +14,9 @@ import com.example.apartmanagebackend.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -23,7 +25,7 @@ public class ReservaService {
     private final ApartamentoRepository apartamentoRepository;
     private final UsuarioRepository usuarioRepository;
 
-    // 1. EL PROPIETARIO CREA LA RESERVA Y GENERA EL CÓDIGO
+    // EL PROPIETARIO CREA LA RESERVA Y GENERA EL CÓDIGO
     public ReservaResponse crearReserva(Long apartamentoId, ReservaRequest request, String emailPropietario) {
         Propietario propietario = (Propietario) usuarioRepository.findByEmail(emailPropietario).orElseThrow();
 
@@ -60,11 +62,30 @@ public class ReservaService {
             throw new RuntimeException("Este código ya ha sido usado o la reserva no está disponible");
         }
 
-        // ¡Vinculación exitosa!
         reserva.setInquilino(inquilino);
         reserva.setEstado(EstadoReserva.CONFIRMADA); // Cambiamos el estado
 
         return mapToResponse(reservaRepository.save(reserva));
+    }
+
+    // OBTENER LA LISTA DE RESERVAS DE UN APARTAMENTO (Para el propietario)
+    public List<ReservaResponse> listarReservasPorApartamento(Long apartamentoId, String emailPropietario) {
+        // Validar seguridad: ¿Eres el dueño del piso?
+        Propietario propietario = (Propietario) usuarioRepository.findByEmail(emailPropietario).orElseThrow();
+
+        boolean esSuPiso = apartamentoRepository.findById(apartamentoId)
+                .map(apt -> apt.getPropietario().getId().equals(propietario.getId()))
+                .orElse(false);
+
+        if (!esSuPiso) {
+            throw new RuntimeException("No tienes permisos para ver las reservas de este apartamento");
+        }
+
+        // Devolvemos la lista mapeada a DTO
+        return reservaRepository.findByApartamentoId(apartamentoId)
+                .stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
     }
 
     private ReservaResponse mapToResponse(Reserva reserva) {

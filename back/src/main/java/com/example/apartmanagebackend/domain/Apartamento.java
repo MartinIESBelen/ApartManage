@@ -64,4 +64,10 @@ public class Apartamento {
     @ToString.Exclude
     @JsonIgnore
     private Set<Reserva> reservas = new HashSet<>();
+
+    @OneToMany(mappedBy = "apartamento", cascade = CascadeType.ALL)
+    @Builder.Default
+    @ToString.Exclude
+    @JsonIgnore
+    private Set<Incidencia> incidencias = new HashSet<>();
 }

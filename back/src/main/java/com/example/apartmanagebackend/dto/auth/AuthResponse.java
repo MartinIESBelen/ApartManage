@@ -1,4 +1,4 @@
-package com.example.apartmanagebackend.dto;
+package com.example.apartmanagebackend.dto.auth;
 
 public record AuthResponse(
         String token
