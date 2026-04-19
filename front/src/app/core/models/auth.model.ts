@@ -10,3 +10,10 @@ export interface LoginRequest {
 export interface AuthResponse {
   token: string;
 }
+
+export interface RegisterRequest {
+  nombreCompleto: string;
+  email: string;
+  password: string;
+  rol: string;
+}

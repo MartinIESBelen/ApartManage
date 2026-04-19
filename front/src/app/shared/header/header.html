@@ -1,0 +1,23 @@
+<header class="bg-blue-900 text-white shadow-md">
+  <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+    <a routerLink="/home" class="text-xl font-bold flex items-center gap-2">
+      <span class="text-2xl">🏢</span> ApartManage
+    </a>
+    @if (isLoggedIn()) {
+      <nav class="flex justify-center items-center gap-6">
+        <a routerLink="/home" class="hover:text-blue-300 font-medium transition">Inicio</a>
+        <a routerLink="/finanzas" class="hover:text-blue-300 font-medium transition">Finanzas</a>
+        <a routerLink="/contratos" class="hover:text-blue-300 font-medium transition">Contratos</a>
+        <a routerLink="/perfil" class="hover:text-blue-300 font-medium transition">Mi Perfil</a>
+
+        <button (click)="logout()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded font-bold transition text-sm ml-4">
+          Cerrar Sesión
+        </button>
+      </nav>
+    } @else {
+      <nav>
+        <a routerLink="/login" class="hover:text-blue-300 font-medium transition">Iniciar Sesión</a>
+      </nav>
+    }
+  </div>
+</header>

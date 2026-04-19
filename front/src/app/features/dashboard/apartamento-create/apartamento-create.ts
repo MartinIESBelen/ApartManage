@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { ApartamentoService } from '../../../core/services/apartamento.service';
+import { ApartamentoService } from '../../../core/services/apartamento/apartamento.service';
 
 @Component({
   selector: 'app-apartamento-create',

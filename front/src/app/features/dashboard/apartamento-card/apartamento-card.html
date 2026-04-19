@@ -1,6 +1,15 @@
-<article class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
+<article class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 relative">
+
+  <div class="absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-bold shadow-sm"
+       [class.bg-blue-100]="apartamento.relacionUsuario === 'PROPIETARIO'"
+       [class.text-blue-800]="apartamento.relacionUsuario === 'PROPIETARIO'"
+       [class.bg-green-100]="apartamento.relacionUsuario === 'INQUILINO'"
+       [class.text-green-800]="apartamento.relacionUsuario === 'INQUILINO'">
+    {{ apartamento.relacionUsuario === 'PROPIETARIO' ? '🏠 Propiedad' : '🔑 Alquilado' }}
+  </div>
+
   <div class="h-48 bg-blue-100 flex items-center justify-center text-blue-500">
-    <span class="text-6xl">🏢</span>
+    <span class="text-6xl">{{ apartamento.relacionUsuario === 'PROPIETARIO' ? '🏢' : '🛋️' }}</span>
   </div>
 
   <div class="p-5">

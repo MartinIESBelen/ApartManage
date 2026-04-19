@@ -6,6 +6,5 @@ export interface ApartamentoModel {
   descripcion: string;
   estado: string;
   alertas?: string[];
-  // Omitimos el Propietario entero aquí para no sobrecargar los datos,
-  // con esta info me sobra para pintar las tarjetas por ahora.
+  relacionUsuario: 'PROPIETARIO' | 'INQUILINO';
 }

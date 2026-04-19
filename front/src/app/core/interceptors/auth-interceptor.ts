@@ -1,8 +1,12 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { AuthService } from '../services/auth.service'; // <-- Ajusta la ruta a tu auth.service.ts
+import { AuthService } from '../services/auth/auth.service'; // <-- Ajusta la ruta a tu auth.service.ts
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
+
+  if(req.url.endsWith('/login') || req.url.endsWith('/register')) {
+    return next(req);
+  }
   // Inyectamos el servicio de autenticación para sacar el token
   const authService = inject(AuthService);
   const token = authService.obtenerToken();

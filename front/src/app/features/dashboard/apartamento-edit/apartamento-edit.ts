@@ -2,7 +2,7 @@ import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core'; //
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { ApartamentoService } from '../../../core/services/apartamento.service';
+import { ApartamentoService } from '../../../core/services/apartamento/apartamento.service';
 
 @Component({
   selector: 'app-apartamento-edit',

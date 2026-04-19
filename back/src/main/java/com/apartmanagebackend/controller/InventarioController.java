@@ -1,0 +1,52 @@
+package com.apartmanagebackend.controller;
+
+import com.apartmanagebackend.dto.inventario.InventarioRequest;
+import com.apartmanagebackend.dto.inventario.InventarioResponse;
+import com.apartmanagebackend.service.InventarioService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/v1/apartamentos/{apartamentoId}/inventario")
+@RequiredArgsConstructor
+public class InventarioController {
+
+    private final InventarioService inventarioService;
+
+    // POST: Crear un nuevo mueble en un apartamento específico
+    @PostMapping
+    public ResponseEntity<InventarioResponse> agregarItem(
+            @PathVariable Long apartamentoId,
+            @RequestBody InventarioRequest request,
+            Principal principal
+    ) {
+        InventarioResponse response = inventarioService.agregarItem(apartamentoId, request, principal.getName());
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    // GET: Ver todos los muebles de un apartamento específico
+    @GetMapping
+    public ResponseEntity<List<InventarioResponse>> obtenerInventario(
+            @PathVariable Long apartamentoId,
+            Principal principal
+    ) {
+        return ResponseEntity.ok(inventarioService.listarInventarioPorApartamento(apartamentoId, principal.getName()));
+    }
+
+    // DELETE: Eliminar un Elemento del inventario
+    @DeleteMapping("/{itemId}")
+    public ResponseEntity<Void> eliminarItem(
+            @PathVariable Long apartamentoId,
+            @PathVariable Long itemId,
+            Principal principal
+    ) {
+        inventarioService.eliminarItem(apartamentoId, itemId, principal.getName());
+        return ResponseEntity.noContent().build(); // Devuelve 204 No Content (es el estándar para Delete)
+    }
+
+}
