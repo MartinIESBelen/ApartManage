@@ -111,6 +111,21 @@
                   </div>
                 }
               </div>
+              <div class="mt-6 border-t border-blue-200 pt-6">
+                <div class="flex items-start gap-4">
+                  <div class="bg-indigo-100 p-3 rounded-lg text-2xl">👤</div>
+                  <div>
+                    <h4 class="text-indigo-900 font-bold">¿Tu inquilino no usa la App?</h4>
+                    <p class="text-indigo-700 text-sm mb-3">
+                      Puedes registrar los datos del contrato y del inquilino tú mismo. Nosotros crearemos su ficha automáticamente.
+                    </p>
+                    <button [routerLink]="['/apartamento', apto.id, 'reserva-manual']"
+                            class="text-indigo-600 font-bold hover:text-indigo-800 text-sm flex items-center gap-1 transition-colors">
+                      Ir al registro manual →
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
           }
         </div>

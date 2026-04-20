@@ -72,7 +72,7 @@ export class ApartamentoEdit implements OnInit {
     this.apartamentoService.actualizarApartamento(this.apartamentoId, this.formApartamento.value).subscribe({
       next: () => {
         this.guardando = false;
-        this.router.navigate(['/apartamento', this.apartamentoId]);
+        void this.router.navigate(['/apartamento', this.apartamentoId]);
       },
       error: (err) => {
         this.mensajeError = 'Error al guardar los cambios.';

@@ -2,10 +2,13 @@ package com.apartmanagebackend.service;
 
 import com.apartmanagebackend.domain.Apartamento;
 import com.apartmanagebackend.domain.Propietario;
+import com.apartmanagebackend.domain.Reserva;
+import com.apartmanagebackend.domain.Usuario;
 import com.apartmanagebackend.domain.enums.*;
 import com.apartmanagebackend.dto.apartamento.ApartamentoRequest;
 import com.apartmanagebackend.dto.apartamento.ApartamentoResponse;
 import com.apartmanagebackend.repository.ApartamentoRepository;
+import com.apartmanagebackend.repository.ReservaRepository;
 import com.apartmanagebackend.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,6 +25,7 @@ public class ApartamentoService {
 
     private final ApartamentoRepository apartamentoRepository;
     private final UsuarioRepository usuarioRepository;
+    private final ReservaRepository reservaRepository;
 
     //Crear
     public ApartamentoResponse crearApartamento(ApartamentoRequest request,String emailPropietario){
@@ -61,33 +65,48 @@ public class ApartamentoService {
         return mapToResponse(apartamento, RelacionVivienda.PROPIETARIO);
     }
 
-    // METODO DE FILTRADO POR ALERTAS
     @Transactional(readOnly = true)
     public List<ApartamentoResponse> filtrarMisApartamentos(
-            String emailPropietario,
+            String email,
             String nombre,
             EstadoApartamento estado,
             Boolean conAlertas) {
 
-        Propietario propietario = (Propietario) usuarioRepository.findByEmail(emailPropietario)
-                .orElseThrow(() -> new RuntimeException("Propietario no encontrado"));
+        // Buscamos al usuario de forma genérica
+        Usuario usuario = usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        List<Apartamento> misApartamentos = apartamentoRepository.findByPropietarioId(propietario.getId());
+        List<Apartamento> misApartamentos;
+        RelacionVivienda relacion; // De nuestro Enum
+
+        // Comprobamos su rol real
+        if (usuario instanceof Propietario) {
+            // Si es casero, le damos sus propiedades
+            misApartamentos = apartamentoRepository.findByPropietarioId(usuario.getId());
+            relacion = RelacionVivienda.PROPIETARIO;
+        } else {
+            // Si es inquilino, le damos los pisos donde tiene una reserva
+            misApartamentos = reservaRepository.findByInquilinoId(usuario.getId())
+                    .stream()
+                    .map(Reserva::getApartamento)
+                    .distinct()
+                    .collect(Collectors.toList());
+            relacion = RelacionVivienda.INQUILINO;
+        }
 
         return misApartamentos.stream()
                 // Filtro: Por nombre
                 .filter(apto -> nombre == null || nombre.isBlank() ||
                         apto.getNombreInterno().toLowerCase().contains(nombre.toLowerCase()))
-
-                // Filtro: Por estado (ACTIVO / INACTIVO)
+                // Filtro: Por estado
                 .filter(apto -> estado == null || apto.getEstado() == estado)
-
-                // Filtro: Solo pisos con alertas (si marcan la casilla)
+                // Filtro: Alertas
                 .filter(apto -> {
                     if (conAlertas == null || !conAlertas) return true;
                     return !detectarAlertas(apto).isEmpty();
                 })
-                .map(apto -> mapToResponse(apto, RelacionVivienda.PROPIETARIO))
+                // ¡MAGIA! Mapeamos usando la relación que descubrimos arriba
+                .map(apto -> mapToResponse(apto, relacion))
                 .collect(Collectors.toList());
     }
 

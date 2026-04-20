@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class AdministradorService {
+
     private final UsuarioRepository usuarioRepository;
 
     // SUPERPODER 1: Ver a todos los usuarios de la plataforma (Versión Segura)

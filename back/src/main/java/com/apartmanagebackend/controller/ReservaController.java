@@ -1,5 +1,6 @@
 package com.apartmanagebackend.controller;
 
+import com.apartmanagebackend.dto.reserva.ReservaManualRequest;
 import com.apartmanagebackend.dto.reserva.ReservaRequest;
 import com.apartmanagebackend.dto.reserva.ReservaResponse;
 import com.apartmanagebackend.dto.reserva.VincularRequest;
@@ -27,6 +28,17 @@ public class ReservaController {
             Principal principal
     ) {
         ReservaResponse response = reservaService.crearReserva(apartamentoId, request, principal.getName());
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    // POST-propietario: Crear reserva con inquilino manual (Shadow Account)
+    @PostMapping("/apartamentos/{apartamentoId}/reservas/manual")
+    public ResponseEntity<ReservaResponse> crearReservaManual(
+            @PathVariable Long apartamentoId,
+            @RequestBody ReservaManualRequest request,
+            Principal principal
+    ) {
+        ReservaResponse response = reservaService.crearReservaManual(apartamentoId, request, principal.getName());
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
