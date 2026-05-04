@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { VincularCodigo } from './vincular-codigo';
+import { VincularCodigoComponent } from './vincular-codigo';
 
 describe('VincularCodigo', () => {
-  let component: VincularCodigo;
-  let fixture: ComponentFixture<VincularCodigo>;
+  let component: VincularCodigoComponent;
+  let fixture: ComponentFixture<VincularCodigoComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [VincularCodigo],
+      imports: [VincularCodigoComponent],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(VincularCodigo);
+    fixture = TestBed.createComponent(VincularCodigoComponent);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

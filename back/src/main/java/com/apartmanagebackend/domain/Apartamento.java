@@ -24,12 +24,11 @@ public class Apartamento {
     @EqualsAndHashCode.Include
     private Long id;
 
-    // IMPORTANTE: Al imprimir un apartamento, no queremos imprimir el propietario completo
-    // para evitar bucles si el propietario tiene lista de apartamentos.
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "propietario_id", nullable = false)
     @ToString.Exclude
-    private Propietario propietario;
+    private Usuario propietario;
 
     @Column(name = "nombre_interno", nullable = false, length = 100)
     private String nombreInterno;
@@ -72,10 +71,10 @@ public class Apartamento {
     @JsonIgnore
     private Set<Incidencia> incidencias = new HashSet<>();
 
-    // 1:N con Gastos
+    // 1:N con Transaccion
     @OneToMany(mappedBy = "apartamento", cascade = CascadeType.ALL)
     @Builder.Default
     @ToString.Exclude
     @JsonIgnore
-    private Set<Gasto> gastos = new HashSet<>();
+    private Set<Transaccion> transacciones = new HashSet<>();
 }

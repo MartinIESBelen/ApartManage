@@ -34,7 +34,7 @@ public class Reserva {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "inquilino_id")
     @ToString.Exclude
-    private Inquilino inquilino;
+    private Usuario inquilino;
 
     @Column(name = "codigo_vinculacion", nullable = false, unique = true, length = 20)
     private String codigoVinculacion;
@@ -56,10 +56,10 @@ public class Reserva {
     @Column(name = "creado_en", updatable = false)
     private LocalDateTime creadoEn;
 
-    // 1:N con Recibos
+    // 1:N con Transaccion
     @OneToMany(mappedBy = "reserva", cascade = CascadeType.ALL)
     @Builder.Default
     @ToString.Exclude
     @JsonIgnore
-    private Set<Recibo> recibos = new HashSet<>();
+    private Set<Transaccion> transaccions = new HashSet<>();
 }

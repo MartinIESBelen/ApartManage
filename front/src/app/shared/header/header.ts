@@ -1,25 +1,36 @@
-import { Component, inject } from '@angular/core';
-import { RouterLink, Router } from '@angular/router';
-import { AuthService } from '../../core/services/auth/auth.service'; // Ajusta la ruta si es necesario
+import { Component, inject, computed } from '@angular/core';
+import { RouterLink, RouterLinkActive, Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { AuthService } from '../../core/services/auth/auth.service';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [RouterLink],
+  imports: [CommonModule, RouterLink, RouterLinkActive],
   templateUrl: './header.html'
 })
 export class HeaderComponent {
   private authService = inject(AuthService);
   private router = inject(Router);
 
-  // Comprueba si el usuario tiene un token activo
-  isLoggedIn(): boolean {
-    return this.authService.obtenerToken() !== null;
+
+  menuFinanzasAbierto: boolean = false;
+
+  toggleMenuFinanzas() {
+    this.menuFinanzasAbierto = !this.menuFinanzasAbierto;
   }
 
-  // Método para salir
+  abrirMenuFinanzas() {
+    this.menuFinanzasAbierto = true;
+  }
+
+  cerrarMenuFinanzas() {
+    this.menuFinanzasAbierto = false;
+  }
+
+  estaLogueado = computed(() => this.authService.obtenerToken() !== null);
+
   logout() {
-    // Asegúrate de tener este método en tu AuthService que haga: localStorage.removeItem('jwt_token');
     this.authService.logout();
     this.router.navigate(['/login']);
   }

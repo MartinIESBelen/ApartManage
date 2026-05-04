@@ -6,7 +6,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
 import lombok.Builder;
-
 import java.time.LocalDate;
 
 @Builder
@@ -17,11 +16,11 @@ public record RegisterRequest(
         @NotBlank(message = "Los apellidos son obligatorios")
         String apellidos,
 
-        @NotBlank
-        @Email
+        @NotBlank(message = "El email es obligatorio")
+        @Email(message = "Formato de email inválido")
         String email,
 
-        @NotBlank
+        @NotBlank(message = "La contraseña es obligatoria")
         String password,
 
         @NotBlank(message = "El DNI/Pasaporte es obligatorio")
@@ -33,5 +32,4 @@ public record RegisterRequest(
 
         @NotNull(message = "El rol es obligatorio")
         RolUsuario rol
-) {
-}
+) {}

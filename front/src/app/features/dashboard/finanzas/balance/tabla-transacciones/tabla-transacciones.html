@@ -1,0 +1,158 @@
+<div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 h-full flex flex-col">
+
+  <div class="flex justify-between items-center mb-6">
+    <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2">
+      🧾 Registro de Movimientos
+    </h3>
+  </div>
+
+  <!-- SECCIÓN DE FILTROS -->
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6 bg-gray-50 p-4 rounded-xl border border-gray-100">
+    <!-- Filtro Tipo -->
+    <div>
+      <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Tipo de movimiento</label>
+      <select [(ngModel)]="filtroTipo" (change)="onFiltroChange()"
+              class="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2">
+        <option value="TODOS">Ingresos y Gastos</option>
+        <option value="INGRESO">Solo Ingresos (+)</option>
+        <option value="GASTO">Solo Gastos (-)</option>
+      </select>
+    </div>
+    <!-- Filtro Estado -->
+    <div>
+      <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Estado</label>
+      <select [(ngModel)]="filtroEstado" (change)="onFiltroChange()"
+              class="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2">
+        <option value="TODOS">Cualquier estado</option>
+        <option value="PAGADO">Pagado</option>
+        <option value="PENDIENTE">Pendiente</option>
+        <option value="VENCIDO">Vencido</option>
+      </select>
+    </div>
+    <!-- Filtro Categoría -->
+    <div>
+      <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Categoría</label>
+      <select [(ngModel)]="filtroCategoria" (change)="onFiltroChange()"
+              class="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2">
+        <option value="TODOS">Todas las categorías</option>
+        @for (cat of categoriasUnicas(); track cat) {
+          <option [value]="cat">{{ cat }}</option>
+        }
+      </select>
+    </div>
+  </div>
+
+  <!-- TABLA -->
+  <div class="overflow-x-auto flex-1">
+    <table class="w-full text-left border-collapse min-w-max">
+      <thead>
+      <tr class="border-b border-gray-200 text-xs font-bold text-gray-500 uppercase tracking-wider">
+        <th class="py-3 px-2">Fecha</th>
+        <th class="py-3 px-2 w-full md:w-auto">Concepto</th>
+        <th class="py-3 px-2 hidden md:table-cell">Piso</th>
+        <th class="py-3 px-2 hidden lg:table-cell">Inquilino</th>
+        <th class="py-3 px-2 text-center">Estado</th>
+        <th class="py-3 px-2 text-right">Importe</th>
+      </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100">
+
+        @for (tx of transaccionesPaginadas(); track tx.id) {
+          <tr class="hover:bg-blue-50/50 transition-colors group">
+
+            <td class="py-3 px-2 text-sm text-gray-500 whitespace-nowrap">
+              {{ tx.fechaEmision | date:'dd MMM yyyy' }}
+            </td>
+
+            <td class="py-3 px-2">
+              <div class="flex items-center gap-2 md:gap-3">
+                <div class="w-6 h-6 md:w-8 md:h-8 rounded-full flex items-center justify-center shrink-0 text-xs md:text-base"
+                     [class.bg-green-100]="tx.tipo === 'INGRESO'" [class.text-green-600]="tx.tipo === 'INGRESO'"
+                     [class.bg-red-100]="tx.tipo === 'GASTO'" [class.text-red-600]="tx.tipo === 'GASTO'">
+                  {{ tx.tipo === 'INGRESO' ? '↓' : '↑' }}
+                </div>
+                <div>
+                  <!-- Ajustamos el tamaño del texto para móviles -->
+                  <span class="text-xs md:text-sm font-medium text-gray-900 block truncate max-w-[100px] sm:max-w-[150px] md:max-w-[200px]" [title]="tx.concepto">
+                    {{ tx.concepto }}
+                  </span>
+                  @if (tx.categoria) {
+                    <span class="text-[10px] md:text-xs text-gray-400 block truncate max-w-[100px] md:max-w-none">{{ tx.categoria }}</span>
+                  }
+                </div>
+              </div>
+            </td>
+
+            <!-- Ocultamos en móvil -->
+            <td class="py-3 px-2 text-sm text-gray-700 max-w-[120px] truncate hidden md:table-cell" [title]="tx.apartamentoNombre || ''">
+              {{ tx.apartamentoNombre || '-' }}
+            </td>
+
+            <!-- Ocultamos en móvil y tablet pequeña -->
+            <td class="py-3 px-2 text-sm text-gray-700 max-w-[120px] truncate hidden lg:table-cell" [title]="tx.inquilinoNombre || ''">
+              {{ tx.inquilinoNombre || '-' }}
+            </td>
+
+            <td class="py-3 px-2 text-center">
+              <span class="px-2 py-0.5 md:px-2.5 md:py-1 text-[9px] md:text-[10px] font-bold uppercase tracking-wider rounded-full"
+                    [class.bg-green-100]="tx.estado === 'PAGADO'" [class.text-green-800]="tx.estado === 'PAGADO'"
+                    [class.bg-yellow-100]="tx.estado === 'PENDIENTE'" [class.text-yellow-800]="tx.estado === 'PENDIENTE'"
+                    [class.bg-red-100]="tx.estado === 'VENCIDO'" [class.text-red-800]="tx.estado === 'VENCIDO'">
+                {{ tx.estado }}
+              </span>
+            </td>
+
+            <!-- Importe siempre visible -->
+            <td class="py-3 px-2 text-right text-xs md:text-sm font-bold whitespace-nowrap"
+                [class.text-green-600]="tx.tipo === 'INGRESO'"
+                [class.text-gray-900]="tx.tipo === 'GASTO'">
+              {{ tx.tipo === 'INGRESO' ? '+' : '-' }}{{ tx.importe | currency:'EUR' }}
+            </td>
+
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="6" class="py-12 text-center text-gray-400 text-sm font-medium bg-gray-50/50 rounded-lg">
+              No hay transacciones que coincidan con los filtros aplicados.
+            </td>
+          </tr>
+        }
+
+      </tbody>
+    </table>
+  </div>
+
+  <!-- CONTROLES DE PAGINACIÓN -->
+  <div class="flex flex-col sm:flex-row items-center justify-between mt-6 pt-4 border-t border-gray-100 gap-4">
+    <span class="text-sm text-gray-500">
+      Mostrando <span class="font-bold text-gray-900">{{ itemInicio() }}</span> -
+      <span class="font-bold text-gray-900">{{ itemFin() }}</span> de
+      <span class="font-bold text-gray-900">{{ totalResultados() }}</span> resultados
+    </span>
+
+    <div class="flex gap-1">
+      <button (click)="cambiarPagina(1)" [disabled]="paginaActual() === 1"
+              class="px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium">
+        &laquo;
+      </button>
+      <button (click)="cambiarPagina(paginaActual() - 1)" [disabled]="paginaActual() === 1"
+              class="px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium">
+        &lsaquo;
+      </button>
+
+      <span class="px-4 py-1.5 font-medium text-sm text-gray-700 bg-gray-50 rounded-lg border border-gray-100">
+        {{ paginaActual() }} / {{ totalPaginas() }}
+      </span>
+
+      <button (click)="cambiarPagina(paginaActual() + 1)" [disabled]="paginaActual() === totalPaginas()"
+              class="px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium">
+        &rsaquo;
+      </button>
+      <button (click)="cambiarPagina(totalPaginas())" [disabled]="paginaActual() === totalPaginas()"
+              class="px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium">
+        &raquo;
+      </button>
+    </div>
+  </div>
+
+</div>

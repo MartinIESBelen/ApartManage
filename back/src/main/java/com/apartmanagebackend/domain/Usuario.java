@@ -1,34 +1,36 @@
 package com.apartmanagebackend.domain;
 
-import com.apartmanagebackend.domain.enums.RolUsuario; // Asegúrate de renombrar la carpeta a 'enums'
+import com.apartmanagebackend.domain.enums.RolUsuario;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
-import lombok.experimental.SuperBuilder; // Necesario para herencia
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "usuarios")
-@Inheritance(strategy = InheritanceType.JOINED)
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@SuperBuilder // Usamos SuperBuilder en lugar de Builder normal por la herencia
+@Builder // Usamos Builder normal, sin herencia
 @ToString
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Usuario implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @EqualsAndHashCode.Include // Solo este campo se usa para equals/hashcode
-    protected Long id;
+    @EqualsAndHashCode.Include
+    private Long id; // Vuelve a ser private
 
     @Column(nullable = false, length = 50)
     private String nombre;
@@ -49,7 +51,17 @@ public class Usuario implements UserDetails {
     private String dniPasaporte;
 
     @Column(name = "fecha_nacimiento")
-    private java.time.LocalDate fechaNacimiento;
+    private LocalDate fechaNacimiento;
+
+    // --- CAMPOS RESCATADOS DE LAS CLASES ELIMINADAS ---
+    @Column(length = 50)
+    private String iban; // Antes solo de Propietario
+
+    @Column(name = "direccion_fiscal", columnDefinition = "TEXT")
+    private String direccionFiscal; // Antes solo de Propietario
+
+    @Column(name = "direccion_habitual", columnDefinition = "TEXT")
+    private String direccionHabitual; // Antes solo de Inquilino
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -63,36 +75,39 @@ public class Usuario implements UserDetails {
     @Column(name = "creado_en", updatable = false)
     private LocalDateTime creadoEn;
 
+    // --- RELACIONES RESCATADAS ---
+    // Un usuario puede ser propietario de varios apartamentos
+    @OneToMany(mappedBy = "propietario", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    @ToString.Exclude
+    @JsonIgnore
+    private Set<Apartamento> apartamentos = new HashSet<>();
 
+    // Un usuario puede ser inquilino en varias reservas
+    @OneToMany(mappedBy = "inquilino")
+    @Builder.Default
+    @ToString.Exclude
+    @JsonIgnore
+    private Set<Reserva> reservas = new HashSet<>();
+
+    // --- MÉTODOS DE USERDETAILS ---
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        //Convertimos el enum (PROPIETARIO) en un rol que security extienda
         return List.of(new SimpleGrantedAuthority(rol.toString()));
     }
 
     @Override
-    public String getUsername() {
-        return email;
-    }
-
-    // Estos 4 métodos controlan si la cuenta está bloqueada o caducada.
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;//UserDetails.super.isAccountNonExpired()
-    }
+    public String getUsername() { return email; }
 
     @Override
-    public boolean isAccountNonLocked() {
-        return true;//UserDetails.super.isAccountNonLocked()
-    }
+    public boolean isAccountNonExpired() { return true; }
 
     @Override
-    public boolean isCredentialsNonExpired() {
-        return true;//UserDetails.super.isCredentialsNonExpired()
-    }
+    public boolean isAccountNonLocked() { return true; }
 
     @Override
-    public boolean isEnabled() {
-        return true;//UserDetails.super.isEnabled()
-    }
+    public boolean isCredentialsNonExpired() { return true; }
+
+    @Override
+    public boolean isEnabled() { return true; }
 }

@@ -1,8 +1,6 @@
 package com.apartmanagebackend.service;
 
 import com.apartmanagebackend.config.JwtService;
-import com.apartmanagebackend.domain.Inquilino;
-import com.apartmanagebackend.domain.Propietario;
 import com.apartmanagebackend.domain.Usuario;
 import com.apartmanagebackend.domain.enums.RolUsuario;
 import com.apartmanagebackend.dto.auth.AuthResponse;
@@ -36,24 +34,17 @@ public class AuthService {
             throw new RuntimeException("No está permitido registrar cuentas de Administrador desde esta vía.");
         }
 
-        Usuario user;
-
-        if (request.rol() == RolUsuario.PROPIETARIO) {
-            user = Propietario.builder()
-                    .nombre(request.nombre())
-                    .email(request.email())
-                    .password(passwordEncoder.encode(request.password()))
-                    .rol(RolUsuario.PROPIETARIO)
-                    .build();
-        } else {
-            // Asumimos Inquilino por defecto
-            user = Inquilino.builder()
-                    .nombre(request.nombre())
-                    .email(request.email())
-                    .password(passwordEncoder.encode(request.password()))
-                    .rol(RolUsuario.INQUILINO)
-                    .build();
-        }
+        // LA MAGIA: Ya no hay if/else para crear Propietario o Inquilino.
+        // Todos nacen como un Usuario universal.
+        Usuario user = Usuario.builder()
+                .nombre(request.nombre())
+                .apellidos(request.apellidos()) // Añadido
+                .email(request.email())
+                .password(passwordEncoder.encode(request.password()))
+                .dniPasaporte(request.dniPasaporte()) // Añadido
+                .fechaNacimiento(request.fechaNacimiento()) // Añadido
+                .rol(request.rol()) // Se guarda el rol, pero ya no limita su tipo de clase
+                .build();
 
         // Guardar en BD
         usuarioRepository.save(user);

@@ -1,0 +1,104 @@
+<div class="border-t border-gray-200 pt-6 mt-6">
+  <h3 class="text-lg font-semibold text-gray-900 mb-4">Panel de Gestión</h3>
+
+  <div class="flex flex-wrap gap-4 mb-8">
+    <button [routerLink]="['/apartamento/editar', apartamento().id]" class="bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-4 rounded shadow transition-colors">
+      ✏️ Editar Datos
+    </button>
+    <button class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded shadow transition-colors">
+      🛋️ Gestionar Inventario
+    </button>
+  </div>
+
+  <div class="bg-blue-50 rounded-xl p-6 border border-blue-100">
+    <h2 class="text-xl font-bold text-blue-900 mb-4 flex items-center gap-2">
+      <span>🔑</span> Sistema de Alquiler
+    </h2>
+
+    @if (!codigoGenerado()) {
+      <p class="text-blue-700 text-sm mb-4">
+        Establece las condiciones para generar un código único y vincular a tu inquilino.
+      </p>
+
+      @if (!mostrarFormularioReserva()) {
+        <button (click)="mostrarFormularioReserva.set(true)"
+                class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-bold transition shadow-sm">
+          + Crear Nuevo Contrato
+        </button>
+      } @else {
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 bg-white p-5 rounded-lg shadow-sm border border-blue-100">
+          <div>
+            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Fecha Entrada</label>
+            <input type="date" [(ngModel)]="nuevaReserva.fechaEntrada"
+                   class="w-full border p-2 rounded focus:ring-blue-500 focus:border-blue-500"
+                   [class.border-red-500]="sonFechasInvalidas()">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Fecha Salida</label>
+            <input type="date" [(ngModel)]="nuevaReserva.fechaSalida"
+                   class="w-full border p-2 rounded focus:ring-blue-500 focus:border-blue-500"
+                   [class.border-red-500]="sonFechasInvalidas()">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Precio Mensual (€)</label>
+            <input type="number" [(ngModel)]="nuevaReserva.precioBaseAlquiler" placeholder="Ej. 850"
+                   class="w-full border border-gray-300 p-2 rounded focus:ring-blue-500 focus:border-blue-500">
+          </div>
+
+          <div class="md:col-span-3">
+            @if (sonFechasInvalidas()) {
+              <p class="text-red-500 text-xs font-bold animate-pulse">
+                ⚠️ La fecha de salida debe ser posterior a la fecha de entrada.
+              </p>
+            }
+          </div>
+
+          <div class="md:col-span-3 flex justify-end gap-3 mt-2 border-t pt-4">
+            <button (click)="mostrarFormularioReserva.set(false)" class="text-gray-500 font-medium px-4 py-2 hover:bg-gray-100 rounded transition">
+              Cancelar
+            </button>
+            <button (click)="generarCodigo()"
+                    [disabled]="formularioInvalido()"
+                    class="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white px-6 py-2 rounded-lg font-bold shadow-sm transition">
+              Generar Código
+            </button>
+          </div>
+        </div>
+      }
+    } @else {
+      <div class="bg-white border-2 border-dashed border-blue-300 p-6 rounded-xl text-center">
+        <span class="block text-sm font-bold text-gray-500 uppercase mb-3">Código para el Inquilino</span>
+        <div class="flex items-center justify-center gap-4">
+          <span class="text-4xl font-mono font-bold text-blue-600 tracking-widest bg-blue-50 px-4 py-2 rounded-lg">
+            {{ codigoGenerado() }}
+          </span>
+          <button (click)="copiarCodigo()" class="p-3 bg-gray-100 hover:bg-gray-200 rounded-full transition shadow-sm" title="Copiar código">
+            📋
+          </button>
+        </div>
+        <p class="mt-4 text-sm text-gray-600">
+          Envía este código por WhatsApp o correo. El inquilino lo usará en su panel para acceder al piso.
+        </p>
+        <button (click)="codigoGenerado.set(null); mostrarFormularioReserva.set(false)" class="mt-4 text-sm font-medium text-blue-600 hover:underline">
+          ← Generar otro código diferente
+        </button>
+      </div>
+    }
+  </div>
+
+  <div class="mt-6 border-t border-blue-200 pt-6">
+    <div class="flex items-start gap-4">
+      <div class="bg-indigo-100 p-3 rounded-lg text-2xl">👤</div>
+      <div>
+        <h4 class="text-indigo-900 font-bold">¿Tu inquilino no usa la App?</h4>
+        <p class="text-indigo-700 text-sm mb-3">
+          Puedes registrar los datos del contrato y del inquilino tú mismo. Nosotros crearemos su ficha automáticamente.
+        </p>
+        <button [routerLink]="['/apartamento', apartamento().id, 'reserva-manual']"
+                class="text-indigo-600 font-bold hover:text-indigo-800 text-sm flex items-center gap-1 transition-colors">
+          Ir al registro manual →
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -6,5 +6,5 @@ export interface ApartamentoModel {
   descripcion: string;
   estado: string;
   alertas?: string[];
-  relacionUsuario: 'PROPIETARIO' | 'INQUILINO';
+  relacion: 'PROPIETARIO' | 'INQUILINO';
 }

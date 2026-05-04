@@ -2,7 +2,7 @@ package com.apartmanagebackend.service;
 
 import com.apartmanagebackend.domain.Apartamento;
 import com.apartmanagebackend.domain.ElementoInventario;
-import com.apartmanagebackend.domain.Propietario;
+import com.apartmanagebackend.domain.Usuario; // <-- Importante: Añadimos Usuario
 import com.apartmanagebackend.dto.inventario.InventarioRequest;
 import com.apartmanagebackend.dto.inventario.InventarioResponse;
 import com.apartmanagebackend.repository.ApartamentoRepository;
@@ -23,16 +23,13 @@ public class InventarioService {
 
     //CREAR UN ELEMENTO
     public InventarioResponse agregarItem(Long apartamentoId, InventarioRequest request, String emailPropietario) {
-        //  Obtener al propietario logueado
-        Propietario propietario = (Propietario) usuarioRepository.findByEmail(emailPropietario)
-                .orElseThrow(() -> new RuntimeException("Propietario no encontrado"));
+        Usuario propietario = usuarioRepository.findByEmail(emailPropietario)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        //  Buscar el apartamento Y verificar que pertenece a este propietario (Seguridad)
         Apartamento apartamento = apartamentoRepository.findById(apartamentoId)
                 .filter(apt -> apt.getPropietario().getId().equals(propietario.getId()))
                 .orElseThrow(() -> new RuntimeException("Apartamento no encontrado o no tienes permisos"));
 
-        //  Crear el elemento de inventario
         ElementoInventario nuevoItem = ElementoInventario.builder()
                 .apartamento(apartamento)
                 .nombre(request.nombre())
@@ -47,8 +44,7 @@ public class InventarioService {
     }
 
     public List<InventarioResponse> listarInventarioPorApartamento(Long apartamentoId, String emailPropietario) {
-        // Volvemos validar el piso (comprobar)
-        Propietario propietario = (Propietario) usuarioRepository.findByEmail(emailPropietario).orElseThrow();
+        Usuario propietario = usuarioRepository.findByEmail(emailPropietario).orElseThrow();
 
         boolean esSuPiso = apartamentoRepository.findById(apartamentoId)
                 .map(apt -> apt.getPropietario().getId().equals(propietario.getId()))
@@ -66,21 +62,17 @@ public class InventarioService {
 
     // ELIMINAR UN ELEMENTO
     public void eliminarItem(Long apartamentoId, Long itemId, String emailPropietario) {
-        //  Validamos al propietario
-        Propietario propietario = (Propietario) usuarioRepository.findByEmail(emailPropietario)
-                .orElseThrow(() -> new RuntimeException("Propietario no encontrado"));
+        Usuario propietario = usuarioRepository.findByEmail(emailPropietario)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        //  Buscamos el item
         ElementoInventario item = inventarioRepository.findById(itemId)
                 .orElseThrow(() -> new RuntimeException("Elemento no encontrado"));
 
-        //  Comprobar si el item pertenece al apartamento
         if (!item.getApartamento().getId().equals(apartamentoId) ||
                 !item.getApartamento().getPropietario().getId().equals(propietario.getId())) {
             throw new RuntimeException("No tienes permisos para borrar este elemento");
         }
 
-        // Borramos
         inventarioRepository.delete(item);
     }
 

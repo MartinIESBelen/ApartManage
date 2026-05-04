@@ -7,12 +7,22 @@ import { ApartamentoEdit } from './features/dashboard/apartamento-edit/apartamen
 import {ApartamentoCreate} from './features/dashboard/apartamento-create/apartamento-create';
 import {VincularCodigoComponent} from './features/dashboard/vincular-codigo/vincular-codigo';
 import {ReservaManualComponent} from './features/dashboard/reserva-manual/reserva-manual';
+import {Balance} from './features/dashboard/finanzas/balance/balance';
+import { NuevoMovimiento } from './features/dashboard/finanzas/nuevo-movimiento/nuevo-movimiento';
 
 export const routes: Routes = [
 
   { path: 'login', component: LoginComponent },
   { path: 'vincular-vivienda', component: VincularCodigoComponent },
   {path: 'home', component: Home},
+  {
+    path: 'finanzas',
+    children: [
+      { path: '', redirectTo: 'balance', pathMatch: 'full' }, // Si van a /finanzas, saltan a balance
+      { path: 'balance', component: Balance },
+      { path: 'nuevo-movimiento', component: NuevoMovimiento }
+    ]
+  },
   { path: 'apartamento/nuevo', component: ApartamentoCreate },
   { path: 'apartamento/:id', component: ApartamentoDetails },
   { path: 'apartamento/editar/:id', component: ApartamentoEdit },

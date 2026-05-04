@@ -1,0 +1,64 @@
+<div class="min-h-screen bg-gray-50 p-8">
+  <div class="max-w-7xl mx-auto">
+
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+      <div>
+        <h1 class="text-3xl font-extrabold text-gray-900">Resumen Financiero</h1>
+        <p class="text-gray-500 mt-1">Controla la rentabilidad de tus activos inmobiliarios</p>
+      </div>
+      <button class="bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 font-semibold py-2 px-4 rounded-lg shadow-sm flex items-center gap-2 transition-colors">
+        <span>📥</span> Descargar Informe (PDF)
+      </button>
+    </div>
+
+    <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200 mb-8 flex flex-col md:flex-row gap-4 items-end">
+
+      <div class="flex-1 w-full">
+        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Propiedad</label>
+        <select [(ngModel)]="filtroPiso" (change)="cargarDatosFinancieros()"
+                class="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 font-medium">
+          <option value="TODOS">🏢 Todos mis pisos (Consolidado)</option>
+          @for (apto of misPropiedades(); track apto.id) {
+            <option [value]="apto.id">{{ apto.nombreInterno }} ({{ apto.ciudad }})</option>
+          }
+        </select>
+      </div>
+
+      <div class="flex-1 w-full md:w-64">
+        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Periodo</label>
+        <select [(ngModel)]="filtroPeriodo" (change)="cargarDatosFinancieros()"
+                class="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 font-medium">
+          <option value="MES">Últimos 30 días</option>
+          <option value="TRIMESTRE">Este trimestre</option>
+          <option value="ANIO_ACTUAL">Este año (YTD)</option>
+          <option value="SIEMPRE">Histórico completo</option>
+        </select>
+      </div>
+
+    </div>
+
+    @if (cargando()) {
+      <div class="flex justify-center items-center py-20">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      </div>
+    } @else {
+
+
+      <div class="mb-8">
+        <app-kpi [ingresos]="ingresosTotales()" [gastos]="gastosTotales()" />
+      </div>
+
+      <div class="mb-8">
+        <app-tabla-transacciones [transacciones]="ultimasTransacciones()" />
+      </div>
+
+      <div class="mb-8">
+        <!-- Le ponemos una altura fija y un fondo blanco para que se vea como una tarjeta más -->
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 h-96">
+          <app-graficos-balance [datos]="datosGrafico()" />
+        </div>
+      </div>
+
+    }
+  </div>
+</div>

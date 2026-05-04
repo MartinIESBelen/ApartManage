@@ -15,6 +15,7 @@ export class ReservaManualComponent implements OnInit {
   cargando = false;
 
   // Modelo actualizado: Añadidos apellidos, DNI y Fecha de Nacimiento
+  // Actualizado para coincidir con el backend
   form = {
     fechaEntrada: '',
     fechaSalida: '',

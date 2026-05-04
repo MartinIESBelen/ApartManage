@@ -40,25 +40,35 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        // Extraer el token (quitar la palabra "Bearer ")
+        // Extraer el token
         jwt = authHeader.substring(7);
-        userEmail = jwtService.extractUsername(jwt);
 
-        // Si hay email y el usuario no está autenticado todavía en el contexto
-        if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
+        try {
+            // INTENTAMOS extraer el usuario. Si está caducado, saltará al catch
+            userEmail = jwtService.extractUsername(jwt);
 
-            // Si el token es válido, autenticar al usuario manualmente
-            if (jwtService.isTokenValid(jwt, userDetails)) {
-                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                        userDetails,
-                        null,
-                        userDetails.getAuthorities()
-                );
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authToken);
+            // Si hay email y el usuario no está autenticado todavía
+            if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
+
+                // Autenticar al usuario
+                if (jwtService.isTokenValid(jwt, userDetails)) {
+                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                            userDetails,
+                            null,
+                            userDetails.getAuthorities()
+                    );
+                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                }
             }
+            filterChain.doFilter(request, response);
+
+        } catch (io.jsonwebtoken.ExpiredJwtException e) {
+            // Le devolvemos un 401 a Angular de forma limpia y sin romper el servidor
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.getWriter().write("{\"error\": \"Token expirado, vuelve a iniciar sesion\"}");
         }
-        filterChain.doFilter(request, response);
     }
 }

@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ReservaManual } from './reserva-manual';
+import { ReservaManualComponent } from './reserva-manual';
 
 describe('ReservaManual', () => {
-  let component: ReservaManual;
-  let fixture: ComponentFixture<ReservaManual>;
+  let component: ReservaManualComponent;
+  let fixture: ComponentFixture<ReservaManualComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ReservaManual],
+      imports: [ReservaManualComponent],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(ReservaManual);
+    fixture = TestBed.createComponent(ReservaManualComponent);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

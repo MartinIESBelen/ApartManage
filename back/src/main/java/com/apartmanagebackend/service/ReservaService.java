@@ -33,13 +33,12 @@ public class ReservaService {
             throw new RuntimeException("La fecha de salida debe ser estrictamente posterior a la de entrada.");
         }
 
-        Propietario propietario = (Propietario) usuarioRepository.findByEmail(emailPropietario).orElseThrow();
+        Usuario propietario = usuarioRepository.findByEmail(emailPropietario).orElseThrow();
 
         Apartamento apartamento = apartamentoRepository.findById(apartamentoId)
                 .filter(apt -> apt.getPropietario().getId().equals(propietario.getId()))
                 .orElseThrow(() -> new RuntimeException("Apartamento no encontrado o sin permisos"));
 
-        // Generamos un código único de 8 caracteres en mayúsculas
         String codigoGenerado = "APT-" + UUID.randomUUID().toString().substring(0, 5).toUpperCase();
 
         Reserva nuevaReserva = Reserva.builder()
@@ -48,7 +47,7 @@ public class ReservaService {
                 .fechaEntrada(request.fechaEntrada())
                 .fechaSalida(request.fechaSalida())
                 .precioBaseAlquiler(request.precioBaseAlquiler())
-                .estado(EstadoReserva.PENDIENTE) // Esperando a que un inquilino use el código
+                .estado(EstadoReserva.PENDIENTE)
                 .build();
 
         return mapToResponse(reservaRepository.save(nuevaReserva));
@@ -62,35 +61,35 @@ public class ReservaService {
             throw new RuntimeException("La fecha de salida debe ser estrictamente posterior a la de entrada.");
         }
 
-        Propietario propietario = (Propietario) usuarioRepository.findByEmail(emailPropietario)
-                .orElseThrow(() -> new RuntimeException("Propietario no encontrado"));
+        Usuario propietario = usuarioRepository.findByEmail(emailPropietario)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
         Apartamento apartamento = apartamentoRepository.findById(apartamentoId)
                 .filter(apt -> apt.getPropietario().getId().equals(propietario.getId()))
                 .orElseThrow(() -> new RuntimeException("Apartamento no encontrado o sin permisos"));
 
-        // BUSCAR O CREAR AL INQUILINO FANTASMA
+        // buscar o crear al inquilino fantasma
         Usuario inquilino = usuarioRepository.findByEmail(request.emailInquilino()).orElseGet(() -> {
-            // Si no existe, creamos el "Shadow Account"
-            String contraseñaFantasma = UUID.randomUUID().toString(); // Imposible de adivinar
+            String contraseñaFantasma = UUID.randomUUID().toString();
 
-            Inquilino nuevoInquilino = new Inquilino();
+            Usuario nuevoInquilino = new Usuario();
             nuevoInquilino.setNombre(request.nombreInquilino());
-
+            nuevoInquilino.setApellidos(request.apellidosInquilino());
             nuevoInquilino.setEmail(request.emailInquilino());
             nuevoInquilino.setPassword(passwordEncoder.encode(contraseñaFantasma));
             nuevoInquilino.setTelefono(request.telefonoInquilino());
-            // Nota: Aquí podrías añadir un campo en tu entidad Usuario como 'boolean cuentaActiva = false' si lo deseas.
+            nuevoInquilino.setDniPasaporte(request.dniInquilino());
+            nuevoInquilino.setFechaNacimiento(request.fechaNacimientoInquilino());
+            nuevoInquilino.setRol(com.apartmanagebackend.domain.enums.RolUsuario.INQUILINO); // Se guarda como rol, pero es Usuario
 
             return usuarioRepository.save(nuevoInquilino);
         });
 
-        // CREAMOS LA RESERVA YA CONFIRMADA (No necesita código)
         String codigoInterno = "MANUAL-" + UUID.randomUUID().toString().substring(0, 5).toUpperCase();
 
         Reserva nuevaReserva = Reserva.builder()
                 .apartamento(apartamento)
-                .inquilino((Inquilino) inquilino)
+                .inquilino(inquilino) // <-- Ya no hay casting a (Inquilino)
                 .codigoVinculacion(codigoInterno)
                 .fechaEntrada(request.fechaEntrada())
                 .fechaSalida(request.fechaSalida())
@@ -101,16 +100,14 @@ public class ReservaService {
         return mapToResponse(reservaRepository.save(nuevaReserva));
     }
 
-    //EL INQUILINO INTRODUCE EL CÓDIGO Y SE VINCULA
+    // EL INQUILINO INTRODUCE EL CÓDIGO Y SE VINCULA
     public ReservaResponse vincularInquilino(VincularRequest request, String emailInquilino) {
-        Inquilino inquilino = (Inquilino) usuarioRepository.findByEmail(emailInquilino)
-                .orElseThrow(() -> new RuntimeException("Solo los inquilinos pueden vincularse"));
+        Usuario inquilino = usuarioRepository.findByEmail(emailInquilino)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado")); // <-- Ahora cualquiera puede vincularse a un piso
 
-        // Buscamos la reserva por el código secreto
         Reserva reserva = reservaRepository.findByCodigoVinculacion(request.codigoVinculacion())
                 .orElseThrow(() -> new RuntimeException("Código de vinculación inválido o no existe"));
 
-        // Verificamos que la reserva esté libre (PENDIENTE)
         if (reserva.getEstado() != EstadoReserva.PENDIENTE) {
             throw new RuntimeException("Este código ya ha sido usado o la reserva no está disponible");
         }
@@ -121,10 +118,9 @@ public class ReservaService {
         return mapToResponse(reservaRepository.save(reserva));
     }
 
-    // OBTENER LA LISTA DE RESERVAS DE UN APARTAMENTO (Para el propietario)
+    // OBTENER LA LISTA DE RESERVAS DE UN APARTAMENTO
     public List<ReservaResponse> listarReservasPorApartamento(Long apartamentoId, String emailPropietario) {
-        // Comprobamos si es realmente el propietario del piso
-        Propietario propietario = (Propietario) usuarioRepository.findByEmail(emailPropietario).orElseThrow();
+        Usuario propietario = usuarioRepository.findByEmail(emailPropietario).orElseThrow();
 
         boolean esSuPiso = apartamentoRepository.findById(apartamentoId)
                 .map(apt -> apt.getPropietario().getId().equals(propietario.getId()))
@@ -149,7 +145,7 @@ public class ReservaService {
                 reserva.getPrecioBaseAlquiler(),
                 reserva.getEstado(),
                 reserva.getApartamento().getNombreInterno(),
-                reserva.getInquilino() != null ? reserva.getInquilino().getNombre() : "Sin asignar"
+                reserva.getInquilino() != null ? reserva.getInquilino().getNombre() + " " + reserva.getInquilino().getApellidos() : "Sin asignar"
         );
     }
 }

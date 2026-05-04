@@ -1,22 +1,73 @@
-<header class="bg-blue-900 text-white shadow-md">
+<header class="bg-blue-900 text-white shadow-lg border-b border-blue-800">
   <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-    <a routerLink="/home" class="text-xl font-bold flex items-center gap-2">
-      <span class="text-2xl">🏢</span> ApartManage
-    </a>
-    @if (isLoggedIn()) {
-      <nav class="flex justify-center items-center gap-6">
-        <a routerLink="/home" class="hover:text-blue-300 font-medium transition">Inicio</a>
-        <a routerLink="/finanzas" class="hover:text-blue-300 font-medium transition">Finanzas</a>
-        <a routerLink="/contratos" class="hover:text-blue-300 font-medium transition">Contratos</a>
-        <a routerLink="/perfil" class="hover:text-blue-300 font-medium transition">Mi Perfil</a>
 
-        <button (click)="logout()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded font-bold transition text-sm ml-4">
+    <a routerLink="/home" class="text-xl font-bold flex items-center gap-2 hover:opacity-90 transition-opacity">
+      <span class="text-2xl">🏢</span>
+      <span class="tracking-tight">ApartManage</span>
+    </a>
+
+    @if (estaLogueado()) {
+      <nav class="flex justify-center items-center gap-1 md:gap-4">
+        <a routerLink="/home"
+           routerLinkActive="bg-blue-800 text-blue-200"
+           [routerLinkActiveOptions]="{exact: true}"
+           class="px-3 py-2 rounded-md hover:text-blue-300 font-medium transition-all">Inicio</a>
+
+        <div class="relative" (mouseleave)="cerrarMenuFinanzas()">
+          <button (click)="toggleMenuFinanzas()"
+                  (mouseenter)="abrirMenuFinanzas()"
+                  class="px-3 py-2 rounded-md hover:text-blue-300 font-medium transition-all flex items-center gap-1 focus:outline-none"
+                  [ngClass]="{'bg-blue-800 text-blue-200': menuFinanzasAbierto}">
+            Finanzas
+            <!-- Icono de flechita hacia abajo -->
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transition-transform duration-200" [ngClass]="{'rotate-180': menuFinanzasAbierto}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+
+          @if (menuFinanzasAbierto) {
+            <!-- EL PUENTE DEFINITIVO: Solapamos hacia arriba con -mt-2 y empujamos el contenido con pt-4 -->
+            <div class="absolute top-full left-0 w-48 z-50 -mt-2 pt-4">
+
+              <!-- LA CAJA BLANCA VISIBLE -->
+              <div class="bg-white rounded-md shadow-xl border border-gray-100 py-2 overflow-hidden">
+                <a routerLink="/finanzas/balance"
+                   (click)="cerrarMenuFinanzas()"
+                   class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 font-medium transition-colors">
+                  📊 Balance
+                </a>
+                <a routerLink="/finanzas/nuevo-movimiento"
+                   (click)="cerrarMenuFinanzas()"
+                   class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 font-medium transition-colors">
+                  ➕ Nuevo Movimiento
+                </a>
+              </div>
+
+            </div>
+          }
+        </div>
+
+        <a routerLink="/contratos"
+           routerLinkActive="bg-blue-800 text-blue-200"
+           class="px-3 py-2 rounded-md hover:text-blue-300 font-medium transition-all">Contratos</a>
+
+        <a routerLink="/perfil"
+           routerLinkActive="bg-blue-800 text-blue-200"
+           class="px-3 py-2 rounded-md hover:text-blue-300 font-medium transition-all">Mi Perfil</a>
+
+        <div class="h-6 w-px bg-blue-800 mx-2 hidden md:block"></div>
+
+        <button (click)="logout()"
+                class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-bold transition-transform active:scale-95 text-sm">
           Cerrar Sesión
         </button>
       </nav>
     } @else {
       <nav>
-        <a routerLink="/login" class="hover:text-blue-300 font-medium transition">Iniciar Sesión</a>
+        <a routerLink="/login"
+           class="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg font-medium transition-all border border-white/20">
+          Iniciar Sesión
+        </a>
       </nav>
     }
   </div>

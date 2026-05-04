@@ -1,7 +1,6 @@
 package com.apartmanagebackend.service;
 
 import com.apartmanagebackend.domain.Apartamento;
-import com.apartmanagebackend.domain.Propietario;
 import com.apartmanagebackend.domain.Reserva;
 import com.apartmanagebackend.domain.Usuario;
 import com.apartmanagebackend.domain.enums.*;
@@ -29,8 +28,8 @@ public class ApartamentoService {
 
     //Crear
     public ApartamentoResponse crearApartamento(ApartamentoRequest request,String emailPropietario){
-        Propietario propietario = (Propietario) usuarioRepository.findByEmail(emailPropietario)
-                .orElseThrow(() -> new RuntimeException("Propietario no encontrado"));
+        Usuario propietario = usuarioRepository.findByEmail(emailPropietario)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
         Apartamento nuevoApartamento = Apartamento.builder()
                 .nombreInterno(request.nombre())
@@ -46,7 +45,7 @@ public class ApartamentoService {
     }
 
     public List<ApartamentoResponse> obtenerMisApartamentos(String emailPropietario){
-        Propietario propietario = (Propietario) usuarioRepository.findByEmail(emailPropietario)
+        Usuario propietario = usuarioRepository.findByEmail(emailPropietario)
                 .orElseThrow();
 
         return apartamentoRepository.findByPropietarioId(propietario.getId())
@@ -56,8 +55,8 @@ public class ApartamentoService {
     }
 
     public ApartamentoResponse obtenerApartamentoPorId(Long id, String emailPropietario) {
-        Propietario propietario = (Propietario) usuarioRepository.findByEmail(emailPropietario)
-                .orElseThrow(() -> new RuntimeException("Propietario no encontrado"));
+        Usuario propietario = usuarioRepository.findByEmail(emailPropietario)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
         Apartamento apartamento = apartamentoRepository.findByIdAndPropietarioId(id, propietario.getId())
                 .orElseThrow(() -> new RuntimeException("Apartamento no encontrado o acceso denegado"));
@@ -72,41 +71,36 @@ public class ApartamentoService {
             EstadoApartamento estado,
             Boolean conAlertas) {
 
-        // Buscamos al usuario de forma genérica
         Usuario usuario = usuarioRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        List<Apartamento> misApartamentos;
-        RelacionVivienda relacion; // De nuestro Enum
+        List<ApartamentoResponse> todasMisViviendas = new ArrayList<>();
 
-        // Comprobamos su rol real
-        if (usuario instanceof Propietario) {
-            // Si es casero, le damos sus propiedades
-            misApartamentos = apartamentoRepository.findByPropietarioId(usuario.getId());
-            relacion = RelacionVivienda.PROPIETARIO;
-        } else {
-            // Si es inquilino, le damos los pisos donde tiene una reserva
-            misApartamentos = reservaRepository.findByInquilinoId(usuario.getId())
-                    .stream()
-                    .map(Reserva::getApartamento)
-                    .distinct()
-                    .collect(Collectors.toList());
-            relacion = RelacionVivienda.INQUILINO;
-        }
+        // Buscamos las casas donde yo soy el DUEÑO
+        List<Apartamento> misPropiedades = apartamentoRepository.findByPropietarioId(usuario.getId());
+        todasMisViviendas.addAll(misPropiedades.stream()
+                .map(apto -> mapToResponse(apto, RelacionVivienda.PROPIETARIO))
+                .collect(Collectors.toList()));
 
-        return misApartamentos.stream()
-                // Filtro: Por nombre
-                .filter(apto -> nombre == null || nombre.isBlank() ||
-                        apto.getNombreInterno().toLowerCase().contains(nombre.toLowerCase()))
-                // Filtro: Por estado
-                .filter(apto -> estado == null || apto.getEstado() == estado)
-                // Filtro: Alertas
-                .filter(apto -> {
+        // Buscamos las casas donde yo soy el INQUILINO
+        List<Apartamento> misAlquileres = reservaRepository.findByInquilinoId(usuario.getId())
+                .stream()
+                .map(Reserva::getApartamento)
+                .distinct()
+                .collect(Collectors.toList());
+        todasMisViviendas.addAll(misAlquileres.stream()
+                .map(apto -> mapToResponse(apto, RelacionVivienda.INQUILINO))
+                .collect(Collectors.toList()));
+
+        // Aplicamos los filtros a la lista combinada
+        return todasMisViviendas.stream()
+                .filter(res -> nombre == null || nombre.isBlank() ||
+                        res.nombreInterno().toLowerCase().contains(nombre.toLowerCase()))
+                .filter(res -> estado == null || res.estado() == estado)
+                .filter(res -> {
                     if (conAlertas == null || !conAlertas) return true;
-                    return !detectarAlertas(apto).isEmpty();
+                    return res.alertas() != null && !res.alertas().isEmpty();
                 })
-                // ¡MAGIA! Mapeamos usando la relación que descubrimos arriba
-                .map(apto -> mapToResponse(apto, relacion))
                 .collect(Collectors.toList());
     }
 
@@ -115,10 +109,11 @@ public class ApartamentoService {
         List<String> alertas = new ArrayList<>();
 
         // Alerta 1: Impagos
-        boolean tieneImpagos = apto.getReservas().stream()
-                .flatMap(reserva -> reserva.getRecibos().stream())
-                .anyMatch(recibo -> recibo.getEstado() == EstadoRecibo.PENDIENTE);
-        if (tieneImpagos) alertas.add("Impago detectado: Hay recibos pendientes.");
+        boolean tieneImpagos = apto.getTransacciones().stream()
+                .anyMatch(t -> t.getTipo() == TipoTransaccion.INGRESO &&
+                        (t.getEstado() == EstadoTransaccion.PENDIENTE || t.getEstado() == EstadoTransaccion.VENCIDO));
+
+        if (tieneImpagos) alertas.add("Impago detectado: Hay cobros pendientes o vencidos.");
 
         // Alerta 2: Fin de contrato inminente
         LocalDate limiteAviso = LocalDate.now().plusDays(30);

@@ -2,16 +2,13 @@ package com.apartmanagebackend.service;
 
 import com.apartmanagebackend.domain.Apartamento;
 import com.apartmanagebackend.domain.Incidencia;
-import com.apartmanagebackend.domain.Usuario;
+import com.apartmanagebackend.domain.Usuario; // <-- Importante
 import com.apartmanagebackend.dto.incidencia.IncidenciaRequest;
 import com.apartmanagebackend.dto.incidencia.IncidenciaResponse;
 import com.apartmanagebackend.repository.ApartamentoRepository;
 import com.apartmanagebackend.repository.IncidenciaRepository;
 import com.apartmanagebackend.repository.UsuarioRepository;
-import com.apartmanagebackend.domain.*;
 import com.apartmanagebackend.domain.enums.EstadoIncidencia;
-import com.apartmanagebackend.dto.incidencia.*;
-import com.apartmanagebackend.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,10 +20,12 @@ public class IncidenciaService {
     private final UsuarioRepository usuarioRepository;
 
     public IncidenciaResponse reportarIncidencia(IncidenciaRequest request, String emailInquilino) {
-        Usuario inquilino = usuarioRepository.findByEmail(emailInquilino).orElseThrow();
+        // Buscamos al inquilino que reporta (ahora es un Usuario genérico)
+        Usuario inquilino = usuarioRepository.findByEmail(emailInquilino)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
         Apartamento apto = apartamentoRepository.findById(request.apartamentoId())
                 .orElseThrow(() -> new RuntimeException("Apartamento no encontrado"));
-
 
         Incidencia nueva = Incidencia.builder()
                 .apartamento(apto)
@@ -40,7 +39,7 @@ public class IncidenciaService {
     public IncidenciaResponse cambiarEstado(Long id, EstadoIncidencia nuevoEstado, String emailPropietario) {
         Incidencia incidencia = incidenciaRepository.findById(id).orElseThrow();
 
-        // Seguridad: ¿Es el dueño del apartamento?
+        // Seguridad: ¿Es el dueño del apartamento? (Comparamos emails, funciona igual)
         if (!incidencia.getApartamento().getPropietario().getEmail().equals(emailPropietario)) {
             throw new RuntimeException("No tienes permiso sobre esta incidencia");
         }

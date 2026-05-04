@@ -1,0 +1,50 @@
+<div class="mb-8">
+  <h1 class="text-3xl font-extrabold text-gray-900">Nuevo Movimiento</h1>
+  <p class="text-gray-500 mt-1">Selecciona la propiedad a la que pertenece la transacción</p>
+</div>
+
+<div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+  <!-- Buscador -->
+  <div class="mb-6 relative">
+    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">🔍</span>
+    <input type="text"
+           [(ngModel)]="terminoBusqueda"
+           placeholder="Buscar por nombre o ciudad..."
+           class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none">
+  </div>
+
+  <!-- Lista de propiedades -->
+  <div class="space-y-3">
+    @for (apto of apartamentosFiltrados(); track apto.id) {
+      <div (click)="seleccionar(apto)"
+           class="group flex items-center justify-between p-4 rounded-xl border border-gray-100 hover:border-blue-300 hover:bg-blue-50 cursor-pointer transition-all">
+        <div class="flex items-center gap-4">
+          <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center text-xl shadow-sm group-hover:bg-blue-600 group-hover:text-white transition-colors">
+            🏢
+          </div>
+          <div>
+            <h3 class="font-bold text-gray-900">{{ apto.nombreInterno }}</h3>
+            <p class="text-sm text-gray-500">{{ apto.ciudad }}
+
+              <!-- COMENTADO POR AHORA PORQUE ApartamentoModel NO TIENE inquilinoActual
+              @if (apto.inquilinoActual) {
+                <span class="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                        Alquilado: {{ apto.inquilinoActual }}
+                      </span>
+              }
+              -->
+
+            </p>
+          </div>
+        </div>
+        <div class="text-gray-400 group-hover:text-blue-600 font-bold">
+          Seleccionar &rarr;
+        </div>
+      </div>
+    } @empty {
+      <div class="text-center py-10 text-gray-500">
+        No se encontraron propiedades con ese nombre.
+      </div>
+    }
+  </div>
+</div>

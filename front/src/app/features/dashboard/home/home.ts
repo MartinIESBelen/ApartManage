@@ -36,8 +36,8 @@ export class Home implements OnInit {
     ).subscribe({
       next: (data) => {
         // Adiós al truco temporal. Ahora filtramos la realidad:
-        this.misPropiedades = data.filter(apto => apto.relacionUsuario === 'PROPIETARIO');
-        this.misAlquileres = data.filter(apto => apto.relacionUsuario === 'INQUILINO');
+        this.misPropiedades = data.filter(apto => apto.relacion === 'PROPIETARIO');
+        this.misAlquileres = data.filter(apto => apto.relacion === 'INQUILINO');
 
         console.log('Propiedades Reales:', this.misPropiedades);
         console.log('Alquileres Reales:', this.misAlquileres);
