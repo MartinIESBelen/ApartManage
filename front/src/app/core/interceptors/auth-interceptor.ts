@@ -9,7 +9,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
   const token = authService.obtenerToken();
 
-  // 1. Clonamos la petición si hay token y no es login/register
+  //  Clonamos la petición si hay token y no es login/register
   let requestToForward = req;
   if (token && !req.url.endsWith('/login') && !req.url.endsWith('/register')) {
     requestToForward = req.clone({
@@ -19,7 +19,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     });
   }
 
-  // 2. Enviamos la petición y estamos atentos por si el backend nos echa (401 o 403)
+  //  Enviamos la petición y estamos atentos por si el backend nos echa (401 o 403)
   return next(requestToForward).pipe(
     catchError((error: HttpErrorResponse) => {
       // ¡AQUÍ ESTÁ EL CAMBIO! Atrapamos el 401 y el temido 403

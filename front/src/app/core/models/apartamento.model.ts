@@ -7,4 +7,6 @@ export interface ApartamentoModel {
   estado: string;
   alertas?: string[];
   relacion: 'PROPIETARIO' | 'INQUILINO';
+  inquilinoActual?: string;
+  reservaActivaId?: number;
 }

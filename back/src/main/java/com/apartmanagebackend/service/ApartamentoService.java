@@ -137,6 +137,22 @@ public class ApartamentoService {
 
 
     private ApartamentoResponse mapToResponse(Apartamento apartamento, RelacionVivienda relacion) {
+
+        String nombreInquilino = null;
+        Long idReservaActiva = null;
+
+        if (apartamento.getReservas() != null) {
+            var reservaOpt = apartamento.getReservas().stream()
+                    .filter(r -> r.getEstado() == EstadoReserva.CONFIRMADA)
+                    .findFirst();
+
+            if (reservaOpt.isPresent()) {
+                var reservaActiva = reservaOpt.get();
+                nombreInquilino = reservaActiva.getInquilino().getNombre() + " " + reservaActiva.getInquilino().getApellidos();
+                idReservaActiva = reservaActiva.getId();
+            }
+        }
+
         return new ApartamentoResponse(
                 apartamento.getId(),
                 apartamento.getNombreInterno(),
@@ -146,7 +162,9 @@ public class ApartamentoService {
                 apartamento.getEstado(),
                 apartamento.getCreadoEn(),
                 detectarAlertas(apartamento),
-                relacion
+                relacion,
+                nombreInquilino,
+                idReservaActiva
         );
     }
 }

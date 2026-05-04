@@ -9,7 +9,8 @@ import {VincularCodigoComponent} from './features/dashboard/vincular-codigo/vinc
 import {ReservaManualComponent} from './features/dashboard/reserva-manual/reserva-manual';
 import {Balance} from './features/dashboard/finanzas/balance/balance';
 import { NuevoMovimiento } from './features/dashboard/finanzas/nuevo-movimiento/nuevo-movimiento';
-
+import {ListaContratos} from './features/dashboard/contratos/lista-contratos/lista-contratos'
+import {DetallesContrato} from './features/dashboard/contratos/detalles-contrato/detalles-contrato';
 export const routes: Routes = [
 
   { path: 'login', component: LoginComponent },
@@ -23,7 +24,9 @@ export const routes: Routes = [
       { path: 'nuevo-movimiento', component: NuevoMovimiento }
     ]
   },
+  {path: 'contratos', component: ListaContratos},
   { path: 'apartamento/nuevo', component: ApartamentoCreate },
+  { path: 'contratos/:id', component: DetallesContrato },
   { path: 'apartamento/:id', component: ApartamentoDetails },
   { path: 'apartamento/editar/:id', component: ApartamentoEdit },
   { path: '', redirectTo: '/login', pathMatch: 'full' },

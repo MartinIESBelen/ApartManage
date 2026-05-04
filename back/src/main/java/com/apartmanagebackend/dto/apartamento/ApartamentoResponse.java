@@ -15,5 +15,7 @@ public record ApartamentoResponse(
         EstadoApartamento estado,
         LocalDateTime creadoEn,
         List<String> alertas,
-        RelacionVivienda relacion
+        RelacionVivienda relacion,
+        String inquilinoActual,
+        Long reservaActivaId
 ) {}

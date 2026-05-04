@@ -48,6 +48,9 @@ public class Reserva {
     @Column(name = "precio_base_alquiler", nullable = false)
     private BigDecimal precioBaseAlquiler;
 
+    @Column(name = "fianza", precision = 10, scale = 2)
+    private BigDecimal fianza;
+
     @Enumerated(EnumType.STRING)
     @Builder.Default
     private EstadoReserva estado = EstadoReserva.PENDIENTE;

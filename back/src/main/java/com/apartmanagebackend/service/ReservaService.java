@@ -2,10 +2,7 @@ package com.apartmanagebackend.service;
 
 import com.apartmanagebackend.domain.*;
 import com.apartmanagebackend.domain.enums.EstadoReserva;
-import com.apartmanagebackend.dto.reserva.ReservaManualRequest;
-import com.apartmanagebackend.dto.reserva.ReservaRequest;
-import com.apartmanagebackend.dto.reserva.ReservaResponse;
-import com.apartmanagebackend.dto.reserva.VincularRequest;
+import com.apartmanagebackend.dto.reserva.*;
 import com.apartmanagebackend.repository.ApartamentoRepository;
 import com.apartmanagebackend.repository.ReservaRepository;
 import com.apartmanagebackend.repository.UsuarioRepository;
@@ -146,6 +143,51 @@ public class ReservaService {
                 reserva.getEstado(),
                 reserva.getApartamento().getNombreInterno(),
                 reserva.getInquilino() != null ? reserva.getInquilino().getNombre() + " " + reserva.getInquilino().getApellidos() : "Sin asignar"
+        );
+    }
+
+    // Método para obtener la lista resumida de contratos
+    public List<ContratoResponse> obtenerMisContratosPropietario(String emailPropietario) {
+        return reservaRepository.findMisContratosComoPropietario(emailPropietario)
+                .stream()
+                .map(r -> new ContratoResponse(
+                        r.getId(),
+                        r.getCodigoVinculacion(),
+                        r.getApartamento().getNombreInterno(),
+                        r.getInquilino() != null ? r.getInquilino().getNombre() + " " + r.getInquilino().getApellidos() : "Sin asignar",
+                        r.getEstado()
+                )).toList();
+    }
+
+    public ContratoDetalleResponse obtenerDetalleContrato(Long reservaId, String emailPropietario) {
+        // 1. Buscamos la reserva de forma segura
+        Reserva r = reservaRepository.findByIdAndPropietarioEmail(reservaId, emailPropietario)
+                .orElseThrow(() -> new RuntimeException("Contrato no encontrado o no tienes permisos"));
+
+        // 2. Mapeamos los datos del inquilino (si existe)
+        ContratoDetalleResponse.InquilinoPublico inquilinoData = null;
+        if (r.getInquilino() != null) {
+            inquilinoData = new ContratoDetalleResponse.InquilinoPublico(
+                    r.getInquilino().getId(),
+                    r.getInquilino().getNombre(),
+                    r.getInquilino().getApellidos(),
+                    r.getInquilino().getEmail(),
+                    r.getInquilino().getTelefono()
+            );
+        }
+
+        // 3. Devolvemos el DTO gigante
+        return new ContratoDetalleResponse(
+                r.getId(),
+                r.getCodigoVinculacion(),
+                r.getApartamento().getNombreInterno(),
+                r.getFechaEntrada(),
+                r.getFechaSalida(),
+                r.getPrecioBaseAlquiler(),
+                r.getFianza(),
+                r.getEstado(),
+                r.getCreadoEn(),
+                inquilinoData
         );
     }
 }

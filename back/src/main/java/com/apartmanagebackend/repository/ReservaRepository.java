@@ -2,6 +2,8 @@ package com.apartmanagebackend.repository;
 
 import com.apartmanagebackend.domain.Reserva;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -15,4 +17,9 @@ public interface ReservaRepository extends JpaRepository<Reserva,Long> {
 
     List<Reserva> findByApartamentoId(Long apartamentoId);
 
+    @Query("SELECT r FROM Reserva r JOIN r.apartamento a WHERE r.id = :reservaId AND a.propietario.email = :email")
+    Optional<Reserva> findByIdAndPropietarioEmail(@Param("reservaId") Long reservaId, @Param("email") String email);
+
+    @Query("SELECT r FROM Reserva r JOIN r.apartamento a WHERE a.propietario.email = :email ORDER BY r.id DESC")
+    List<Reserva> findMisContratosComoPropietario(@Param("email") String email);
 }
