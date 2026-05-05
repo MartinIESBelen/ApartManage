@@ -1,53 +1,58 @@
 <div class="border-t border-gray-200 pt-6 mt-6">
   <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-3">
     <span class="bg-green-100 text-green-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">
-      🏠 Mi Alquiler
+      Mi Alquiler
     </span>
     Panel de Inquilino
   </h3>
 
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-    <div class="space-y-6">
+  <!-- ZONA DE FINANZAS (Contrato y Recibo lado a lado en pantallas grandes) -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
 
-      <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
-        <h4 class="font-bold text-gray-800 mb-3 flex items-center gap-2">📄 Mi Contrato</h4>
-        <p class="text-sm text-gray-600">Precio Base: <span class="font-bold text-blue-600 text-lg">1.200,00 € <span class="text-xs font-normal">/mes</span></span></p>
-        <p class="text-xs text-gray-500 mt-2">Válido hasta: 01/05/2027</p>
-      </div>
-
-      <div class="bg-white rounded-xl shadow-sm border border-red-200 p-5 relative overflow-hidden">
-        <div class="absolute top-0 right-0 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-bl-lg">PENDIENTE</div>
-        <h4 class="font-bold text-gray-800 mb-3 flex items-center gap-2">💳 Recibo Actual</h4>
-        <div class="flex justify-between items-center mb-4">
-          <div>
-            <p class="text-xs text-gray-500">Marzo 2026 (Incl. suministros)</p>
-            <span class="font-bold text-gray-900 text-2xl">1.265,50 €</span>
-          </div>
-        </div>
-        <button (click)="pagarRecibo()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded-lg transition-colors shadow-sm">
-          Pagar Ahora
-        </button>
-      </div>
+    <!-- Mi Contrato -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+      <h4 class="font-bold text-gray-800 mb-3 flex items-center gap-2"> Mi Contrato</h4>
+      <p class="text-sm text-gray-600">Precio Base: <span class="font-bold text-blue-600 text-lg">1.200,00 € <span class="text-xs font-normal">/mes</span></span></p>
+      <p class="text-xs text-gray-500 mt-2">Válido hasta: 01/05/2027</p>
     </div>
 
-    <div class="space-y-6">
-      <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
-        <div class="flex justify-between items-center mb-4">
-          <h4 class="font-bold text-gray-800 flex items-center gap-2">🔧 Averías Activas</h4>
-          <button (click)="reportarIncidencia()" class="text-xs bg-gray-900 hover:bg-gray-800 text-white font-bold py-1.5 px-3 rounded-lg shadow-sm transition">
-            + Reportar
-          </button>
+    <!-- Recibo Actual -->
+    <div class="bg-white rounded-xl shadow-sm border border-red-200 p-5 relative overflow-hidden">
+      <div class="absolute top-0 right-0 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-bl-lg">PENDIENTE</div>
+      <h4 class="font-bold text-gray-800 mb-3 flex items-center gap-2"> Recibo Actual</h4>
+      <div class="flex justify-between items-center mb-4">
+        <div>
+          <p class="text-xs text-gray-500">Marzo 2026 (Incl. suministros)</p>
+          <span class="font-bold text-gray-900 text-2xl">1.265,50 €</span>
         </div>
-        <div class="space-y-3">
-          <div class="p-3 border border-yellow-200 bg-yellow-50 rounded-lg">
-            <div class="flex justify-between items-start">
-              <p class="font-semibold text-gray-800 text-sm">Lavadora no centrifuga</p>
-              <span class="text-[10px] font-bold bg-yellow-200 text-yellow-800 px-2 py-0.5 rounded uppercase">En Proceso</span>
-            </div>
-            <p class="text-xs text-gray-500 mt-1">Reportado el 25/04/2026</p>
-          </div>
+      </div>
+      <button (click)="pagarRecibo()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded-lg transition-colors shadow-sm">
+        Pagar Ahora
+      </button>
+    </div>
+
+  </div>
+
+  <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
+      <h4 class="font-bold text-gray-800 flex items-center gap-2"> Averías y Desperfectos</h4>
+
+      <a [routerLink]="['/apartamento', apartamento().id, 'inventario']"
+         class="text-sm bg-gray-900 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded-lg shadow-sm transition flex items-center gap-2">
+        <span>Ir al Inventario a Reportar</span> &rarr;
+      </a>
+    </div>
+
+    <!-- Lista Mockeada -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+      <div class="p-3 border border-yellow-200 bg-yellow-50 rounded-lg">
+        <div class="flex justify-between items-start">
+          <p class="font-semibold text-gray-800 text-sm">Lavadora no centrifuga</p>
+          <span class="text-[10px] font-bold bg-yellow-200 text-yellow-800 px-2 py-0.5 rounded uppercase">En Proceso</span>
         </div>
+        <p class="text-xs text-gray-500 mt-1">Reportado el 25/04/2026</p>
       </div>
     </div>
   </div>
+
 </div>

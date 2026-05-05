@@ -5,17 +5,17 @@
        [class.text-blue-800]="apartamento.relacion === 'PROPIETARIO'"
        [class.bg-green-100]="apartamento.relacion === 'INQUILINO'"
        [class.text-green-800]="apartamento.relacion === 'INQUILINO'">
-    {{ apartamento.relacion === 'PROPIETARIO' ? '🏠 Propiedad' : '🔑 Alquilado' }}
+    {{ apartamento.relacion === 'PROPIETARIO' ? ' Propiedad' : ' Alquilado' }}
   </div>
 
   <div class="h-48 bg-blue-100 flex items-center justify-center text-blue-500">
-    <span class="text-6xl">{{ apartamento.relacion === 'PROPIETARIO' ? '🏢' : '🛋️' }}</span>
+    <span class="text-6xl">{{ apartamento.relacion === 'PROPIETARIO' ? '' : '' }}</span>
   </div>
 
   <div class="p-5">
     <h2 class="text-xl font-bold text-gray-900 mb-2">{{ apartamento.nombreInterno }}</h2>
     <p class="text-gray-600 mb-3 flex items-center gap-2">
-      📍 {{ apartamento.ciudad }}
+       {{ apartamento.ciudad }}
     </p>
     <p class="text-sm text-gray-500 line-clamp-2 mb-4">
       {{ apartamento.descripcion }}

@@ -41,7 +41,7 @@ public class ApartamentoController {
             @PathVariable Long id,
             Principal principal
     ) {
-        return ResponseEntity.ok(apartamentoService.obtenerApartamentoPorId(id, principal.getName()));
+        return ResponseEntity.ok(apartamentoService.obtenerApartamento(id, principal.getName()));
     }
 
     // GET: /api/v1/apartamentos/filtrar -> Busca pisos según filtros

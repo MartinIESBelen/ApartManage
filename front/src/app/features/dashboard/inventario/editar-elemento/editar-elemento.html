@@ -1,0 +1,91 @@
+<div class="min-h-screen bg-gray-50 p-4 sm:p-8">
+  <div class="max-w-2xl mx-auto">
+
+    <!-- Botón volver -->
+    <a [routerLink]="['/apartamento', apartamentoId, 'inventario', itemId]"
+       class="text-gray-500 hover:text-gray-800 mb-6 flex items-center gap-2 transition-colors w-fit font-medium">
+      &larr; Cancelar y volver a la ficha
+    </a>
+
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+      <!-- Cabecera -->
+      <div class="bg-amber-500 p-6 text-white text-center">
+        <h1 class="text-2xl font-extrabold">Editar Elemento</h1>
+        <p class="text-amber-100 text-sm mt-1">Actualiza la información de este mueble o electrodoméstico.</p>
+      </div>
+
+      @if (cargando()) {
+        <div class="flex justify-center py-20">
+          <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-500"></div>
+        </div>
+      } @else {
+        <!-- Formulario -->
+        <form (ngSubmit)="guardar(itemForm)" #itemForm="ngForm" class="p-6 sm:p-8 space-y-6">
+
+          <!-- Nombre -->
+          <div>
+            <label class="block text-sm font-bold text-gray-700 mb-1">Nombre del Elemento *</label>
+            <input type="text" name="nombre" [(ngModel)]="form.nombre" required #nombre="ngModel"
+                   class="w-full border-gray-300 rounded-lg p-3 border focus:ring-2 focus:ring-amber-500 outline-none transition-all"
+                   [class.border-red-500]="nombre.invalid && nombre.touched">
+            @if (nombre.invalid && nombre.touched) {
+              <div class="text-red-500 text-xs mt-1 font-medium">El nombre es obligatorio.</div>
+            }
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Categoría -->
+            <div>
+              <label class="block text-sm font-bold text-gray-700 mb-1">Categoría *</label>
+              <select name="categoria" [(ngModel)]="form.categoria" required #categoria="ngModel"
+                      class="w-full border-gray-300 rounded-lg p-3 border focus:ring-2 focus:ring-amber-500 outline-none bg-white transition-all"
+                      [class.border-red-500]="categoria.invalid && categoria.touched">
+                @for (cat of categorias; track cat) {
+                  <option [value]="cat">{{ cat }}</option>
+                }
+              </select>
+            </div>
+
+            <!-- Estado -->
+            <div>
+              <label class="block text-sm font-bold text-gray-700 mb-1">Estado Actual *</label>
+              <select name="estado" [(ngModel)]="form.estado" required
+                      class="w-full border-gray-300 rounded-lg p-3 border focus:ring-2 focus:ring-amber-500 outline-none bg-white transition-all">
+                @for (est of estados; track est) {
+                  <option [value]="est">{{ est }}</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <div class="border-t border-gray-100 pt-6">
+            <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4">Información de Compra</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <!-- Fecha de Compra -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Fecha de Compra</label>
+                <input type="date" name="fechaCompra" [(ngModel)]="form.fechaCompra"
+                       class="w-full border-gray-300 rounded-lg p-3 border focus:ring-2 focus:ring-amber-500 outline-none transition-all">
+              </div>
+
+              <!-- Precio -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Precio (€)</label>
+                <input type="number" name="precio" [(ngModel)]="form.precioCompra" min="0" step="0.01"
+                       class="w-full border-gray-300 rounded-lg p-3 border focus:ring-2 focus:ring-amber-500 outline-none transition-all">
+              </div>
+            </div>
+          </div>
+
+          <!-- Botón Submit -->
+          <button type="submit"
+                  [disabled]="guardando || itemForm.invalid"
+                  class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-4 rounded-xl shadow-md transition-all transform active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed mt-4">
+            {{ guardando ? 'Guardando cambios...' : 'Guardar Cambios' }}
+          </button>
+
+        </form>
+      }
+    </div>
+  </div>
+</div>

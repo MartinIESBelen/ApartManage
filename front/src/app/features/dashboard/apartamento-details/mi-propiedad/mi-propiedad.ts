@@ -12,7 +12,6 @@ import { ApartamentoModel } from '../../../../core/models/apartamento.model';
   templateUrl: './mi-propiedad.html'
 })
 export class MiPropiedad {
-  // Magia de Angular 21: Recibe los datos del padre de forma segura y reactiva
   apartamento = input.required<ApartamentoModel>();
 
   // Variables exclusivas del propietario
@@ -22,7 +21,8 @@ export class MiPropiedad {
   nuevaReserva = {
     fechaEntrada: '',
     fechaSalida: '',
-    precioBaseAlquiler: 0
+    precioBaseAlquiler: 0,
+    fianza: 0
   };
 
   private reservaService = inject(ReservaService);

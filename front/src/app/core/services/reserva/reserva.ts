@@ -15,7 +15,7 @@ export class ReservaService {
   }
 
   crearReserva(apartamentoId: number, reservaData: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/apartamentos/${apartamentoId}/reservas`, reservaData);
+    return this.http.post(`${this.apiUrl}/reservas/apartamentos/${apartamentoId}`, reservaData);
   }
 
   crearReservaManual(apartamentoId: number, reservaManualData: any): Observable<any> {

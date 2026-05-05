@@ -13,6 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/reservas")
+@CrossOrigin(origins = "http://localhost:4200")
 @RequiredArgsConstructor
 public class ReservaController {
 
@@ -51,14 +52,14 @@ public class ReservaController {
 
     // GET: Ver TODAS las reservas del propietario (Para la lista principal de Angular)
     @GetMapping
-    @PreAuthorize("hasRole('PROPIETARIO')")
+    @PreAuthorize("hasAuthority('PROPIETARIO')")
     public ResponseEntity<List<ContratoResponse>> obtenerMisContratos(Principal principal) {
         return ResponseEntity.ok(reservaService.obtenerMisContratosPropietario(principal.getName()));
     }
 
     // GET: Ver el detalle de 1 solo contrato
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('PROPIETARIO')")
+    @PreAuthorize("hasAuthority('PROPIETARIO')")
     public ResponseEntity<ContratoDetalleResponse> obtenerDetalleContrato(
             @PathVariable Long id,
             Principal principal) {

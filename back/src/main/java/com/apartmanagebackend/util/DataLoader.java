@@ -111,7 +111,80 @@ public class DataLoader implements CommandLineRunner {
                 .build();
         inventarioRepository.save(tv);
 
-        // Crear RESERVA (Actual)
+        Apartamento apartamentoVacio = Apartamento.builder()
+                .propietario(propietario)
+                .nombreInterno("Estudio Playa")
+                .direccion("Calle Marina 45, 2ºA")
+                .ciudad("Valencia")
+                .descripcion("Estudio recién reformado cerca de la playa.")
+                .estado(EstadoApartamento.ACTIVO)
+                .build();
+        apartamentoRepository.save(apartamentoVacio);
+
+        // Inventario para el apartamento vacío
+        ElementoInventario cama = ElementoInventario.builder()
+                .apartamento(apartamentoVacio)
+                .nombre("Cama de matrimonio 150cm")
+                .categoria(CategoriaItem.MUEBLE)
+                .estado(EstadoItem.NUEVO)
+                .precioCompra(new BigDecimal("250.00"))
+                .fechaCompra(LocalDate.of(2025, 11, 10))
+                .build();
+        inventarioRepository.save(cama);
+
+        ElementoInventario microondas = ElementoInventario.builder()
+                .apartamento(apartamentoVacio)
+                .nombre("Microondas Balay")
+                .categoria(CategoriaItem.ELECTRODOMESTICO)
+                .estado(EstadoItem.BUENO)
+                .precioCompra(new BigDecimal("80.00"))
+                .fechaCompra(LocalDate.of(2024, 6, 15))
+                .build();
+        inventarioRepository.save(microondas);
+
+        Apartamento apartamentoAlquilado = Apartamento.builder()
+                .propietario(propietario2) // El dueño es el usuario 2
+                .nombreInterno("Piso Sierra Nevada")
+                .direccion("Av. de las Nieves 12")
+                .ciudad("Granada")
+                .descripcion("Acogedor piso para la temporada de invierno.")
+                .estado(EstadoApartamento.ACTIVO)
+                .build();
+        apartamentoRepository.save(apartamentoAlquilado);
+
+        // Inventario para el apartamento alquilado
+        ElementoInventario estufa = ElementoInventario.builder()
+                .apartamento(apartamentoAlquilado)
+                .nombre("Estufa de Pellets")
+                .categoria(CategoriaItem.ELECTRODOMESTICO)
+                .estado(EstadoItem.BUENO)
+                .precioCompra(new BigDecimal("850.00"))
+                .fechaCompra(LocalDate.of(2022, 10, 5))
+                .build();
+        inventarioRepository.save(estufa);
+
+        ElementoInventario mesa = ElementoInventario.builder()
+                .apartamento(apartamentoAlquilado)
+                .nombre("Mesa de comedor rústica")
+                .categoria(CategoriaItem.MUEBLE)
+                .estado(EstadoItem.DESGASTADO)
+                .precioCompra(new BigDecimal("150.00"))
+                .fechaCompra(LocalDate.of(2020, 3, 20))
+                .build();
+        inventarioRepository.save(mesa);
+
+        Reserva reservaMartinInquilino = Reserva.builder()
+                .apartamento(apartamentoAlquilado)
+                .inquilino(propietario) // ¡Aquí está la magia! Le pasamos el objeto 'propietario' al campo inquilino
+                .codigoVinculacion("RES-2026-002")
+                .fechaEntrada(LocalDate.of(2026, 2, 1))
+                .fechaSalida(LocalDate.of(2026, 8, 31))
+                .precioBaseAlquiler(new BigDecimal("700.00"))
+                .estado(EstadoReserva.CONFIRMADA)
+                .build();
+        reservaRepository.save(reservaMartinInquilino);
+
+        // Crear RESERVA
         Reserva reserva = Reserva.builder()
                 .apartamento(apartamento)
                 .inquilino(inquilino)

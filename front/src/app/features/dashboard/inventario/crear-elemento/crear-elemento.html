@@ -1,0 +1,88 @@
+<div class="min-h-screen bg-gray-50 p-4 sm:p-8">
+  <div class="max-w-2xl mx-auto">
+
+    <!-- Botón volver -->
+    <a [routerLink]="['/apartamento', apartamentoId, 'inventario']"
+       class="text-gray-500 hover:text-gray-800 mb-6 flex items-center gap-2 transition-colors w-fit font-medium">
+      &larr; Cancelar y volver al inventario
+    </a>
+
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+      <!-- Cabecera de la tarjeta -->
+      <div class="bg-blue-600 p-6 text-white text-center">
+        <h1 class="text-2xl font-extrabold">Añadir al Inventario</h1>
+        <p class="text-blue-100 text-sm mt-1">Registra un nuevo mueble o electrodoméstico.</p>
+      </div>
+
+      <!-- Formulario -->
+      <form (ngSubmit)="guardar(itemForm)" #itemForm="ngForm" class="p-6 sm:p-8 space-y-6">
+
+        <!-- 1. Nombre -->
+        <div>
+          <label class="block text-sm font-bold text-gray-700 mb-1">Nombre del Elemento *</label>
+          <input type="text" name="nombre" [(ngModel)]="form.nombre" required #nombre="ngModel"
+                 class="w-full border-gray-300 rounded-lg p-3 border focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                 placeholder="Ej. Sofá de 3 plazas, Frigorífico, Lámpara de pie..."
+                 [class.border-red-500]="nombre.invalid && nombre.touched">
+          @if (nombre.invalid && nombre.touched) {
+            <div class="text-red-500 text-xs mt-1 font-medium">El nombre es obligatorio.</div>
+          }
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- 2. Categoría -->
+          <div>
+            <label class="block text-sm font-bold text-gray-700 mb-1">Categoría *</label>
+            <select name="categoria" [(ngModel)]="form.categoria" required #categoria="ngModel"
+                    class="w-full border-gray-300 rounded-lg p-3 border focus:ring-2 focus:ring-blue-500 outline-none bg-white transition-all"
+                    [class.border-red-500]="categoria.invalid && categoria.touched">
+              <option value="" disabled selected>Selecciona una categoría</option>
+              @for (cat of categorias; track cat) {
+                <option [value]="cat">{{ cat }}</option>
+              }
+            </select>
+          </div>
+
+          <!-- 3. Estado -->
+          <div>
+            <label class="block text-sm font-bold text-gray-700 mb-1">Estado Actual *</label>
+            <select name="estado" [(ngModel)]="form.estado" required
+                    class="w-full border-gray-300 rounded-lg p-3 border focus:ring-2 focus:ring-blue-500 outline-none bg-white transition-all">
+              @for (est of estados; track est) {
+                <option [value]="est">{{ est }}</option>
+              }
+            </select>
+          </div>
+        </div>
+
+        <div class="border-t border-gray-100 pt-6">
+          <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4">Información de Compra (Opcional)</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- 4. Fecha de Compra -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Fecha de Compra</label>
+              <input type="date" name="fechaCompra" [(ngModel)]="form.fechaCompra"
+                     class="w-full border-gray-300 rounded-lg p-3 border focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+            </div>
+
+            <!-- 5. Precio -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Precio (€)</label>
+              <input type="number" name="precio" [(ngModel)]="form.precioCompra" min="0" step="0.01"
+                     class="w-full border-gray-300 rounded-lg p-3 border focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                     placeholder="0.00">
+            </div>
+          </div>
+        </div>
+
+        <!-- Botón Submit -->
+        <button type="submit"
+                [disabled]="cargando || itemForm.invalid"
+                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl shadow-md transition-all transform active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed mt-4">
+          {{ cargando ? 'Guardando elemento...' : 'Añadir al Inventario' }}
+        </button>
+
+      </form>
+    </div>
+  </div>
+</div>

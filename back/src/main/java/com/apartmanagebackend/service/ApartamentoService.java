@@ -26,7 +26,6 @@ public class ApartamentoService {
     private final UsuarioRepository usuarioRepository;
     private final ReservaRepository reservaRepository;
 
-    //Crear
     public ApartamentoResponse crearApartamento(ApartamentoRequest request,String emailPropietario){
         Usuario propietario = usuarioRepository.findByEmail(emailPropietario)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
@@ -54,15 +53,24 @@ public class ApartamentoService {
                 .collect(Collectors.toList());
     }
 
-    public ApartamentoResponse obtenerApartamentoPorId(Long id, String emailPropietario) {
-        Usuario propietario = usuarioRepository.findByEmail(emailPropietario)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+    public ApartamentoResponse obtenerApartamento(Long id, String email) {
+        Usuario usuario = usuarioRepository.findByEmail(email).orElseThrow();
+        Apartamento apartamento = apartamentoRepository.findById(id).orElseThrow();
 
-        Apartamento apartamento = apartamentoRepository.findByIdAndPropietarioId(id, propietario.getId())
-                .orElseThrow(() -> new RuntimeException("Apartamento no encontrado o acceso denegado"));
+        boolean esPropietario = apartamento.getPropietario().getId().equals(usuario.getId());
 
-        return mapToResponse(apartamento, RelacionVivienda.PROPIETARIO);
+        boolean esInquilino = reservaRepository.existsByApartamentoIdAndInquilinoIdAndEstado(
+                id, usuario.getId(), EstadoReserva.CONFIRMADA);
+
+        if (!esPropietario && !esInquilino) {
+            throw new RuntimeException("No tienes permisos para ver este apartamento");
+        }
+
+        RelacionVivienda relacion = esPropietario ? RelacionVivienda.PROPIETARIO : RelacionVivienda.INQUILINO;
+
+        return mapToResponse(apartamento, relacion);
     }
+
 
     @Transactional(readOnly = true)
     public List<ApartamentoResponse> filtrarMisApartamentos(

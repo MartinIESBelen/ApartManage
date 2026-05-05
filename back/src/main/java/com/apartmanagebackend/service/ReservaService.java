@@ -44,6 +44,7 @@ public class ReservaService {
                 .fechaEntrada(request.fechaEntrada())
                 .fechaSalida(request.fechaSalida())
                 .precioBaseAlquiler(request.precioBaseAlquiler())
+                .fianza(request.fianza())
                 .estado(EstadoReserva.PENDIENTE)
                 .build();
 

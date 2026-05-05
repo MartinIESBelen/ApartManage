@@ -3,6 +3,7 @@ package com.apartmanagebackend.dto.reserva;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -17,5 +18,8 @@ public record ReservaRequest(
 
         @NotNull
         @Positive(message = "El precio base debe ser mayor a 0")
-        BigDecimal precioBaseAlquiler
+        BigDecimal precioBaseAlquiler,
+
+        @PositiveOrZero(message = "La fianza no puede ser negativa")
+        BigDecimal fianza
 ) {}

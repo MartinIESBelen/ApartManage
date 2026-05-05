@@ -49,4 +49,27 @@ public class InventarioController {
         return ResponseEntity.noContent().build(); // Devuelve 204 No Content (es el estándar para Delete)
     }
 
+    // PUT: Editar un elemento existente (Solo propietario)
+    @PutMapping("/{itemId}")
+    public ResponseEntity<InventarioResponse> editarItem(
+            @PathVariable Long apartamentoId,
+            @PathVariable Long itemId,
+            @RequestBody InventarioRequest request,
+            Principal principal
+    ) {
+        InventarioResponse response = inventarioService.editarItem(apartamentoId, itemId, request, principal.getName());
+        return ResponseEntity.ok(response);
+    }
+
+    // PATCH: Marcar un elemento como ROTO
+    @PatchMapping("/{itemId}/roto")
+    public ResponseEntity<InventarioResponse> marcarComoRoto(
+            @PathVariable Long apartamentoId,
+            @PathVariable Long itemId,
+            Principal principal
+    ) {
+        InventarioResponse response = inventarioService.marcarComoRoto(apartamentoId, itemId, principal.getName());
+        return ResponseEntity.ok(response);
+    }
+
 }

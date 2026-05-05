@@ -1,0 +1,87 @@
+<div class="p-4 sm:p-8 max-w-5xl mx-auto">
+
+  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+    <div>
+      <a [routerLink]="['/apartamento', apartamentoId]" class="text-blue-600 hover:text-blue-800 text-sm font-medium mb-2 inline-block">
+        &larr; Volver al Apartamento
+      </a>
+      <h1 class="text-3xl font-extrabold text-gray-900">Inventario</h1>
+      <p class="text-gray-500 mt-1">Controla los muebles y electrodomésticos de la propiedad</p>
+    </div>
+    @if (esPropietario()) {
+    <a [routerLink]="['/apartamento', apartamentoId, 'inventario', 'nuevo']"
+       class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-bold shadow-sm transition-colors flex items-center gap-2">
+      <span>+</span> Añadir Elemento
+    </a>
+    }
+  </div>
+
+  @if (cargando()) {
+    <div class="flex justify-center py-20">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+    </div>
+  } @else {
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+      <table class="w-full text-left border-collapse">
+        <thead>
+        <tr class="bg-gray-50 border-b border-gray-100 text-xs font-bold text-gray-500 uppercase tracking-wider">
+          <th class="py-4 px-6">Elemento</th>
+          <th class="py-4 px-6">Categoría</th>
+          <th class="py-4 px-6">Estado</th>
+          <th class="py-4 px-6 text-right">Acción</th>
+        </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+
+          @for (item of inventario(); track item.id) {
+            <tr [routerLink]="['/apartamento', apartamentoId, 'inventario', item.id]"
+                class="hover:bg-blue-50/50 transition-colors cursor-pointer group">
+
+              <td class="py-4 px-6 font-bold text-gray-900">
+                {{ item.nombre }}
+              </td>
+
+              <td class="py-4 px-6 text-sm text-gray-600">
+                <span class="bg-gray-100 text-gray-700 px-2.5 py-1 rounded-md text-xs font-medium border border-gray-200">
+                  {{ item.categoria }}
+                </span>
+              </td>
+
+              <td class="py-4 px-6">
+                <span class="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full flex w-max items-center gap-1"
+                      [class.bg-green-100]="item.estado === 'NUEVO' || item.estado === 'BUENO'"
+                      [class.text-green-800]="item.estado === 'NUEVO' || item.estado === 'BUENO'"
+                      [class.bg-yellow-100]="item.estado === 'DESGASTADO'"
+                      [class.text-yellow-800]="item.estado === 'DESGASTADO'"
+                      [class.bg-orange-100]="item.estado === 'AVERIADO'"
+                      [class.text-orange-800]="item.estado === 'AVERIADO'"
+                      [class.bg-red-100]="item.estado === 'ROTO'"
+                      [class.text-red-800]="item.estado === 'ROTO'">
+                  <span class="w-1.5 h-1.5 rounded-full block"
+                        [class.bg-green-600]="item.estado === 'NUEVO' || item.estado === 'BUENO'"
+                        [class.bg-yellow-500]="item.estado === 'DESGASTADO'"
+                        [class.bg-orange-500]="item.estado === 'AVERIADO'"
+                        [class.bg-red-600]="item.estado === 'ROTO'"></span>
+                  {{ item.estado }}
+                </span>
+              </td>
+
+              <td class="py-4 px-6 text-right text-gray-400 group-hover:text-blue-600 transition-colors">
+                <span class="text-xl">&rsaquo;</span>
+              </td>
+
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="4" class="py-16 text-center text-gray-400 bg-gray-50/30">
+                <p class="text-4xl mb-2">📦</p>
+                <p class="font-medium text-gray-600">El inventario está vacío</p>
+                <p class="text-sm">Añade tu primer elemento para empezar a gestionarlo.</p>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

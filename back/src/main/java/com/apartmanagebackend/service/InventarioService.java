@@ -7,6 +7,7 @@ import com.apartmanagebackend.dto.inventario.InventarioRequest;
 import com.apartmanagebackend.dto.inventario.InventarioResponse;
 import com.apartmanagebackend.repository.ApartamentoRepository;
 import com.apartmanagebackend.repository.ElementoInventarioRepository;
+import com.apartmanagebackend.repository.ReservaRepository;
 import com.apartmanagebackend.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ public class InventarioService {
     private final ElementoInventarioRepository inventarioRepository;
     private final ApartamentoRepository apartamentoRepository;
     private final UsuarioRepository usuarioRepository;
+    private final ReservaRepository reservaRepository;
 
     //CREAR UN ELEMENTO
     public InventarioResponse agregarItem(Long apartamentoId, InventarioRequest request, String emailPropietario) {
@@ -43,14 +45,17 @@ public class InventarioService {
         return mapToResponse(guardado);
     }
 
-    public List<InventarioResponse> listarInventarioPorApartamento(Long apartamentoId, String emailPropietario) {
-        Usuario propietario = usuarioRepository.findByEmail(emailPropietario).orElseThrow();
+    public List<InventarioResponse> listarInventarioPorApartamento(Long apartamentoId, String email) {
+        Usuario usuario = usuarioRepository.findByEmail(email).orElseThrow();
+        Apartamento apartamento = apartamentoRepository.findById(apartamentoId)
+                .orElseThrow(() -> new RuntimeException("Apartamento no encontrado"));
 
-        boolean esSuPiso = apartamentoRepository.findById(apartamentoId)
-                .map(apt -> apt.getPropietario().getId().equals(propietario.getId()))
-                .orElse(false);
+        boolean esPropietario = apartamento.getPropietario().getId().equals(usuario.getId());
 
-        if (!esSuPiso) {
+        boolean esInquilino = reservaRepository.existsByApartamentoIdAndInquilinoIdAndEstado(
+                apartamentoId, usuario.getId(), com.apartmanagebackend.domain.enums.EstadoReserva.CONFIRMADA);
+
+        if (!esPropietario && !esInquilino) {
             throw new RuntimeException("No tienes permisos para ver este inventario");
         }
 
@@ -74,6 +79,50 @@ public class InventarioService {
         }
 
         inventarioRepository.delete(item);
+    }
+
+    // EDITAR UN ELEMENTO (Solo Propietario)
+    public InventarioResponse editarItem(Long apartamentoId, Long itemId, InventarioRequest request, String emailPropietario) {
+        Usuario propietario = usuarioRepository.findByEmail(emailPropietario)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        ElementoInventario item = inventarioRepository.findById(itemId)
+                .orElseThrow(() -> new RuntimeException("Elemento no encontrado"));
+
+        // Verificamos que el elemento sea del apartamento y el usuario sea el dueño
+        if (!item.getApartamento().getId().equals(apartamentoId) ||
+                !item.getApartamento().getPropietario().getId().equals(propietario.getId())) {
+            throw new RuntimeException("No tienes permisos para editar este elemento");
+        }
+
+        // Actualizamos los datos
+        item.setNombre(request.nombre());
+        item.setCategoria(request.categoria());
+        item.setEstado(request.estado());
+        item.setPrecioCompra(request.precioCompra());
+        item.setFechaCompra(request.fechaCompra());
+
+        return mapToResponse(inventarioRepository.save(item));
+    }
+
+    // MARCAR COMO ROTO (Propietario o Inquilino)
+    public InventarioResponse marcarComoRoto(Long apartamentoId, Long itemId, String emailUsuario) {
+        // Buscamos el elemento
+        ElementoInventario item = inventarioRepository.findById(itemId)
+                .orElseThrow(() -> new RuntimeException("Elemento no encontrado"));
+
+        // Verificamos que pertenezca al apartamento correcto
+        if (!item.getApartamento().getId().equals(apartamentoId)) {
+            throw new RuntimeException("El elemento no coincide con el apartamento");
+        }
+
+        // TODO: Aquí en el futuro añadiremos la validación para comprobar
+        // si el emailUsuario pertenece al Propietario o al Inquilino ACTIVO de este piso.
+        // Por ahora, simplemente le cambiamos el estado.
+
+        item.setEstado(com.apartmanagebackend.domain.enums.EstadoItem.ROTO);
+
+        return mapToResponse(inventarioRepository.save(item));
     }
 
     private InventarioResponse mapToResponse(ElementoInventario item) {

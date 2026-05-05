@@ -1,6 +1,7 @@
 package com.apartmanagebackend.repository;
 
 import com.apartmanagebackend.domain.Reserva;
+import com.apartmanagebackend.domain.enums.EstadoReserva;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -16,6 +17,8 @@ public interface ReservaRepository extends JpaRepository<Reserva,Long> {
     List<Reserva> findByInquilinoId(Long inquilinoId);
 
     List<Reserva> findByApartamentoId(Long apartamentoId);
+
+    boolean existsByApartamentoIdAndInquilinoIdAndEstado(Long apartamentoId, Long inquilinoId, EstadoReserva estado);
 
     @Query("SELECT r FROM Reserva r JOIN r.apartamento a WHERE r.id = :reservaId AND a.propietario.email = :email")
     Optional<Reserva> findByIdAndPropietarioEmail(@Param("reservaId") Long reservaId, @Param("email") String email);

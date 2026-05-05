@@ -16,7 +16,7 @@ export class ApartamentoEdit implements OnInit {
   private apartamentoService = inject(ApartamentoService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
-  private cd = inject(ChangeDetectorRef); // <-- 2. LO INYECTAMOS AQUÍ
+  private cd = inject(ChangeDetectorRef);
 
   apartamentoId!: number;
   cargando = true;
@@ -49,13 +49,13 @@ export class ApartamentoEdit implements OnInit {
         });
         this.cargando = false;
 
-        this.cd.detectChanges(); // <-- 3. ¡DESPERTAMOS A ANGULAR!
+        this.cd.detectChanges();
       },
       error: (err) => {
         this.mensajeError = 'Error al cargar los datos del apartamento.';
         this.cargando = false;
 
-        this.cd.detectChanges(); // <-- Y también en caso de error
+        this.cd.detectChanges();
       }
     });
   }
