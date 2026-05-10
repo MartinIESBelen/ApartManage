@@ -1,23 +1,9 @@
-import { Component, input, signal, computed } from '@angular/core';
+import {Component, input, signal, computed, inject, output} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms'; // <-- MUY IMPORTANTE
+import { FormsModule } from '@angular/forms';
+import {TransaccionResponse} from '../../../../../core/models/finanzas.model';
+import {FinanzasService} from '../../../../../core/services/finanzas/finanzas.service';
 
-export interface Transaccion {
-  id: number;
-  apartamentoId: number;
-  apartamentoNombre?: string;
-  reservaId?: number;
-  inquilinoNombre?: string;
-  tipo: 'INGRESO' | 'GASTO';
-  categoria: string;
-  estado: 'PENDIENTE' | 'PAGADO' | 'VENCIDO';
-  concepto: string;
-  importe: number;
-  comentario?: string;
-  fechaEmision: string;
-  fechaVencimiento?: string;
-  fechaPago?: string;
-}
 
 @Component({
   selector: 'app-tabla-transacciones',
@@ -26,23 +12,23 @@ export interface Transaccion {
   templateUrl: './tabla-transacciones.html'
 })
 export class TablaTransacciones {
-  // Recibimos TODAS las transacciones del padre
-  transacciones = input.required<Transaccion[]>();
+  transacciones = input<TransaccionResponse[]>([]);
+  private finanzasService = inject(FinanzasService);
 
-  // --- ESTADOS DE LOS FILTROS ---
   filtroTipo = signal<string>('TODOS');
   filtroEstado = signal<string>('TODOS');
   filtroCategoria = signal<string>('TODOS');
 
-  // --- ESTADOS DE PAGINACIÓN ---
-  paginaActual = signal<number>(1);
-  itemsPorPagina = 8; // Puedes cambiar a 10 o 15
+  recargar = output<void>();
+  editar = output<TransaccionResponse>();
 
-  // Extraer las categorías únicas dinámicamente para el desplegable
+  paginaActual = signal<number>(1);
+  itemsPorPagina = 8;
+
   categoriasUnicas = computed(() => {
     const categorias = this.transacciones()
       .map(t => t.categoria)
-      .filter(c => !!c) as string[]; // Solo las que existan
+      .filter(c => !!c) as string[];
     return [...new Set(categorias)]; // Quitar duplicados
   });
 
@@ -80,5 +66,18 @@ export class TablaTransacciones {
   // Si el usuario cambia un filtro, lo devolvemos a la página 1
   onFiltroChange() {
     this.paginaActual.set(1);
+  }
+
+  onEditar(tx: TransaccionResponse) {
+    this.editar.emit(tx);
+  }
+
+  onBorrar(id: number) {
+    if (confirm('¿Estás seguro de que quieres borrar este movimiento? Esta acción no se puede deshacer y alterará tus balances.')) {
+      this.finanzasService.borrarTransaccion(id).subscribe({
+        next: () => this.recargar.emit(), // Avisamos al padre para que refresque la tabla
+        error: (err) => alert('Error al borrar la transacción.')
+      });
+    }
   }
 }

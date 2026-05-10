@@ -17,5 +17,6 @@ public record ApartamentoResponse(
         List<String> alertas,
         RelacionVivienda relacion,
         String inquilinoActual,
-        Long reservaActivaId
+        Long contratoActivoId,
+        String imagenPrincipal
 ) {}

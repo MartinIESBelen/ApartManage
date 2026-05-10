@@ -1,14 +1,14 @@
 package com.apartmanagebackend.service;
 
 import com.apartmanagebackend.domain.Apartamento;
-import com.apartmanagebackend.domain.Reserva;
+import com.apartmanagebackend.domain.Contrato;
 import com.apartmanagebackend.domain.Transaccion;
 import com.apartmanagebackend.domain.Usuario;
-import com.apartmanagebackend.domain.enums.EstadoReserva;
+import com.apartmanagebackend.domain.enums.EstadoContrato;
 import com.apartmanagebackend.dto.transaccion.TransaccionRequest;
 import com.apartmanagebackend.dto.transaccion.TransaccionResponse;
 import com.apartmanagebackend.repository.ApartamentoRepository;
-import com.apartmanagebackend.repository.ReservaRepository;
+import com.apartmanagebackend.repository.ContratoRepository;
 import com.apartmanagebackend.repository.TransaccionRepository;
 import com.apartmanagebackend.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +28,7 @@ public class TransaccionService {
 
     private final TransaccionRepository transaccionRepository;
     private final ApartamentoRepository apartamentoRepository;
-    private final ReservaRepository reservaRepository;
+    private final ContratoRepository contratoRepository;
     private final UsuarioRepository usuarioRepository;
 
     @Transactional
@@ -39,39 +39,69 @@ public class TransaccionService {
 
         List<Transaccion> transaccionesGuardadas = new ArrayList<>();
 
-        // CASO A: DIVIDIR ENTRE TODOS LOS INQUILINOS ACTIVOS
         if (request.dividirEntreTodos()) {
-            List<Reserva> reservasActivas = reservaRepository.findAll().stream()
+            List<Contrato> contratosActivos = contratoRepository.findAll().stream()
                     .filter(r -> r.getApartamento().getId().equals(apartamento.getId()))
-                    .filter(r -> r.getEstado() == EstadoReserva.CONFIRMADA)
+                    .filter(r -> r.getEstado() == EstadoContrato.CONFIRMADA)
                     .toList();
 
-            if (reservasActivas.isEmpty()) {
+            if (contratosActivos.isEmpty()) {
                 throw new RuntimeException("No hay inquilinos activos en este piso para dividir la transacción.");
             }
 
             // Dividir importe equitativamente (Redondeo a 2 decimales para evitar fallos contables)
-            BigDecimal importeDividido = request.importe().divide(new BigDecimal(reservasActivas.size()), 2, RoundingMode.HALF_UP);
+            BigDecimal importeDividido = request.importe().divide(new BigDecimal(contratosActivos.size()), 2, RoundingMode.HALF_UP);
 
-            for (Reserva res : reservasActivas) {
+            for (Contrato res : contratosActivos) {
                 Transaccion t = construirTransaccionBase(apartamento, res, request, importeDividido);
                 transaccionesGuardadas.add(transaccionRepository.save(t));
             }
         }
         // CASO B: ASIGNAR A UN INQUILINO CONCRETO O GASTO GENERAL DEL PISO
         else {
-            Reserva reserva = null;
-            if (request.reservaId() != null) {
-                reserva = reservaRepository.findById(request.reservaId()).orElseThrow();
+            Contrato contrato = null;
+            if (request.contratoId() != null) {
+                contrato = contratoRepository.findById(request.contratoId()).orElseThrow();
             }
-            Transaccion t = construirTransaccionBase(apartamento, reserva, request, request.importe());
+            Transaccion t = construirTransaccionBase(apartamento, contrato, request, request.importe());
             transaccionesGuardadas.add(transaccionRepository.save(t));
         }
 
         return transaccionesGuardadas.stream().map(this::mapToResponse).collect(Collectors.toList());
     }
 
-    // Para que el Propietario vea las transacciones de un piso concreto
+    @Transactional
+    public TransaccionResponse actualizarTransaccion(Long id, TransaccionRequest request, String emailPropietario) {
+        Transaccion transaccion = transaccionRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Transacción no encontrada"));
+
+        Usuario propietario = usuarioRepository.findByEmail(emailPropietario).orElseThrow();
+        if (!transaccion.getApartamento().getPropietario().getId().equals(propietario.getId())) {
+            throw new RuntimeException("No tienes permisos para editar esta transacción");
+        }
+
+        transaccion.setTipo(request.tipo());
+        transaccion.setCategoria(request.categoria());
+        transaccion.setEstado(request.estado());
+        transaccion.setConcepto(request.concepto());
+        transaccion.setImporte(request.importe());
+        transaccion.setFechaEmision(request.fechaEmision());
+
+        return mapToResponse(transaccionRepository.save(transaccion));
+    }
+
+    @Transactional
+    public void eliminarTransaccion(Long id, String emailPropietario) {
+        Transaccion transaccion = transaccionRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Transacción no encontrada"));
+
+        Usuario propietario = usuarioRepository.findByEmail(emailPropietario).orElseThrow();
+        if (!transaccion.getApartamento().getPropietario().getId().equals(propietario.getId())) {
+            throw new RuntimeException("No tienes permisos para eliminar esta transacción");
+        }
+        transaccionRepository.delete(transaccion);
+    }
+
     public List<TransaccionResponse> obtenerPorApartamento(Long apartamentoId) {
         return transaccionRepository.findByApartamentoIdOrderByFechaEmisionDesc(apartamentoId)
                 .stream()
@@ -79,9 +109,8 @@ public class TransaccionService {
                 .collect(Collectors.toList());
     }
 
-    // Para que el Inquilino vea sus deudas/pagos
-    public List<TransaccionResponse> obtenerPorReserva(Long reservaId) {
-        return transaccionRepository.findByReservaIdOrderByFechaEmisionDesc(reservaId)
+    public List<TransaccionResponse> obtenerPorContrato(Long contratoId) {
+        return transaccionRepository.findByContratoIdOrderByFechaEmisionDesc(contratoId)
                 .stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
@@ -89,7 +118,6 @@ public class TransaccionService {
 
     public List<TransaccionResponse> obtenerFiltradas(Long apartamentoId, String periodo, String emailPropietario) {
 
-        // Calculamos las fechas en base al filtro que envía Angular
         LocalDate hoy = LocalDate.now();
         LocalDate fechaInicio = LocalDate.of(2000, 1, 1);
         LocalDate fechaFin = LocalDate.of(2100, 12, 31);
@@ -111,7 +139,6 @@ public class TransaccionService {
             }
         }
 
-        // Buscamos en base de datos usando nuestro nuevo método del Repositorio
         List<Transaccion> transaccionesCrudas = transaccionRepository.buscarFiltradasSeguras(
                 apartamentoId,
                 emailPropietario,
@@ -119,17 +146,15 @@ public class TransaccionService {
                 fechaFin
         );
 
-        // Convertimos las entidades a DTOs (TransaccionResponse) para mandarlas a Angular
         return transaccionesCrudas.stream()
                 .map(this::mapToResponse) // Asumo que ya tienes este método de mapeo creado de antes
                 .collect(Collectors.toList());
     }
 
-    // Método auxiliar para no repetir código al construir la transacción
-    private Transaccion construirTransaccionBase(Apartamento apto, Reserva reserva, TransaccionRequest req, BigDecimal importe) {
+    private Transaccion construirTransaccionBase(Apartamento apto, Contrato contrato, TransaccionRequest req, BigDecimal importe) {
         return Transaccion.builder()
                 .apartamento(apto)
-                .reserva(reserva)
+                .contrato(contrato)
                 .tipo(req.tipo())
                 .categoria(req.categoria())
                 .estado(req.estado())
@@ -146,15 +171,15 @@ public class TransaccionService {
         String nombreApto = t.getApartamento() != null ? t.getApartamento().getNombreInterno() : null;
 
         String nombreInq = null;
-        if (t.getReserva() != null && t.getReserva().getInquilino() != null) {
-            nombreInq = t.getReserva().getInquilino().getNombre() + " " + t.getReserva().getInquilino().getApellidos();
+        if (t.getContrato() != null && t.getContrato().getInquilino() != null) {
+            nombreInq = t.getContrato().getInquilino().getNombre() + " " + t.getContrato().getInquilino().getApellidos();
         }
 
         return new TransaccionResponse(
                 t.getId(),
                 t.getApartamento() != null ? t.getApartamento().getId() : null,
                 nombreApto,
-                t.getReserva() != null ? t.getReserva().getId() : null,
+                t.getContrato() != null ? t.getContrato().getId() : null,
                 nombreInq,
                 t.getTipo(),
                 t.getCategoria(),

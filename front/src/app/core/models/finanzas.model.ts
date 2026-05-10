@@ -1,4 +1,3 @@
-// Corresponde a tu DTO DashboardStatsResponse
 export interface DashboardStats {
   totalApartamentos: number;
   apartamentosOcupados: number;
@@ -7,24 +6,13 @@ export interface DashboardStats {
   incidenciasAbiertas: number;
 }
 
-// Corresponde a tu DTO FinanzasMesResponse
 export interface FinanzasMes {
   mes: string;
   ingresos: number;
   gastos: number;
 }
 
-// Corresponde a tu DTO TransaccionResponse
-export interface Transaccion {
-  id: string; // O number, según lo mande tu backend
-  fecha: string;
-  concepto: string;
-  tipo: 'INGRESO' | 'GASTO';
-  monto: number;
-  estado: 'PENDIENTE' | 'PAGADO' | 'VENCIDO';
-}
 
-// Corresponde a tu DTO TransaccionRequest (para cuando hagamos el formulario)
 export interface TransaccionRequest {
   apartamentoId: number;
   reservaId?: number | null;

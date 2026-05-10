@@ -1,7 +1,8 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { ContratoService, ContratoDetalle } from '../../../../core/services/contrato/contrato.service'; // Ajusta tu ruta
+import { ContratoService } from '../../../../core/services/contrato/contrato.service';
+import { ContratoDetalle } from '../../../../core/models/contrato.model';
 
 @Component({
   selector: 'app-detalles-contrato',

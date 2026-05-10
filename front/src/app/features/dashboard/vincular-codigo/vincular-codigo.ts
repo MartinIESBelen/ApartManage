@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { ReservaService } from '../../../core/services/reserva/reserva';
+import {ContratoService} from '../../../core/services/contrato/contrato.service';
 
 @Component({
   selector: 'app-vincular-codigo',
@@ -16,18 +16,17 @@ export class VincularCodigoComponent {
   mensajeError: string = '';
   mensajeExito: string = '';
 
-  private reservaService = inject(ReservaService);
+  private contratoService = inject(ContratoService);
   private router = inject(Router);
 
   vincular() {
-    // Evitamos enviar si está vacío
     if (!this.codigo || this.codigo.trim() === '') return;
 
     this.cargando = true;
     this.mensajeError = '';
     this.mensajeExito = '';
 
-    this.reservaService.vincularCodigo(this.codigo.trim().toUpperCase()).subscribe({
+    this.contratoService.vincularCodigo(this.codigo.trim().toUpperCase()).subscribe({
       next: (respuesta) => {
         this.cargando = false;
         this.mensajeExito = '¡Vivienda vinculada con éxito!';

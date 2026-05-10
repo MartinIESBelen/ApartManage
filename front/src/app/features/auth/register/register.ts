@@ -70,7 +70,7 @@ export class RegisterComponent {
 
     this.authService.register(requestData).subscribe({
       next: (response) => {
-        this.authService.guardarToken(response.token);
+        this.authService.guardarToken(response.accessToken);
         this.errorMessage = '';
         void this.router.navigate(['/home']);
       },

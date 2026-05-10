@@ -15,6 +15,10 @@ import {ListaElementos} from './features/dashboard/inventario/lista-elementos/li
 import {CrearElemento} from './features/dashboard/inventario/crear-elemento/crear-elemento';
 import {ElementoDetalle} from './features/dashboard/inventario/elemento-detalle/elemento-detalle';
 import {EditarElemento} from './features/dashboard/inventario/editar-elemento/editar-elemento';
+import {Perfil} from './features/dashboard/perfil/perfil';
+import {EditarPerfil} from './features/dashboard/perfil/editar-perfil/editar-perfil';
+import {ResetPassword} from './features/dashboard/reset-password/reset-password';
+import {RecuperarPassword} from './features/dashboard/recuperar-password/recuperar-password';
 
 export const routes: Routes = [
 
@@ -24,7 +28,7 @@ export const routes: Routes = [
   {
     path: 'finanzas',
     children: [
-      { path: '', redirectTo: 'balance', pathMatch: 'full' }, // Si van a /finanzas, saltan a balance
+      { path: '', redirectTo: 'balance', pathMatch: 'full' },
       { path: 'balance', component: Balance },
       { path: 'nuevo-movimiento', component: NuevoMovimiento }
     ]
@@ -34,12 +38,16 @@ export const routes: Routes = [
   { path: 'contratos/:id', component: DetallesContrato },
   { path: 'apartamento/:id', component: ApartamentoDetails },
   { path: 'apartamento/editar/:id', component: ApartamentoEdit },
+  {path: 'apartamento/:id/reserva-manual', component: ReservaManualComponent},
   { path: 'apartamento/:id/inventario', component: ListaElementos },
   { path: 'apartamento/:id/inventario/nuevo', component: CrearElemento },
   { path: 'apartamento/:id/inventario/editar/:itemId', component: EditarElemento },
   { path: 'apartamento/:id/inventario/:itemId', component: ElementoDetalle },
-  { path: '', redirectTo: '/login', pathMatch: 'full' },
+  { path: '', redirectTo: '/perfil', pathMatch: 'full' },
+  { path: 'editar-cuenta', component: EditarPerfil },
   {path: 'register', component:RegisterComponent},
-  {path: 'apartamento/:id/reserva-manual', component: ReservaManualComponent},
+  { path: 'recuperar-password', component: RecuperarPassword },
+  { path: 'reset-password', component: ResetPassword },
+  {path: 'perfil', component:Perfil},
   { path: '**', redirectTo: '/login' }
 ];

@@ -4,7 +4,7 @@ import com.apartmanagebackend.domain.Transaccion;
 import com.apartmanagebackend.domain.Usuario;
 import com.apartmanagebackend.domain.enums.EstadoTransaccion;
 import com.apartmanagebackend.domain.enums.EstadoIncidencia;
-import com.apartmanagebackend.domain.enums.EstadoReserva;
+import com.apartmanagebackend.domain.enums.EstadoContrato;
 import com.apartmanagebackend.domain.enums.TipoTransaccion;
 import com.apartmanagebackend.dto.stats.DashboardStatsResponse;
 import com.apartmanagebackend.dto.stats.FinanzasMesResponse;
@@ -25,7 +25,7 @@ public class StatsService {
     private final TransaccionRepository transaccionRepository;
     private final IncidenciaRepository incidenciaRepository;
     private final UsuarioRepository usuarioRepository;
-    private final ReservaRepository reservaRepository;
+    private final ContratoRepository contratoRepository;
 
     public DashboardStatsResponse obtenerResumen(String emailPropietario) {
         Usuario prop = usuarioRepository.findByEmail(emailPropietario)
@@ -37,9 +37,9 @@ public class StatsService {
         long totalAptos = apartamentoRepository.findByPropietarioId(idPropietario).size();
 
         // Cálculo de apartamentos OCUPADOS actualmente
-        long ocupados = reservaRepository.findAll().stream()
+        long ocupados = contratoRepository.findAll().stream()
                 .filter(r -> r.getApartamento().getPropietario().getId().equals(idPropietario))
-                .filter(r -> r.getEstado() == EstadoReserva.CONFIRMADA)
+                .filter(r -> r.getEstado() == EstadoContrato.CONFIRMADA)
                 .filter(r -> !hoy.isBefore(r.getFechaEntrada()) && !hoy.isAfter(r.getFechaSalida()))
                 .map(r -> r.getApartamento().getId())
                 .distinct()

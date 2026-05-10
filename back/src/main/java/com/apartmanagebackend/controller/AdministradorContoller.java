@@ -1,6 +1,6 @@
 package com.apartmanagebackend.controller;
 
-import com.apartmanagebackend.dto.user.UsuarioGlobalResponse;
+import com.apartmanagebackend.dto.usuario.UsuarioGlobalResponse;
 import com.apartmanagebackend.service.AdministradorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

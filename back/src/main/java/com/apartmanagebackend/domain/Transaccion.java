@@ -11,10 +11,8 @@ import java.time.LocalDate;
 
 @Entity
 @Table(name = "transacciones")
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter @Setter
+@NoArgsConstructor @AllArgsConstructor
 @Builder
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Transaccion {
@@ -32,9 +30,9 @@ public class Transaccion {
 
     // Opcional: Solo si va ligado a un inquilino concreto (Alquiler, factura de luz, etc.)
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "reserva_id", nullable = true)
+    @JoinColumn(name = "contrato_id", nullable = true)
     @ToString.Exclude
-    private Reserva reserva;
+    private Contrato contrato;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

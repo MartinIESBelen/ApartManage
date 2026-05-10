@@ -6,15 +6,15 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.List;
 
 @Entity
 @Table(name = "apartamentos")
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter @Setter
+@NoArgsConstructor @AllArgsConstructor
 @Builder
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Apartamento {
@@ -28,6 +28,7 @@ public class Apartamento {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "propietario_id", nullable = false)
     @ToString.Exclude
+    @JsonIgnore
     private Usuario propietario;
 
     @Column(name = "nombre_interno", nullable = false, length = 100)
@@ -50,31 +51,37 @@ public class Apartamento {
     @Column(name = "creado_en", updatable = false)
     private LocalDateTime creadoEn;
 
-    //1:N con Inventario
+    @OneToMany(mappedBy = "apartamento", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ImagenesApartamento> imagenes = new ArrayList<>();
+
     @OneToMany(mappedBy = "apartamento", cascade = CascadeType.ALL)
     @Builder.Default
     @ToString.Exclude
     @JsonIgnore
     private Set<ElementoInventario> inventario = new HashSet<>();
 
-    //1:N con Reservas
     @OneToMany(mappedBy = "apartamento")
     @Builder.Default
     @ToString.Exclude
     @JsonIgnore
-    private Set<Reserva> reservas = new HashSet<>();
+    private Set<Contrato> contratos = new HashSet<>();
 
-    //1:N con incidencias
     @OneToMany(mappedBy = "apartamento", cascade = CascadeType.ALL)
     @Builder.Default
     @ToString.Exclude
     @JsonIgnore
     private Set<Incidencia> incidencias = new HashSet<>();
 
-    // 1:N con Transaccion
     @OneToMany(mappedBy = "apartamento", cascade = CascadeType.ALL)
     @Builder.Default
     @ToString.Exclude
     @JsonIgnore
     private Set<Transaccion> transacciones = new HashSet<>();
+
+    @OneToMany(mappedBy = "apartamento", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    @ToString.Exclude
+    @JsonIgnore
+    private List<DocumentoApartamento> documentos = new ArrayList<>();
 }
+

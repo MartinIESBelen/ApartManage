@@ -22,7 +22,7 @@ public class DataLoader implements CommandLineRunner {
     private final UsuarioRepository usuarioRepository;
     private final ApartamentoRepository apartamentoRepository;
     private final ElementoInventarioRepository inventarioRepository;
-    private final ReservaRepository reservaRepository;
+    private final ContratoRepository contratoRepository;
     private final TransaccionRepository transaccionRepository;
     private final PasswordEncoder passwordEncoder;
 
@@ -173,47 +173,47 @@ public class DataLoader implements CommandLineRunner {
                 .build();
         inventarioRepository.save(mesa);
 
-        Reserva reservaMartinInquilino = Reserva.builder()
+        Contrato contratoMartinInquilino = Contrato.builder()
                 .apartamento(apartamentoAlquilado)
-                .inquilino(propietario) // ¡Aquí está la magia! Le pasamos el objeto 'propietario' al campo inquilino
+                .inquilino(propietario)
                 .codigoVinculacion("RES-2026-002")
                 .fechaEntrada(LocalDate.of(2026, 2, 1))
                 .fechaSalida(LocalDate.of(2026, 8, 31))
                 .precioBaseAlquiler(new BigDecimal("700.00"))
-                .estado(EstadoReserva.CONFIRMADA)
+                .estado(EstadoContrato.CONFIRMADA)
                 .build();
-        reservaRepository.save(reservaMartinInquilino);
+        contratoRepository.save(contratoMartinInquilino);
 
-        // Crear RESERVA
-        Reserva reserva = Reserva.builder()
+        // Crear CONTRATO
+        Contrato contrato = Contrato.builder()
                 .apartamento(apartamento)
                 .inquilino(inquilino)
                 .codigoVinculacion("RES-2026-001")
                 .fechaEntrada(LocalDate.of(2026, 1, 1))
                 .fechaSalida(LocalDate.of(2027, 1, 1))
                 .precioBaseAlquiler(new BigDecimal("1200.00"))
-                .estado(EstadoReserva.CONFIRMADA)
+                .estado(EstadoContrato.CONFIRMADA)
                 .build();
-        reservaRepository.save(reserva);
+        contratoRepository.save(contrato);
 
         // --- INICIO DE CARGA DE TRANSACCIONES ---
 
         // Enero: Alquiler 1200, Gasto 250
-        crearMesCompleto(reserva, 1, 2026, new BigDecimal("1200"), new BigDecimal("250"), "Revisión Caldera", CategoriaTransaccion.MANTENIMIENTO_RUTINARIO);
+        crearMesCompleto(contrato, 1, 2026, new BigDecimal("1200"), new BigDecimal("250"), "Revisión Caldera", CategoriaTransaccion.MANTENIMIENTO_RUTINARIO);
 
         // Febrero: Alquiler 1200, Gasto 100
-        crearMesCompleto(reserva, 2, 2026, new BigDecimal("1200"), new BigDecimal("100"), "Limpieza profunda", CategoriaTransaccion.LIMPIEZA);
+        crearMesCompleto(contrato, 2, 2026, new BigDecimal("1200"), new BigDecimal("100"), "Limpieza profunda", CategoriaTransaccion.LIMPIEZA);
 
         // Marzo: Alquiler 1200, Gasto 450 (Reparación cara)
-        crearMesCompleto(reserva, 3, 2026, new BigDecimal("1200"), new BigDecimal("450"), "Reparación Termo Eléctrico", CategoriaTransaccion.REPARACION_INCIDENCIA);
+        crearMesCompleto(contrato, 3, 2026, new BigDecimal("1200"), new BigDecimal("450"), "Reparación Termo Eléctrico", CategoriaTransaccion.REPARACION_INCIDENCIA);
 
         // Abril: Alquiler 1250 (Simulamos una subida), Gasto 100
-        crearMesCompleto(reserva, 4, 2026, new BigDecimal("1250"), new BigDecimal("100"), "Cuota Comunidad", CategoriaTransaccion.COMUNIDAD);
+        crearMesCompleto(contrato, 4, 2026, new BigDecimal("1250"), new BigDecimal("100"), "Cuota Comunidad", CategoriaTransaccion.COMUNIDAD);
 
         // Mayo: Alquiler PENDIENTE
         Transaccion alquilerMayo = Transaccion.builder()
                 .apartamento(apartamento)
-                .reserva(reserva)
+                .contrato(contrato)
                 .tipo(TipoTransaccion.INGRESO)
                 .categoria(CategoriaTransaccion.ALQUILER)
                 .estado(EstadoTransaccion.PENDIENTE)
@@ -227,7 +227,7 @@ public class DataLoader implements CommandLineRunner {
         // Suministros separados (La magia de tu nueva arquitectura)
         Transaccion reciboLuz = Transaccion.builder()
                 .apartamento(apartamento)
-                .reserva(reserva)
+                .contrato(contrato)
                 .tipo(TipoTransaccion.INGRESO)
                 .categoria(CategoriaTransaccion.SUMINISTROS)
                 .estado(EstadoTransaccion.PENDIENTE)
@@ -240,7 +240,7 @@ public class DataLoader implements CommandLineRunner {
 
         Transaccion reciboAgua = Transaccion.builder()
                 .apartamento(apartamento)
-                .reserva(reserva)
+                .contrato(contrato)
                 .tipo(TipoTransaccion.INGRESO)
                 .categoria(CategoriaTransaccion.SUMINISTROS)
                 .estado(EstadoTransaccion.PENDIENTE)
@@ -254,12 +254,12 @@ public class DataLoader implements CommandLineRunner {
         log.info("¡Datos de prueba cargados con éxito! Ya puedes iniciar sesión en Angular con 'propietario@email.com' o 'inquilino@email.com' y contraseña '123456'.");
     }
 
-    private void crearMesCompleto(Reserva r, int mes, int anio, BigDecimal alquiler, BigDecimal montoGasto, String conceptoGasto, CategoriaTransaccion catGasto) {
+    private void crearMesCompleto(Contrato r, int mes, int anio, BigDecimal alquiler, BigDecimal montoGasto, String conceptoGasto, CategoriaTransaccion catGasto) {
 
-        // 1. Ingreso por alquiler (Asociado a la reserva del inquilino)
+        // 1. Ingreso por alquiler (Asociado a el contrato del inquilino)
         Transaccion ingreso = Transaccion.builder()
                 .apartamento(r.getApartamento())
-                .reserva(r)
+                .contrato(r)
                 .tipo(TipoTransaccion.INGRESO)
                 .categoria(CategoriaTransaccion.ALQUILER)
                 .estado(EstadoTransaccion.PAGADO)
@@ -270,10 +270,10 @@ public class DataLoader implements CommandLineRunner {
                 .build();
         transaccionRepository.save(ingreso);
 
-        // 2. Gasto del piso (La reserva va en null porque es un gasto del propietario, no del inquilino)
+        // 2. Gasto del piso (El contrato va en null porque es un gasto del propietario, no del inquilino)
         Transaccion gasto = Transaccion.builder()
                 .apartamento(r.getApartamento())
-                .reserva(null)
+                .contrato(null)
                 .tipo(TipoTransaccion.GASTO)
                 .categoria(catGasto)
                 .estado(EstadoTransaccion.PAGADO)

@@ -10,7 +10,7 @@ public record TransaccionResponse(
         Long id,
         Long apartamentoId,
         String apartamentoNombre,
-        Long reservaId,
+        Long contratoId,
         String inquilinoNombre,
         TipoTransaccion tipo,
         CategoriaTransaccion categoria,

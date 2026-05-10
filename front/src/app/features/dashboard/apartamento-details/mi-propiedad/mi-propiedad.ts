@@ -1,22 +1,24 @@
-import { Component, inject, input, signal } from '@angular/core';
+import { Component, inject, input, signal, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { ReservaService } from '../../../../core/services/reserva/reserva';
+// Quita la línea que importa ReservaService y pon esta:
+import { ContratoService } from '../../../../core/services/contrato/contrato.service';
 import { ApartamentoModel } from '../../../../core/models/apartamento.model';
+import {GestorDocumentos} from '../../gestor-documentos/gestor-documentos';
 
 @Component({
   selector: 'app-mi-propiedad',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule, FormsModule, GestorDocumentos],
   templateUrl: './mi-propiedad.html'
 })
 export class MiPropiedad {
   apartamento = input.required<ApartamentoModel>();
 
-  // Variables exclusivas del propietario
   mostrarFormularioReserva = signal<boolean>(false);
   codigoGenerado = signal<string | null>(null);
+  private cdr = inject(ChangeDetectorRef);
 
   nuevaReserva = {
     fechaEntrada: '',
@@ -25,7 +27,7 @@ export class MiPropiedad {
     fianza: 0
   };
 
-  private reservaService = inject(ReservaService);
+  private contratoService = inject(ContratoService);
 
   sonFechasInvalidas(): boolean {
     if (!this.nuevaReserva.fechaEntrada || !this.nuevaReserva.fechaSalida) return false;
@@ -43,13 +45,13 @@ export class MiPropiedad {
   }
 
   generarCodigo() {
-    // Leemos el ID del piso a través de la Signal que nos pasa el padre
     const id = this.apartamento().id;
 
-    this.reservaService.crearReserva(id, this.nuevaReserva).subscribe({
+    this.contratoService.crearContrato(id, this.nuevaReserva).subscribe({
       next: (res) => {
         this.codigoGenerado.set(res.codigoVinculacion);
         this.mostrarFormularioReserva.set(false);
+        this.cdr.detectChanges();
       },
       error: (err) => {
         alert("Error al generar el código: " + (err.error?.message || 'Verifica las fechas'));
@@ -62,6 +64,7 @@ export class MiPropiedad {
     if (codigo) {
       navigator.clipboard.writeText(codigo);
       alert("¡Código copiado al portapapeles!");
+      this.cdr.detectChanges();
     }
   }
 }

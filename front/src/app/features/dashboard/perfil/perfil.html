@@ -1,0 +1,103 @@
+<div class="min-h-screen bg-gray-50 p-4 sm:p-8">
+  <div class="max-w-4xl mx-auto">
+
+    <div class="flex justify-between items-center mb-8">
+      <h1 class="text-3xl font-bold text-gray-900">Mi Cuenta</h1>
+      <a routerLink="/editar-cuenta" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 sm:px-6 rounded-md shadow transition-colors flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+          <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+        </svg>
+        <span class="hidden sm:inline">Editar Perfil</span>
+      </a>
+    </div>
+    @if (cargando) {
+      <div class="flex justify-center items-center py-20">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      </div>
+    }
+    @else if (error) {
+      <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6 shadow-sm">
+        {{ error }}
+      </div>
+    }
+    @else if (usuario) {
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <div class="bg-gradient-to-r from-blue-500 to-indigo-600 h-32"></div>
+        <div class="px-8 pb-8 relative">
+
+          <div class="flex justify-center -mt-16 mb-4">
+            <label class="relative h-32 w-32 rounded-full border-4 border-white overflow-hidden bg-white shadow-lg flex items-center justify-center cursor-pointer group">
+
+              <input type="file" class="hidden" accept="image/*" (change)="subirFoto($event)">
+
+              @if (subiendoFoto) {
+                <div class="absolute inset-0 bg-black/60 z-20 flex items-center justify-center">
+                  <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+                </div>
+              }
+
+              @if (imagenSegura) {
+                <img [src]="imagenSegura" alt="Foto de perfil" class="h-full w-full object-cover">
+              }
+              @else {
+                <div class="h-full w-full bg-blue-600 text-white flex items-center justify-center text-4xl font-bold tracking-wider">
+                  {{ usuario.nombre.charAt(0) | uppercase }}{{ usuario.apellidos.charAt(0) | uppercase }}
+                </div>
+              }
+
+              <div class="absolute inset-0 bg-black/50 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-white text-xs font-bold z-10">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8 mb-1">
+                </svg>
+                CAMBIAR
+              </div>
+
+            </label>
+          </div>
+
+          <div class="text-center mb-8">
+            <h2 class="text-2xl font-bold text-gray-900">{{ usuario.nombre }} {{ usuario.apellidos }}</h2>
+            <span class="inline-flex mt-2 items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+              {{ usuario.rol }}
+            </span>
+          </div>
+
+          <hr class="mb-8 border-gray-100">
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div>
+              <h3 class="text-lg font-semibold text-gray-900 mb-4 border-b pb-2">Información de Contacto</h3>
+              <div class="space-y-4">
+                <div>
+                  <p class="text-sm text-gray-500">Correo Electrónico</p>
+                  <p class="font-medium text-gray-900">{{ usuario.email }}</p>
+                </div>
+                <div>
+                  <p class="text-sm text-gray-500">Teléfono</p>
+                  <p class="font-medium text-gray-900">{{ usuario.telefono || 'No especificado' }}</p>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h3 class="text-lg font-semibold text-gray-900 mb-4 border-b pb-2">Información Personal</h3>
+              <div class="space-y-4">
+                <div>
+                  <p class="text-sm text-gray-500">DNI / Pasaporte</p>
+                  <p class="font-medium text-gray-900">{{ usuario.dniPasaporte || 'No especificado' }}</p>
+                </div>
+                <div>
+                  <p class="text-sm text-gray-500">Fecha de Nacimiento</p>
+                  <p class="font-medium text-gray-900">
+                    {{ usuario.fechaNacimiento ? (usuario.fechaNacimiento | date:'dd/MM/yyyy') : 'No especificada' }}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    }
+
+  </div>
+</div>

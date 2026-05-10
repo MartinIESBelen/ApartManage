@@ -1,7 +1,8 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ContratoService, ContratoLista } from '../../../../core/services/contrato/contrato.service';
+import { ContratoService } from '../../../../core/services/contrato/contrato.service';
+import { ContratoLista } from '../../../../core/models/contrato.model';
 import {RouterLink, Router} from '@angular/router';
 
 @Component({

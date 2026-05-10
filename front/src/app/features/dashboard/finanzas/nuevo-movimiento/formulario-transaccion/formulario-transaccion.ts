@@ -1,57 +1,122 @@
-import { Component, inject, input, output, signal } from '@angular/core';
+import { Component, inject, input, output, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { FinanzasService } from '../../../../../core/services/finanzas/finanzas.service';
-import { TransaccionRequest } from '../../../../../core/models/finanzas.model';
+import { TransaccionRequest, TransaccionResponse } from '../../../../../core/models/finanzas.model';
 
 @Component({
   selector: 'app-formulario-transaccion',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  // 1. Cambiamos FormsModule por ReactiveFormsModule
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './formulario-transaccion.html'
 })
-export class FormularioTransaccion {
+export class FormularioTransaccion implements OnInit {
   private finanzasService = inject(FinanzasService);
-  private router = inject(Router);
+  private fb = inject(FormBuilder);
 
-  // INPUT: Recibe obligatoriamente el apartamento del padre
+  // INPUTS
   apartamento = input.required<any>();
+  transaccionAEditar = input<TransaccionResponse | null>(null);
 
-  // OUTPUT: Avisa al padre que queremos volver atrás
+  // OUTPUTS
   volver = output<void>();
+  guardadoExitoso = output<void>();
 
-  // Señales del formulario
-  tipoMovimiento = signal<'INGRESO' | 'GASTO'>('GASTO');
-  dividirGasto = signal<boolean>(false);
-  concepto = signal<string>('');
-  importe = signal<number | null>(null);
-  fechaEmision = signal<string>(new Date().toISOString().split('T')[0]);
-  categoria = signal<string>('OTROS');
-  reservaId = signal<number | null>(null);
+  // 2. Creamos el FormGroup con sus validaciones estrictas
+  formTransaccion: FormGroup = this.fb.group({
+    tipoMovimiento: ['GASTO', Validators.required],
+    concepto: ['', [Validators.required, Validators.minLength(3)]],
+    importe: [null, [Validators.required, Validators.min(0.01)]],
+    fechaEmision: [new Date().toISOString().split('T')[0], Validators.required],
+    categoria: ['OTROS', Validators.required],
+    estado: ['PAGADO', Validators.required],
+    reservaId: [null],
+    dividirGasto: [false]
+  });
+
+  guardando = false;
+  mensajeError = '';
+
+  ngOnInit() {
+    // Si recibimos una transacción, rellenamos el formulario automáticamente (Modo Edición)
+    const tx = this.transaccionAEditar();
+    if (tx) {
+      this.formTransaccion.patchValue({
+        tipoMovimiento: tx.tipo,
+        concepto: tx.concepto,
+        importe: tx.importe,
+        fechaEmision: tx.fechaEmision,
+        categoria: tx.categoria || 'OTROS',
+        estado: tx.estado,
+        reservaId: tx.reservaId
+      });
+    }
+  }
+
+  // Helper para los botones superiores de Ingreso/Gasto
+  cambiarTipo(tipo: 'INGRESO' | 'GASTO') {
+    this.formTransaccion.patchValue({
+      tipoMovimiento: tipo,
+      // Autocompletamos el estado por comodidad
+      estado: tipo === 'INGRESO' ? 'PENDIENTE' : 'PAGADO'
+    });
+  }
+
+  // Getter para usarlo fácilmente en el HTML
+  get tipoActual() {
+    return this.formTransaccion.get('tipoMovimiento')?.value;
+  }
 
   cancelar() {
-    this.volver.emit(); // Avisamos al padre
+    this.volver.emit();
   }
 
   guardarTransaccion() {
-    if (!this.concepto() || !this.importe() || !this.fechaEmision()) return;
+    if (this.formTransaccion.invalid) {
+      this.formTransaccion.markAllAsTouched(); // Marca todos en rojo si faltan datos
+      return;
+    }
+
+    this.guardando = true;
+    this.mensajeError = '';
+
+    const valores = this.formTransaccion.value;
 
     const request: TransaccionRequest = {
       apartamentoId: this.apartamento().id,
-      reservaId: this.reservaId(),
-      dividirEntreTodos: this.dividirGasto(),
-      tipo: this.tipoMovimiento(),
-      categoria: this.categoria(),
-      estado: this.tipoMovimiento() === 'INGRESO' ? 'PENDIENTE' : 'PAGADO',
-      concepto: this.concepto(),
-      importe: this.importe()!,
-      fechaEmision: this.fechaEmision()
+      reservaId: valores.reservaId,
+      dividirEntreTodos: valores.dividirGasto,
+      tipo: valores.tipoMovimiento,
+      categoria: valores.categoria,
+      estado: valores.estado,
+      concepto: valores.concepto,
+      importe: valores.importe,
+      fechaEmision: valores.fechaEmision
     };
 
-    this.finanzasService.crearTransaccion(request).subscribe({
-      next: () => this.router.navigate(['/finanzas/balance']),
-      error: (err) => console.error(err)
-    });
+    const tx = this.transaccionAEditar();
+
+    if (tx) {
+      // MODO EDICIÓN
+      this.finanzasService.actualizarTransaccion(tx.id, request).subscribe({
+        next: () => this.guardadoExitoso.emit(),
+        error: (err) => {
+          console.error(err);
+          this.mensajeError = 'Error al actualizar el movimiento.';
+          this.guardando = false;
+        }
+      });
+    } else {
+      // MODO CREACIÓN
+      this.finanzasService.crearTransaccion(request).subscribe({
+        next: () => this.guardadoExitoso.emit(),
+        error: (err) => {
+          console.error(err);
+          this.mensajeError = 'Error al guardar el movimiento.';
+          this.guardando = false;
+        }
+      });
+    }
   }
 }

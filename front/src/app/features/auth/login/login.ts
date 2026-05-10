@@ -32,11 +32,11 @@ export class LoginComponent {
     this.authService.login(this.credentials).subscribe({
       next: (response) => {
 
-        this.authService.guardarToken(response.token);
+        this.authService.guardarToken(response.accessToken);
 
         this.errorMessage = '';
 
-        console.log("¡Login Exitoso! Token guardado:", response.token);
+        console.log("¡Login Exitoso! Token guardado:", response.accessToken);
 
         this.router.navigate(['/home']);
       },

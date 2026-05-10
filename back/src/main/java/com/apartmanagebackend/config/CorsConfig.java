@@ -18,6 +18,12 @@ public class CorsConfig {
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Métodos HTTP permitidos
                         .allowedHeaders("*") // Permitimos cualquier cabecera (vital para enviar el Token JWT)
                         .allowCredentials(true); // Permitimos el envío de credenciales/cookies
+
+                registry.addMapping("/archivos/**")
+                        .allowedOrigins("http://localhost:4200")
+                        .allowedMethods("GET", "OPTIONS")
+                        .allowedHeaders("*")
+                        .allowCredentials(true);
             }
         };
     }

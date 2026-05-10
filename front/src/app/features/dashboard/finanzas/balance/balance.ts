@@ -1,11 +1,12 @@
 import { Component, inject, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { FormularioTransaccion } from '../nuevo-movimiento/formulario-transaccion/formulario-transaccion';
 
 import { ApartamentoService } from '../../../../core/services/apartamento/apartamento.service';
 import { ApartamentoModel } from '../../../../core/models/apartamento.model';
 import { FinanzasService } from '../../../../core/services/finanzas/finanzas.service';
-import { TransaccionResponse } from '../../../../core/models/finanzas.model'; // Ajusta la ruta
+import { TransaccionResponse } from '../../../../core/models/finanzas.model';
 
 import { Kpi } from './kpi/kpi';
 import { GraficosBalance } from './graficos-balance/graficos-balance';
@@ -14,7 +15,7 @@ import { TablaTransacciones } from './tabla-transacciones/tabla-transacciones';
 @Component({
   selector: 'app-finanzas',
   standalone: true,
-  imports: [CommonModule, FormsModule, Kpi, GraficosBalance, TablaTransacciones],
+  imports: [CommonModule, FormsModule, Kpi, GraficosBalance, TablaTransacciones, FormularioTransaccion],
   templateUrl: './balance.html'
 })
 export class Balance implements OnInit {
@@ -22,17 +23,16 @@ export class Balance implements OnInit {
   private aptoService = inject(ApartamentoService);
   private finanzasService = inject(FinanzasService);
 
-  // --- ESTADO PRINCIPAL ---
   misPropiedades = signal<ApartamentoModel[]>([]);
   ultimasTransacciones = signal<TransaccionResponse[]>([]);
   cargando = signal<boolean>(true);
 
-  // --- FILTROS ---
   filtroPiso = signal<string>('TODOS');
   filtroPeriodo = signal<string>('ANIO_ACTUAL');
 
-  // --- KPIs CALCULADOS AUTOMÁTICAMENTE (Magia de Angular) ---
-  // Estos valores se recalcularán solos cada vez que cambien las transacciones
+  mostrandoFormulario = signal<boolean>(false);
+  transaccionAEditar = signal<TransaccionResponse | null>(null);
+
   ingresosTotales = computed(() => {
     return this.ultimasTransacciones()
       .filter(t => t.tipo === 'INGRESO' && t.estado === 'PAGADO') // Solo contamos lo cobrado
@@ -104,5 +104,20 @@ export class Balance implements OnInit {
           alert('Hubo un error al conectar con el servidor.');
         }
       });
+  }
+
+  abrirEdicion(tx: TransaccionResponse) {
+    this.transaccionAEditar.set(tx);
+    this.mostrandoFormulario.set(true);
+  }
+
+  cerrarEdicion() {
+    this.mostrandoFormulario.set(false);
+    this.transaccionAEditar.set(null);
+  }
+
+  recargarDespuesDeEditar() {
+    this.cerrarEdicion();
+    this.cargarDatosFinancieros();
   }
 }

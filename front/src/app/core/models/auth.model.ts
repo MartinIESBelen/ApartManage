@@ -8,7 +8,10 @@ export interface LoginRequest {
 
 // Lo que nos devuelve el backend
 export interface AuthResponse {
-  token: string;
+  accessToken: string;
+  refreshToken: string;
+  tokenType: string;
+  expiresIn: number;
 }
 
 export interface RegisterRequest {

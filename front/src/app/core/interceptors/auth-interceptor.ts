@@ -9,12 +9,11 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
   const token = authService.obtenerToken();
 
-  //  Clonamos la petición si hay token y no es login/register
   let requestToForward = req;
   if (token && !req.url.endsWith('/login') && !req.url.endsWith('/register')) {
     requestToForward = req.clone({
       setHeaders: {
-        Authorization: `Bearer ${token}` // Asegúrate de que el token sea correcto
+        Authorization: `Bearer ${token}`
       }
     });
   }
@@ -22,8 +21,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   //  Enviamos la petición y estamos atentos por si el backend nos echa (401 o 403)
   return next(requestToForward).pipe(
     catchError((error: HttpErrorResponse) => {
-      // ¡AQUÍ ESTÁ EL CAMBIO! Atrapamos el 401 y el temido 403
-      if (error.status === 401 || error.status === 403) {
+      if (error.status === 401) {
         console.warn('Token caducado, inválido o sin permisos. Redirigiendo al login...');
 
         authService.logout();

@@ -7,7 +7,7 @@
         <p class="text-gray-500 mt-1">Controla la rentabilidad de tus activos inmobiliarios</p>
       </div>
       <button class="bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 font-semibold py-2 px-4 rounded-lg shadow-sm flex items-center gap-2 transition-colors">
-        <span>📥</span> Descargar Informe (PDF)
+        <span></span> Descargar Informe (PDF)
       </button>
     </div>
 
@@ -17,7 +17,7 @@
         <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Propiedad</label>
         <select [(ngModel)]="filtroPiso" (change)="cargarDatosFinancieros()"
                 class="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 font-medium">
-          <option value="TODOS">🏢 Todos mis pisos (Consolidado)</option>
+          <option value="TODOS"> Todos mis pisos (Consolidado)</option>
           @for (apto of misPropiedades(); track apto.id) {
             <option [value]="apto.id">{{ apto.nombreInterno }} ({{ apto.ciudad }})</option>
           }
@@ -49,11 +49,21 @@
       </div>
 
       <div class="mb-8">
-        <app-tabla-transacciones [transacciones]="ultimasTransacciones()" />
+        @if (mostrandoFormulario()) {
+          <app-formulario-transaccion
+            [transaccionAEditar]="transaccionAEditar()"
+            [apartamento]="{ id: transaccionAEditar()?.apartamentoId, nombreInterno: transaccionAEditar()?.apartamentoNombre }"
+            (volver)="cerrarEdicion()"
+            (guardadoExitoso)="recargarDespuesDeEditar()" />
+        } @else {
+          <app-tabla-transacciones
+            [transacciones]="ultimasTransacciones()"
+            (editar)="abrirEdicion($event)"
+            (recargar)="cargarDatosFinancieros()" />
+        }
       </div>
 
       <div class="mb-8">
-        <!-- Le ponemos una altura fija y un fondo blanco para que se vea como una tarjeta más -->
         <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 h-96">
           <app-graficos-balance [datos]="datosGrafico()" />
         </div>

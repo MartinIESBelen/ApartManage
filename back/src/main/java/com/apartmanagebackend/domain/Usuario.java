@@ -18,11 +18,9 @@ import java.util.Set;
 
 @Entity
 @Table(name = "usuarios")
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder // Usamos Builder normal, sin herencia
+@Getter @Setter
+@NoArgsConstructor @AllArgsConstructor
+@Builder
 @ToString
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Usuario implements UserDetails {
@@ -30,7 +28,7 @@ public class Usuario implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
-    private Long id; // Vuelve a ser private
+    private Long id;
 
     @Column(nullable = false, length = 50)
     private String nombre;
@@ -53,15 +51,17 @@ public class Usuario implements UserDetails {
     @Column(name = "fecha_nacimiento")
     private LocalDate fechaNacimiento;
 
-    // --- CAMPOS RESCATADOS DE LAS CLASES ELIMINADAS ---
     @Column(length = 50)
-    private String iban; // Antes solo de Propietario
+    private String iban;
 
     @Column(name = "direccion_fiscal", columnDefinition = "TEXT")
-    private String direccionFiscal; // Antes solo de Propietario
+    private String direccionFiscal;
 
     @Column(name = "direccion_habitual", columnDefinition = "TEXT")
-    private String direccionHabitual; // Antes solo de Inquilino
+    private String direccionHabitual;
+
+    @Column(name = "imagen_perfil")
+    private String imagenPerfil;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -75,7 +75,6 @@ public class Usuario implements UserDetails {
     @Column(name = "creado_en", updatable = false)
     private LocalDateTime creadoEn;
 
-    // --- RELACIONES RESCATADAS ---
     // Un usuario puede ser propietario de varios apartamentos
     @OneToMany(mappedBy = "propietario", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
@@ -83,14 +82,13 @@ public class Usuario implements UserDetails {
     @JsonIgnore
     private Set<Apartamento> apartamentos = new HashSet<>();
 
-    // Un usuario puede ser inquilino en varias reservas
+    // Un usuario puede ser inquilino en varios contratos
     @OneToMany(mappedBy = "inquilino")
     @Builder.Default
     @ToString.Exclude
     @JsonIgnore
-    private Set<Reserva> reservas = new HashSet<>();
+    private Set<Contrato> contratoes = new HashSet<>();
 
-    // --- MÉTODOS DE USERDETAILS ---
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(rol.toString()));

@@ -22,14 +22,14 @@ public class JwtService {
     private static final long JWT_EXPIRATION = 1000 * 60 * 60; // 1 hora
     private static final long REFRESH_EXPIRATION = 1000L * 60 * 60 * 24 * 7;
 
-    // Generar token solo con datos de usuario
+    // Generar accessToken solo con datos de usuario
     public String generateToken(UserDetails userDetails) {
         return generateToken(new HashMap<>(), userDetails);
     }
 
     public long getJwtExpiration() {return JWT_EXPIRATION;}
 
-    // Generar token con datos extra (claims)
+    // Generar accessToken con datos extra (claims)
     public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
         return Jwts.builder()
                 .setClaims(extraClaims)
@@ -50,7 +50,7 @@ public class JwtService {
                 .compact();
     }
 
-    // Validar si el token pertenece al usuario
+    // Validar si el accessToken pertenece al usuario
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);

@@ -36,9 +36,14 @@
           name="password"
           [(ngModel)]="credentials.password"
           required
-          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500"
+          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500"
           placeholder="********"
         >
+        <div class="text-right mt-2">
+          <a routerLink="/recuperar-password" class="inline-block align-baseline font-semibold text-sm text-blue-600 hover:text-blue-800 transition-colors">
+            ¿Olvidaste tu contraseña?
+          </a>
+        </div>
       </div>
 
       <div class="flex items-center justify-between mt-6">

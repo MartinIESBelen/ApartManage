@@ -1,6 +1,5 @@
 package com.apartmanagebackend.repository;
 
-import com.apartmanagebackend.domain.Reserva;
 import com.apartmanagebackend.domain.Transaccion;
 import com.apartmanagebackend.domain.enums.CategoriaTransaccion;
 import com.apartmanagebackend.domain.enums.EstadoTransaccion;
@@ -19,8 +18,8 @@ public interface TransaccionRepository extends JpaRepository<Transaccion,Long> {
     // Para ver todas las transacciones de un piso concreto
     List<Transaccion> findByApartamentoIdOrderByFechaEmisionDesc(Long apartamentoId);
 
-    // Para ver las transacciones que le corresponden a un inquilino (su reserva)
-    List<Transaccion> findByReservaIdOrderByFechaEmisionDesc(Long reservaId);
+    // Para ver las transacciones que le corresponden a un inquilino
+    List<Transaccion> findByContratoIdOrderByFechaEmisionDesc(Long contratoId);
 
     // Para calcular ingresos/gastos globales del propietario en el Dashboard
     @Query("SELECT t FROM Transaccion t WHERE t.apartamento.propietario.id = :propietarioId AND t.tipo = :tipo AND YEAR(t.fechaEmision) = :anio")

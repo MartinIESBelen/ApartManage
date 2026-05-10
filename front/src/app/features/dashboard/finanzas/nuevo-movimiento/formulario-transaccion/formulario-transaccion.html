@@ -1,55 +1,70 @@
 <div class="mb-6 flex items-center justify-between">
   <div>
-    <!-- CORREGIDO: ahora llama a cancelar() -->
-    <button (click)="cancelar()" class="text-sm font-semibold text-blue-600 hover:text-blue-800 flex items-center gap-1 mb-2">
-      &larr; Cambiar propiedad
+    <button (click)="cancelar()" class="text-sm font-semibold text-blue-600 hover:text-blue-800 flex items-center gap-1 mb-2 transition">
+      &larr; Volver
     </button>
-    <h1 class="text-3xl font-extrabold text-gray-900">Detalles del Movimiento</h1>
-    <!-- CORREGIDO: ahora usa apartamento() -->
+    <h1 class="text-3xl font-extrabold text-gray-900">
+      {{ transaccionAEditar() ? 'Editar Movimiento' : 'Nuevo Movimiento' }}
+    </h1>
     <p class="text-gray-500 mt-1">Vinculado a <span class="font-bold text-gray-700">{{ apartamento()?.nombreInterno }}</span></p>
   </div>
 </div>
 
 <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-100">
 
-  <!-- SELECTOR INGRESO / GASTO -->
+  @if (mensajeError) {
+    <div class="mb-6 bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm font-medium">
+      {{ mensajeError }}
+    </div>
+  }
+
   <div class="flex p-1 bg-gray-100 rounded-xl mb-8">
-    <button (click)="tipoMovimiento.set('INGRESO')"
+    <button (click)="cambiarTipo('INGRESO')" type="button"
             class="flex-1 py-2.5 text-sm font-bold rounded-lg transition-all"
-            [class.bg-white]="tipoMovimiento() === 'INGRESO'" [class.text-green-600]="tipoMovimiento() === 'INGRESO'" [class.shadow-sm]="tipoMovimiento() === 'INGRESO'"
-            [class.text-gray-500]="tipoMovimiento() !== 'INGRESO'" [class.hover:text-gray-700]="tipoMovimiento() !== 'INGRESO'">
+            [class.bg-white]="tipoActual === 'INGRESO'" [class.text-green-600]="tipoActual === 'INGRESO'" [class.shadow-sm]="tipoActual === 'INGRESO'"
+            [class.text-gray-500]="tipoActual !== 'INGRESO'">
       ↓ Ingreso
     </button>
-    <button (click)="tipoMovimiento.set('GASTO')"
+    <button (click)="cambiarTipo('GASTO')" type="button"
             class="flex-1 py-2.5 text-sm font-bold rounded-lg transition-all"
-            [class.bg-white]="tipoMovimiento() === 'GASTO'" [class.text-red-600]="tipoMovimiento() === 'GASTO'" [class.shadow-sm]="tipoMovimiento() === 'GASTO'"
-            [class.text-gray-500]="tipoMovimiento() !== 'GASTO'" [class.hover:text-gray-700]="tipoMovimiento() !== 'GASTO'">
+            [class.bg-white]="tipoActual === 'GASTO'" [class.text-red-600]="tipoActual === 'GASTO'" [class.shadow-sm]="tipoActual === 'GASTO'"
+            [class.text-gray-500]="tipoActual !== 'GASTO'">
       ↑ Gasto
     </button>
   </div>
 
-  <form class="space-y-6">
+  <form [formGroup]="formTransaccion" (ngSubmit)="guardarTransaccion()" class="space-y-6">
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-      <!-- AÑADIDOS LOS ngModel a todos los inputs -->
       <div class="md:col-span-2">
-        <label class="block text-sm font-bold text-gray-700 mb-1">Concepto</label>
-        <input type="text" [(ngModel)]="concepto" name="concepto" placeholder="Ej: Reparación de caldera..." class="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5">
+        <label class="block text-sm font-bold text-gray-700 mb-1">Concepto <span class="text-red-500">*</span></label>
+        <input type="text" formControlName="concepto" placeholder="Ej: Reparación de caldera..."
+               class="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
+               [class.border-red-500]="formTransaccion.get('concepto')?.invalid && formTransaccion.get('concepto')?.touched">
+        @if (formTransaccion.get('concepto')?.invalid && formTransaccion.get('concepto')?.touched) {
+          <p class="text-red-500 text-xs mt-1">El concepto es obligatorio y debe tener al menos 3 letras.</p>
+        }
       </div>
 
       <div>
-        <label class="block text-sm font-bold text-gray-700 mb-1">Importe (€)</label>
-        <input type="number" step="0.01" [(ngModel)]="importe" name="importe" placeholder="0.00" class="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5">
+        <label class="block text-sm font-bold text-gray-700 mb-1">Importe (€) <span class="text-red-500">*</span></label>
+        <input type="number" step="0.01" formControlName="importe" placeholder="0.00"
+               class="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
+               [class.border-red-500]="formTransaccion.get('importe')?.invalid && formTransaccion.get('importe')?.touched">
+        @if (formTransaccion.get('importe')?.invalid && formTransaccion.get('importe')?.touched) {
+          <p class="text-red-500 text-xs mt-1">Introduce un importe válido mayor a 0.</p>
+        }
       </div>
 
       <div>
-        <label class="block text-sm font-bold text-gray-700 mb-1">Fecha de Emisión</label>
-        <input type="date" [(ngModel)]="fechaEmision" name="fechaEmision" class="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5">
+        <label class="block text-sm font-bold text-gray-700 mb-1">Fecha de Emisión <span class="text-red-500">*</span></label>
+        <input type="date" formControlName="fechaEmision"
+               class="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5">
       </div>
 
       <div>
         <label class="block text-sm font-bold text-gray-700 mb-1">Categoría</label>
-        <select [(ngModel)]="categoria" name="categoria" class="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5">
+        <select formControlName="categoria" class="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5">
           <option value="ALQUILER">Alquiler</option>
           <option value="SUMINISTROS">Suministros (Luz, Agua...)</option>
           <option value="MANTENIMIENTO_RUTINARIO">Mantenimiento</option>
@@ -60,35 +75,32 @@
       </div>
 
       <div>
-        <label class="block text-sm font-bold text-gray-700 mb-1">Vincular al Inquilino</label>
-        <select [(ngModel)]="reservaId" name="reservaId" class="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5">
-          <option [ngValue]="null">No vincular (Gasto del Propietario)</option>
-          @if (apartamento()?.inquilinoActual) {
-            <!-- Aquí pondremos el ID real de la reserva cuando lo tengas en el modelo, por ahora lo dejamos así -->
-            <option value="ID_RESERVA">Contrato de: {{ apartamento()?.inquilinoActual }}</option>
-          }
+        <label class="block text-sm font-bold text-gray-700 mb-1">Estado de Pago</label>
+        <select formControlName="estado" class="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5">
+          <option value="PAGADO">Pagado</option>
+          <option value="PENDIENTE">Pendiente</option>
+          <option value="VENCIDO">Vencido</option>
         </select>
       </div>
     </div>
 
-    @if (tipoMovimiento() === 'GASTO') {
+    @if (tipoActual === 'GASTO' && !transaccionAEditar()) {
       <div class="flex items-start mt-4 p-4 bg-blue-50 rounded-xl border border-blue-100">
         <div class="flex items-center h-5">
-          <input id="dividir" type="checkbox" [(ngModel)]="dividirGasto" name="dividir" class="w-4 h-4 border border-gray-300 rounded bg-white focus:ring-3 focus:ring-blue-300">
+          <input id="dividir" type="checkbox" formControlName="dividirGasto" class="w-4 h-4 border border-gray-300 rounded focus:ring-blue-300">
         </div>
         <div class="ml-3 text-sm">
-          <label for="dividir" class="font-bold text-blue-900">Dividir este gasto y cobrarlo a los inquilinos</label>
-          <p class="text-blue-700 mt-1">Si marcas esta opción, el sistema generará automáticamente recibos pendientes para los inquilinos actuales de este apartamento dividiendo el importe a partes iguales.</p>
+          <label for="dividir" class="font-bold text-blue-900 cursor-pointer">Dividir este gasto entre los inquilinos activos</label>
         </div>
       </div>
     }
 
     <div class="pt-6 mt-6 border-t border-gray-100 flex justify-end gap-3">
-      <button type="button" (click)="cancelar()" class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-4 focus:ring-gray-200 transition-colors">
+      <button type="button" (click)="cancelar()" class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
         Cancelar
       </button>
-      <button type="button" (click)="guardarTransaccion()" class="px-5 py-2.5 text-sm font-bold text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 transition-colors">
-        Guardar Movimiento
+      <button type="submit" [disabled]="formTransaccion.invalid || guardando" class="px-5 py-2.5 text-sm font-bold text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+        {{ guardando ? 'Guardando...' : 'Guardar Movimiento' }}
       </button>
     </div>
   </form>

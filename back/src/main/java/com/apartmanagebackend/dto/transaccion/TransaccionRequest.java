@@ -9,7 +9,7 @@ import java.time.LocalDate;
 
 public record TransaccionRequest(
         Long apartamentoId,
-        Long reservaId,
+        Long contratoId,
         boolean dividirEntreTodos,
         TipoTransaccion tipo,
         CategoriaTransaccion categoria,

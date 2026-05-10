@@ -9,4 +9,5 @@ export interface ApartamentoModel {
   relacion: 'PROPIETARIO' | 'INQUILINO';
   inquilinoActual?: string;
   reservaActivaId?: number;
+  rutaImagenPrincipal?: string;
 }

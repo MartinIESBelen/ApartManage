@@ -1,12 +1,12 @@
 package com.apartmanagebackend;
 
-import com.apartmanagebackend.domain.Reserva;
+import com.apartmanagebackend.domain.Contrato;
 import com.apartmanagebackend.domain.Transaccion;
 import com.apartmanagebackend.domain.enums.CategoriaTransaccion;
-import com.apartmanagebackend.domain.enums.EstadoReserva;
+import com.apartmanagebackend.domain.enums.EstadoContrato;
 import com.apartmanagebackend.domain.enums.EstadoTransaccion;
 import com.apartmanagebackend.domain.enums.TipoTransaccion;
-import com.apartmanagebackend.repository.ReservaRepository;
+import com.apartmanagebackend.repository.ContratoRepository;
 import com.apartmanagebackend.repository.TransaccionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +21,7 @@ import java.util.List;
 @Slf4j
 public class TransaccionScheduler {
 
-    private final ReservaRepository reservaRepository;
+    private final ContratoRepository contratoRepository;
     private final TransaccionRepository transaccionRepository;
 
     /**
@@ -33,21 +33,21 @@ public class TransaccionScheduler {
         log.info("Iniciando generación automática de alquileres mensuales...");
         LocalDate hoy = LocalDate.now();
 
-        List<Reserva> reservasActivas = reservaRepository.findAll().stream()
-                .filter(r -> r.getEstado() == EstadoReserva.CONFIRMADA)
+        List<Contrato> reservasActivas = contratoRepository.findAll().stream()
+                .filter(r -> r.getEstado() == EstadoContrato.CONFIRMADA)
                 .filter(r -> !hoy.isBefore(r.getFechaEntrada()) && !hoy.isAfter(r.getFechaSalida()))
                 .toList();
 
         int creados = 0;
-        for (Reserva reserva : reservasActivas) {
+        for (Contrato contrato : reservasActivas) {
             Transaccion cobroAlquiler = Transaccion.builder()
-                    .apartamento(reserva.getApartamento())
-                    .reserva(reserva)
+                    .apartamento(contrato.getApartamento())
+                    .contrato(contrato)
                     .tipo(TipoTransaccion.INGRESO)
                     .categoria(CategoriaTransaccion.ALQUILER)
                     .estado(EstadoTransaccion.PENDIENTE)
                     .concepto("Alquiler " + hoy.getMonthValue() + "/" + hoy.getYear())
-                    .importe(reserva.getPrecioBaseAlquiler())
+                    .importe(contrato.getPrecioBaseAlquiler())
                     .fechaEmision(hoy)
                     .fechaVencimiento(hoy.plusDays(5))
                     .build();

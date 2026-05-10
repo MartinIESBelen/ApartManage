@@ -22,6 +22,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final UsuarioService usuarioService;
 
     public AuthResponse register(RegisterRequest request) {
         // Validar si el email ya existe
@@ -46,8 +47,8 @@ public class AuthService {
                 .rol(request.rol()) // Se guarda el rol, pero ya no limita su tipo de clase
                 .build();
 
-        // Guardar en BD
-        usuarioRepository.save(user);
+        Usuario usuarioGuardado = usuarioRepository.save(user);
+        usuarioService.inicializarCarpetasRaizUsuario(usuarioGuardado);
 
         // Generar Token
         var jwtToken = jwtService.generateToken(user);
@@ -91,18 +92,18 @@ public class AuthService {
             Usuario user = usuarioRepository.findByEmail(userEmail)
                     .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-            // Si el refresh token es válido, generamos un nuevo access token
+            // Si el refresh accessToken es válido, generamos un nuevo access accessToken
             if (jwtService.isTokenValid(refreshToken, user)) {
                 var accessToken = jwtService.generateToken(user);
 
                 return new AuthResponse(
                         accessToken,
-                        refreshToken, // Devolvemos el mismo refresh token
+                        refreshToken,
                         "Bearer",
                         jwtService.getJwtExpiration() / 1000
                 );
             }
         }
-        throw new RuntimeException("Refresh token inválido o caducado");
+        throw new RuntimeException("Refresh accessToken inválido o caducado");
     }
 }

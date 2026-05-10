@@ -16,7 +16,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-//Controla el acceso a la pagina a traves del token
+//Controla el acceso a la pagina a traves del accessToken
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -34,13 +34,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String jwt;
         final String userEmail;
 
-        // Verificar si hay token
+        // Verificar si hay accessToken
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        // Extraer el token
+        // Extraer el accessToken
         jwt = authHeader.substring(7);
 
         try {

@@ -41,5 +41,13 @@ export class AuthService {
     localStorage.removeItem('jwt_token');
   }
 
+  // Añade esto a tu auth.service.ts
+  solicitarRecuperacion(email: string): Observable<string> {
+    return this.http.post(`${this.apiUrl}/recuperar-password`, { email }, { responseType: 'text' });
+  }
+
+  resetearPassword(token: string, nuevaPassword: string): Observable<string> {
+    return this.http.post(`${this.apiUrl}/reset-password`, { token, nuevaPassword }, { responseType: 'text' });
+  }
 
 }

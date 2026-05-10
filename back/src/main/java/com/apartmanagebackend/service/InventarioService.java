@@ -3,11 +3,12 @@ package com.apartmanagebackend.service;
 import com.apartmanagebackend.domain.Apartamento;
 import com.apartmanagebackend.domain.ElementoInventario;
 import com.apartmanagebackend.domain.Usuario; // <-- Importante: Añadimos Usuario
+import com.apartmanagebackend.domain.enums.EstadoContrato;
 import com.apartmanagebackend.dto.inventario.InventarioRequest;
 import com.apartmanagebackend.dto.inventario.InventarioResponse;
 import com.apartmanagebackend.repository.ApartamentoRepository;
 import com.apartmanagebackend.repository.ElementoInventarioRepository;
-import com.apartmanagebackend.repository.ReservaRepository;
+import com.apartmanagebackend.repository.ContratoRepository;
 import com.apartmanagebackend.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,7 +22,7 @@ public class InventarioService {
     private final ElementoInventarioRepository inventarioRepository;
     private final ApartamentoRepository apartamentoRepository;
     private final UsuarioRepository usuarioRepository;
-    private final ReservaRepository reservaRepository;
+    private final ContratoRepository contratoRepository;
 
     //CREAR UN ELEMENTO
     public InventarioResponse agregarItem(Long apartamentoId, InventarioRequest request, String emailPropietario) {
@@ -52,8 +53,8 @@ public class InventarioService {
 
         boolean esPropietario = apartamento.getPropietario().getId().equals(usuario.getId());
 
-        boolean esInquilino = reservaRepository.existsByApartamentoIdAndInquilinoIdAndEstado(
-                apartamentoId, usuario.getId(), com.apartmanagebackend.domain.enums.EstadoReserva.CONFIRMADA);
+        boolean esInquilino = contratoRepository.existsByApartamentoIdAndInquilinoIdAndEstado(
+                apartamentoId, usuario.getId(), EstadoContrato.CONFIRMADA);
 
         if (!esPropietario && !esInquilino) {
             throw new RuntimeException("No tienes permisos para ver este inventario");
