@@ -2,7 +2,8 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { InventarioService, InventarioRequest } from '../../../../core/services/inventario/inventario.service';
+import { InventarioService} from '../../../../core/services/inventario/inventario.service';
+import {  InventarioRequest } from '../../../../core/models/inventario.model';
 
 @Component({
   selector: 'app-editar-elemento',
@@ -14,8 +15,8 @@ export class EditarElemento implements OnInit {
   apartamentoId!: number;
   itemId!: number;
 
-  cargando = signal<boolean>(true); // Para saber si estamos buscando los datos
-  guardando = false; // Para el botón de submit
+  cargando = signal<boolean>(true);
+  guardando = false;
 
   categorias = ['ELECTRODOMESTICO', 'MUEBLE', 'DECORACION', 'MENAJE', 'OTRO'];
   estados = ['NUEVO', 'BUENO', 'DESGASTADO', 'AVERIADO', 'ROTO'];
@@ -43,7 +44,7 @@ export class EditarElemento implements OnInit {
       next: (lista) => {
         const encontrado = lista.find(i => i.id === this.itemId);
         if (encontrado) {
-          // Rellenamos el formulario con los datos encontrados
+
           this.form = {
             nombre: encontrado.nombre,
             categoria: encontrado.categoria,

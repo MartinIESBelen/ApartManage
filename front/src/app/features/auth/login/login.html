@@ -1,18 +1,18 @@
-<div class="min-h-screen flex items-center justify-center bg-gray-100">
-  <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+<div class="min-h-screen flex items-center justify-center bg-habitalis-cream font-sans">
+  <div class="bg-white p-8 md:p-10 rounded-xl shadow-sm border border-habitalis-navy/10 w-full max-w-md">
 
-    <h2 class="text-3xl font-bold text-center text-blue-900 mb-6">ApartManage</h2>
+    <h2 class="text-4xl font-serif font-bold text-center text-habitalis-navy mb-8 tracking-tight">Habitalis</h2>
 
     @if (errorMessage) {
-      <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
-        {{ errorMessage }}
+      <div class="bg-habitalis-gold/10 border border-habitalis-gold/30 text-habitalis-gold px-4 py-3 rounded-lg text-sm font-bold mb-6 flex items-center gap-2">
+        <span>⚠️</span> {{ errorMessage }}
       </div>
     }
 
-    <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
+    <form (ngSubmit)="onSubmit()" #loginForm="ngForm" class="space-y-6">
 
-      <div class="mb-4">
-        <label class="block text-gray-700 text-sm font-bold mb-2" for="email">
+      <div>
+        <label class="block text-habitalis-navy/70 text-xs font-bold uppercase tracking-widest mb-2" for="email">
           Correo Electrónico
         </label>
         <input
@@ -21,13 +21,13 @@
           name="email"
           [(ngModel)]="credentials.email"
           required
-          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500"
+          class="w-full bg-habitalis-cream/30 border border-habitalis-navy/10 rounded-lg py-3 px-4 text-habitalis-navy leading-tight focus:outline-none focus:ring-1 focus:ring-habitalis-navy focus:border-habitalis-navy transition-all placeholder-habitalis-navy/20"
           placeholder="propietario@email.com"
         >
       </div>
 
-      <div class="mb-6">
-        <label class="block text-gray-700 text-sm font-bold mb-2" for="password">
+      <div>
+        <label class="block text-habitalis-navy/70 text-xs font-bold uppercase tracking-widest mb-2" for="password">
           Contraseña
         </label>
         <input
@@ -36,28 +36,30 @@
           name="password"
           [(ngModel)]="credentials.password"
           required
-          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500"
+          class="w-full bg-habitalis-cream/30 border border-habitalis-navy/10 rounded-lg py-3 px-4 text-habitalis-navy leading-tight focus:outline-none focus:ring-1 focus:ring-habitalis-navy focus:border-habitalis-navy transition-all placeholder-habitalis-navy/20"
           placeholder="********"
         >
-        <div class="text-right mt-2">
-          <a routerLink="/recuperar-password" class="inline-block align-baseline font-semibold text-sm text-blue-600 hover:text-blue-800 transition-colors">
+        <div class="text-right mt-3">
+          <a routerLink="/recuperar-password" class="inline-block font-semibold text-xs text-habitalis-navy/60 hover:text-habitalis-gold transition-colors underline decoration-habitalis-navy/10 underline-offset-4">
             ¿Olvidaste tu contraseña?
           </a>
         </div>
       </div>
 
-      <div class="flex items-center justify-between mt-6">
+      <div class="pt-2">
         <button
           type="submit"
           [disabled]="!loginForm.valid"
-          class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+          class="w-full bg-habitalis-olive hover:bg-habitalis-olive/90 text-white font-bold py-3.5 px-4 rounded-lg shadow-sm transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-widest text-sm"
         >
           Iniciar Sesión
         </button>
       </div>
-      <div class="mt-4 text-center" style="margin-top: 15px; text-align: center; font-size: 14px;">
-        <p>¿Aún no tienes cuenta?
-          <a routerLink="/register" style="color: #0056b3; text-decoration: none; font-weight: bold;">
+
+      <div class="mt-8 text-center border-t border-habitalis-navy/5 pt-6">
+        <p class="text-habitalis-navy/60 text-sm font-medium">
+          ¿Aún no tienes cuenta?
+          <a routerLink="/register" class="text-habitalis-navy hover:text-habitalis-olive font-bold transition-colors ml-1">
             Crea una aquí
           </a>
         </p>

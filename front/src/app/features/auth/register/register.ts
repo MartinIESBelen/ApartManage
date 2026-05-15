@@ -1,14 +1,14 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators, FormGroup, AbstractControl, ValidationErrors } from '@angular/forms';
-import { Router} from '@angular/router';
+import { Router, RouterLink} from '@angular/router';
 import { AuthService } from '../../../core/services/auth/auth.service';
 import { RegisterRequest } from '../../../core/models/auth.model';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './register.html',
   styleUrl: './register.css'
 })
@@ -70,7 +70,13 @@ export class RegisterComponent {
         void this.router.navigate(['/home']);
       },
       error: (err) => {
-        this.errorMessage = err.error?.message || 'Error al crear la cuenta. Revisa los datos.';
+        const errorDelServidor = err.error?.message || err.error || '';
+
+        if (typeof errorDelServidor === 'string' && errorDelServidor.toLowerCase().includes('email')) {
+          this.errorMessage = 'Ya existe una cuenta con este correo electrónico. Por favor, inicia sesión.';
+        } else {
+          this.errorMessage = 'Error al crear la cuenta. Revisa los datos y vuelve a intentarlo.';
+        }
       }
     });
   }

@@ -45,4 +45,8 @@ export class FinanzasService {
   borrarTransaccion(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrlTransacciones}/${id}`);
   }
+
+  obtenerTransaccionesPorContrato(contratoId: number): Observable<TransaccionResponse[]> {
+    return this.http.get<TransaccionResponse[]>(`${this.apiUrlTransacciones}/contrato/${contratoId}`);
+  }
 }

@@ -1,29 +1,32 @@
-import { Component, inject, input, output, OnInit } from '@angular/core';
+import { Component, inject, input, output, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { FinanzasService } from '../../../../../core/services/finanzas/finanzas.service';
 import { TransaccionRequest, TransaccionResponse } from '../../../../../core/models/finanzas.model';
+import { ContratoService} from '../../../../../core/services/contrato/contrato.service';
+
 
 @Component({
   selector: 'app-formulario-transaccion',
   standalone: true,
-  // 1. Cambiamos FormsModule por ReactiveFormsModule
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './formulario-transaccion.html'
 })
 export class FormularioTransaccion implements OnInit {
   private finanzasService = inject(FinanzasService);
+  private contratoService = inject(ContratoService);
   private fb = inject(FormBuilder);
 
-  // INPUTS
   apartamento = input.required<any>();
   transaccionAEditar = input<TransaccionResponse | null>(null);
 
-  // OUTPUTS
   volver = output<void>();
   guardadoExitoso = output<void>();
 
-  // 2. Creamos el FormGroup con sus validaciones estrictas
+  contratosActivos = signal<any[]>([]);
+  guardando = false;
+  mensajeError = '';
+
   formTransaccion: FormGroup = this.fb.group({
     tipoMovimiento: ['GASTO', Validators.required],
     concepto: ['', [Validators.required, Validators.minLength(3)]],
@@ -31,17 +34,20 @@ export class FormularioTransaccion implements OnInit {
     fechaEmision: [new Date().toISOString().split('T')[0], Validators.required],
     categoria: ['OTROS', Validators.required],
     estado: ['PAGADO', Validators.required],
-    reservaId: [null],
-    dividirGasto: [false]
+    // NUEVO: Unificamos el destino en un solo campo desplegable
+    asignacion: ['GENERAL', Validators.required]
   });
 
-  guardando = false;
-  mensajeError = '';
-
   ngOnInit() {
-    // Si recibimos una transacción, rellenamos el formulario automáticamente (Modo Edición)
+    this.cargarInquilinos();
+
     const tx = this.transaccionAEditar();
     if (tx) {
+      let valorAsignacion = 'GENERAL';
+      if (tx.contratoId) {
+        valorAsignacion = tx.contratoId.toString();
+      } // Nota: No podemos saber si fue "dividirEntreTodos" al editar, porque el backend ya las separó.
+
       this.formTransaccion.patchValue({
         tipoMovimiento: tx.tipo,
         concepto: tx.concepto,
@@ -49,21 +55,31 @@ export class FormularioTransaccion implements OnInit {
         fechaEmision: tx.fechaEmision,
         categoria: tx.categoria || 'OTROS',
         estado: tx.estado,
-        reservaId: tx.reservaId
+        asignacion: valorAsignacion
       });
     }
   }
 
-  // Helper para los botones superiores de Ingreso/Gasto
+  cargarInquilinos() {
+    this.contratoService.obtenerContratosPorApartamento(this.apartamento().id).subscribe({
+      next: (contratos: any[]) => {
+        console.log('🔎 DATOS DEL BACKEND:', contratos);
+        const activos = contratos.filter(c => c.estado === 'CONFIRMADA');
+        this.contratosActivos.set(activos);
+      },
+      error: (err) => {
+        console.error('Error al cargar los inquilinos del apartamento:', err);
+      }
+    });
+  }
+
   cambiarTipo(tipo: 'INGRESO' | 'GASTO') {
     this.formTransaccion.patchValue({
       tipoMovimiento: tipo,
-      // Autocompletamos el estado por comodidad
       estado: tipo === 'INGRESO' ? 'PENDIENTE' : 'PAGADO'
     });
   }
 
-  // Getter para usarlo fácilmente en el HTML
   get tipoActual() {
     return this.formTransaccion.get('tipoMovimiento')?.value;
   }
@@ -74,7 +90,7 @@ export class FormularioTransaccion implements OnInit {
 
   guardarTransaccion() {
     if (this.formTransaccion.invalid) {
-      this.formTransaccion.markAllAsTouched(); // Marca todos en rojo si faltan datos
+      this.formTransaccion.markAllAsTouched();
       return;
     }
 
@@ -83,37 +99,44 @@ export class FormularioTransaccion implements OnInit {
 
     const valores = this.formTransaccion.value;
 
+    let idDelContrato = null;
+    let dividir = false;
+
+    if (valores.asignacion === 'TODOS') {
+      dividir = true;
+    } else if (valores.asignacion !== 'GENERAL') {
+      idDelContrato = Number(valores.asignacion);
+    }
+
+    // CREAMOS EL REQUEST ACORDE AL BACKEND
     const request: TransaccionRequest = {
       apartamentoId: this.apartamento().id,
-      reservaId: valores.reservaId,
-      dividirEntreTodos: valores.dividirGasto,
+      contratoId: idDelContrato,
+      dividirEntreTodos: dividir,
       tipo: valores.tipoMovimiento,
       categoria: valores.categoria,
       estado: valores.estado,
       concepto: valores.concepto,
       importe: valores.importe,
       fechaEmision: valores.fechaEmision
+      // fechaVencimiento
     };
 
     const tx = this.transaccionAEditar();
 
     if (tx) {
-      // MODO EDICIÓN
       this.finanzasService.actualizarTransaccion(tx.id, request).subscribe({
         next: () => this.guardadoExitoso.emit(),
         error: (err) => {
-          console.error(err);
           this.mensajeError = 'Error al actualizar el movimiento.';
           this.guardando = false;
         }
       });
     } else {
-      // MODO CREACIÓN
       this.finanzasService.crearTransaccion(request).subscribe({
         next: () => this.guardadoExitoso.emit(),
         error: (err) => {
-          console.error(err);
-          this.mensajeError = 'Error al guardar el movimiento.';
+          this.mensajeError = err.error?.message || 'Error al guardar el movimiento.';
           this.guardando = false;
         }
       });

@@ -2,7 +2,8 @@ import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { InventarioService, InventarioRequest } from '../../../../core/services/inventario/inventario.service';
+import { InventarioService } from '../../../../core/services/inventario/inventario.service';
+import { InventarioRequest } from '../../../../core/models/inventario.model';
 
 @Component({
   selector: 'app-crear-elemento',
@@ -14,14 +15,13 @@ export class CrearElemento implements OnInit {
   apartamentoId!: number;
   cargando = false;
 
-  // Arrays basados en tus Enums de Java
   categorias = ['ELECTRODOMESTICO', 'MUEBLE', 'DECORACION', 'MENAJE', 'OTRO'];
-  estados = ['NUEVO', 'BUENO', 'DESGASTADO', 'AVERIADO', 'ROTO'];
+  estados = ['NUEVO', 'BUENO', 'DESGASTADO', 'ROTO'];
 
   form: InventarioRequest = {
     nombre: '',
     categoria: '',
-    estado: 'BUENO', // Valor por defecto amigable
+    estado: 'BUENO',
     precioCompra: null,
     fechaCompra: null
   };

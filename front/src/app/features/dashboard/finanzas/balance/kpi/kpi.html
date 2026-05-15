@@ -1,42 +1,51 @@
-<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 font-sans">
 
-  <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+  <div class="bg-white p-6 rounded-xl shadow-sm border border-habitalis-navy/10">
     <div class="flex items-center justify-between mb-4">
-      <div class="p-3 bg-green-50 text-green-600 rounded-xl text-2xl"></div>
-      <span class="text-xs font-bold text-green-600 bg-green-50 px-2 py-1 rounded-full">+12% vs mes ant.</span>
-    </div>
-    <p class="text-sm font-medium text-gray-500 uppercase tracking-wider">Ingresos Brutos</p>
-    <h3 class="text-3xl font-extrabold text-gray-900">{{ ingresos() | currency:'EUR' }}</h3>
-  </div>
-
-  <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-    <div class="flex items-center justify-between mb-4">
-      <div class="p-3 bg-red-50 text-red-600 rounded-xl text-2xl"></div>
-      <span class="text-xs font-bold text-gray-400">Suministros + Mantenimiento</span>
-    </div>
-    <p class="text-sm font-medium text-gray-500 uppercase tracking-wider">Gastos Totales</p>
-    <h3 class="text-3xl font-extrabold text-gray-900">{{ gastos() | currency:'EUR' }}</h3>
-  </div>
-
-  <div class="bg-white p-6 rounded-2xl shadow-sm border-2"
-       [class.border-blue-100]="esPositivo()"
-       [class.border-red-100]="!esPositivo()">
-    <div class="flex items-center justify-between mb-4">
-      <div class="p-3 rounded-xl text-2xl"
-           [class.bg-blue-50]="esPositivo()" [class.text-blue-600]="esPositivo()"
-           [class.bg-red-50]="!esPositivo()" [class.text-red-600]="!esPositivo()">
-        {{ esPositivo() ? '' : '' }}
+      <div class="p-3 bg-habitalis-olive/10 text-habitalis-olive rounded-lg text-2xl">
+        <img src="/iconos/moneda.png" alt="ingresos" class="h-6 w-6">
       </div>
-      <span class="text-xs font-bold px-2 py-1 rounded-full"
-            [class.bg-blue-50]="esPositivo()" [class.text-blue-600]="esPositivo()"
-            [class.bg-red-50]="!esPositivo()" [class.text-red-600]="!esPositivo()">
-        {{ margenBeneficio() | number:'1.0-1' }}% Margen
+      <span class="text-xs font-bold text-habitalis-olive bg-habitalis-olive/10 px-2.5 py-1 rounded-full uppercase tracking-wider">
+        +12% vs mes ant.
       </span>
     </div>
-    <p class="text-sm font-medium text-gray-500 uppercase tracking-wider">Beneficio Neto</p>
-    <h3 class="text-3xl font-extrabold" [class.text-blue-700]="esPositivo()" [class.text-red-700]="!esPositivo()">
-      {{ beneficioNeto() | currency:'EUR' }}
-    </h3>
+    <p class="text-xs font-bold text-habitalis-navy/50 uppercase tracking-widest mb-1">Ingresos Brutos</p>
+    <h3 class="text-3xl font-bold text-habitalis-navy">{{ ingresos() | currency:'EUR' }}</h3>
   </div>
+
+  <div class="bg-white p-6 rounded-xl shadow-sm border border-habitalis-navy/10">
+    <div class="flex items-center justify-between mb-4">
+      <div class="p-3 bg-habitalis-gold/10 text-habitalis-gold rounded-lg text-2xl">
+        <img src="/iconos/moneda-rota.png" alt="ingresos" class="h-6 w-6">
+      </div>
+      <span class="text-xs font-bold text-habitalis-navy/40 uppercase tracking-wider">Suministros + Mantenimiento</span>
+    </div>
+    <p class="text-xs font-bold text-habitalis-navy/50 uppercase tracking-widest mb-1">Gastos Totales</p>
+    <h3 class="text-3xl font-bold text-habitalis-navy">{{ gastos() | currency:'EUR' }}</h3>
+  </div>
+
+  <div class="bg-white p-6 rounded-xl shadow-sm border-2"
+       [style.borderColor]="esPositivo() ? 'rgba(113, 131, 85, 0.2)' : 'rgba(140, 120, 81, 0.2)'">
+    <div class="flex items-center justify-between mb-4">
+      <div class="p-3 rounded-lg text-2xl"
+           [class.bg-habitalis-olive/10]="esPositivo()" [class.text-habitalis-olive]="esPositivo()"
+      [class.bg-habitalis-gold/10]="!esPositivo()" [class.text-habitalis-gold]="!esPositivo()">
+
+      <img [src]="esPositivo() ? '/iconos/grafico-de-crecimiento.png' : '/iconos/tendencia-a-la-baja.png'"
+           alt="beneficio" class="h-6 w-6 object-contain">
+    </div>
+    <span class="text-xs font-bold px-2.5 py-1 rounded-full uppercase tracking-wider"
+          [class.bg-habitalis-olive/10]="esPositivo()" [class.text-habitalis-olive]="esPositivo()"
+    [class.bg-habitalis-gold/10]="!esPositivo()" [class.text-habitalis-gold]="!esPositivo()">
+    {{ margenBeneficio() | number:'1.0-1' }}% Margen
+    </span>
+  </div>
+  <p class="text-xs font-bold text-habitalis-navy/50 uppercase tracking-widest mb-1">Beneficio Neto</p>
+  <h3 class="text-3xl font-bold"
+      [class.text-habitalis-olive]="esPositivo()"
+      [class.text-habitalis-gold]="!esPositivo()">
+    {{ beneficioNeto() | currency:'EUR' }}
+  </h3>
+</div>
 
 </div>

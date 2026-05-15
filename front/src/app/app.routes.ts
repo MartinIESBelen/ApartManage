@@ -54,6 +54,6 @@ export const routes: Routes = [
     ]
   },
 
-  { path: '', redirectTo: '/perfil', pathMatch: 'full' },
-  { path: '**', redirectTo: '/login' } // Si ponen una URL que no existe, al login.
+  { path: '', redirectTo: '/home', pathMatch: 'full' },
+  { path: '**', redirectTo: '/login' }
 ];

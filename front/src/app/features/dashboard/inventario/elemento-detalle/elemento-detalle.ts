@@ -1,80 +1,125 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { InventarioService, InventarioItem } from '../../../../core/services/inventario/inventario.service';
+import { Component, inject, signal, computed } from '@angular/core';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { switchMap } from 'rxjs';
+import { InventarioService } from '../../../../core/services/inventario/inventario.service';
+import {  InventarioItem } from '../../../../core/models/inventario.model';
+import { ApartamentoService } from '../../../../core/services/apartamento/apartamento.service';
+
+const ESTADOS_MAL = ['ROTO', 'AVERIADO', 'DESGASTADO'];
 
 @Component({
   selector: 'app-elemento-detalle',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [RouterLink],
   templateUrl: './elemento-detalle.html'
 })
-export class ElementoDetalle implements OnInit {
-  private route = inject(ActivatedRoute);
-  private router = inject(Router);
+export class ElementoDetalle {
+  private route             = inject(ActivatedRoute);
+  private router            = inject(Router);
   private inventarioService = inject(InventarioService);
+  private apartamentoService = inject(ApartamentoService);
 
-  apartamentoId!: number;
-  itemId!: number;
+  procesando  = signal(false);
+  errorMsg    = signal('');
+  confirmando = signal<'roto' | 'eliminar' | null>(null);
 
-  item = signal<InventarioItem | null>(null);
-  cargando = signal<boolean>(true);
+  private params = toSignal(this.route.paramMap);
 
-  // TODO: Conectar esto con tu lógica real (ej: authService.getRol() === 'PROPIETARIO' o leyendo los datos del piso)
-  esPropietario = signal<boolean>(true);
+  apartamentoId = computed(() => Number(this.params()?.get('id')     ?? 0));
+  itemId        = computed(() => Number(this.params()?.get('itemId') ?? 0));
 
-  ngOnInit() {
-    this.apartamentoId = Number(this.route.snapshot.paramMap.get('id'));
-    this.itemId = Number(this.route.snapshot.paramMap.get('itemId'));
-    this.cargarDatos();
+  private inventario = toSignal(
+    this.route.paramMap.pipe(
+      switchMap(p => this.inventarioService.listarInventario(Number(p.get('id'))))
+    ),
+    { initialValue: [] as InventarioItem[] }
+  );
+
+  cargando = computed(() => this.inventario().length === 0 && !this.errorMsg());
+
+  item = computed(() =>
+    this.inventario().find(i => i.id === this.itemId()) ?? null
+  );
+
+  private apartamento = toSignal(
+    this.route.paramMap.pipe(
+      switchMap(p => this.apartamentoService.getApartamentoById(Number(p.get('id'))))
+    )
+  );
+
+  esPropietario = computed(() => this.apartamento()?.relacion === 'PROPIETARIO');
+
+  // --- confirmación inline ---
+
+  pedirConfirmacion(accion: 'roto' | 'eliminar') {
+    this.confirmando.set(accion);
   }
 
-  cargarDatos() {
-    // Como no tenemos GET por ID en el backend, pedimos la lista y filtramos
-    this.inventarioService.listarInventario(this.apartamentoId).subscribe({
-      next: (lista) => {
-        const encontrado = lista.find(i => i.id === this.itemId);
-        if (encontrado) {
-          this.item.set(encontrado);
-        } else {
-          alert('Elemento no encontrado');
-          void this.router.navigate(['/apartamento', this.apartamentoId, 'inventario']);
-        }
-        this.cargando.set(false);
-      },
-      error: (err) => {
-        console.error(err);
-        this.cargando.set(false);
-      }
-    });
+  cancelarConfirmacion() {
+    this.confirmando.set(null);
   }
 
-  marcarComoRoto() {
-    if (!confirm('¿Estás seguro de que quieres marcar este elemento como ROTO? Se generará una alerta.')) return;
+  confirmarAccion() {
+    const accion = this.confirmando();
+    this.confirmando.set(null);
+    if (accion === 'roto')     this.ejecutarMarcarRoto();
+    if (accion === 'eliminar') this.ejecutarEliminar();
+  }
 
-    this.cargando.set(true);
-    this.inventarioService.marcarComoRoto(this.apartamentoId, this.itemId).subscribe({
+  private ejecutarMarcarRoto() {
+    this.procesando.set(true);
+    this.inventarioService.marcarComoRoto(this.apartamentoId(), this.itemId()).subscribe({
       next: (itemActualizado) => {
-        this.item.set(itemActualizado);
-        this.cargando.set(false);
-        alert('Elemento marcado como roto. (La alerta se implementará más adelante)');
+        // Actualizamos el item en la lista local sin recargar
+        const lista = [...this.inventario()];
+        const idx = lista.findIndex(i => i.id === itemActualizado.id);
+        if (idx !== -1) lista[idx] = itemActualizado;
+        this.procesando.set(false);
       },
       error: (err) => {
-        alert('Error: ' + err.error?.message);
-        this.cargando.set(false);
+        this.errorMsg.set(err.error?.message ?? 'Error al marcar como roto.');
+        this.procesando.set(false);
       }
     });
   }
 
-  eliminar() {
-    if (!confirm('¿Estás completamente seguro de borrar este elemento? Esta acción no se puede deshacer.')) return;
-
-    this.inventarioService.eliminarItem(this.apartamentoId, this.itemId).subscribe({
-      next: () => {
-        alert('Elemento eliminado correctamente');
-        void this.router.navigate(['/apartamento', this.apartamentoId, 'inventario']);
-      },
-      error: (err) => alert('Error al eliminar: ' + err.error?.message)
+  private ejecutarEliminar() {
+    this.procesando.set(true);
+    this.inventarioService.eliminarItem(this.apartamentoId(), this.itemId()).subscribe({
+      next: () => void this.router.navigate(['/apartamento', this.apartamentoId(), 'inventario']),
+      error: (err) => {
+        this.errorMsg.set(err.error?.message ?? 'Error al eliminar el elemento.');
+        this.procesando.set(false);
+      }
     });
+  }
+
+  // --- helpers de clases ---
+
+  estaEnMalEstado(i: InventarioItem): boolean {
+    return ESTADOS_MAL.includes(i.estado);
+  }
+
+  estadoBadgeClases(i: InventarioItem): string {
+    return this.estaEnMalEstado(i)
+      ? 'bg-habitalis-gold/10 text-habitalis-gold border-habitalis-gold/20'
+      : 'bg-habitalis-olive/10 text-habitalis-olive border-habitalis-olive/20';
+  }
+
+  estadoPuntoClases(i: InventarioItem): string {
+    return this.estaEnMalEstado(i) ? 'bg-habitalis-gold' : 'bg-habitalis-olive';
+  }
+
+  formatearFecha(fecha?: string): string {
+    if (!fecha) return 'No registrada';
+    const [y, m, d] = fecha.split('-');
+    const meses = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+    return `${d} ${meses[Number(m) - 1]} ${y}`;
+  }
+
+  formatearPrecio(precio?: number): string {
+    if (precio == null) return 'No registrado';
+    return precio.toLocaleString('es-ES', { style: 'currency', currency: 'EUR' });
   }
 }

@@ -1,50 +1,53 @@
-<article class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 relative flex flex-col h-full">
+<article class="bg-white rounded-xl shadow-sm border border-habitalis-navy/10 overflow-hidden hover:shadow-md transition-shadow duration-300 relative flex flex-col h-full font-sans">
 
-  <div class="absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-bold shadow-sm z-10"
-       [class.bg-blue-100]="apartamento.relacion === 'PROPIETARIO'"
-       [class.text-blue-800]="apartamento.relacion === 'PROPIETARIO'"
-       [class.bg-green-100]="apartamento.relacion === 'INQUILINO'"
-       [class.text-green-800]="apartamento.relacion === 'INQUILINO'">
+  <div class="bg-white absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-bold shadow-md z-10"
+       [class.text-habitalis-navy]="apartamento.relacion === 'PROPIETARIO'"
+       [class.text-habitalis-olive]="apartamento.relacion === 'INQUILINO'">
     {{ apartamento.relacion === 'PROPIETARIO' ? ' Propiedad' : ' Alquilado' }}
   </div>
 
-  <div class="h-48 w-full relative overflow-hidden bg-gray-100">
+  @if (apartamento.alertas && apartamento.alertas.length > 0) {
+    <div class="absolute top-3 left-3 text-white rounded-full p-1.5 shadow-sm z-10 animate-pulse"
+         title="Requiere atención">
+      <img src="/iconos/roto.png" alt="Alerta" class="h-12 w-12">
+    </div>
+  }
+
+  <div class="h-48 w-full relative overflow-hidden bg-habitalis-cream">
 
     @if (cargandoImagen) {
       <div class="absolute inset-0 flex items-center justify-center">
-        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-habitalis-navy"></div>
       </div>
     }
+
     @else if (imagenSegura) {
       <img [src]="imagenSegura" alt="Foto de {{ apartamento.nombreInterno }}" class="w-full h-full object-cover">
     }
+
     @else {
-      <div class="w-full h-full bg-blue-50 flex items-center justify-center text-blue-200">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-20 h-20">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008z" />
-        </svg>
+      <div class="w-full h-full bg-habitalis-cream flex items-center justify-center">
+        <img src="/iconos/ciudad-verde.png" alt="Sin imagen" class="w-20 h-20">
       </div>
     }
-
   </div>
 
   <div class="p-5 flex-1 flex flex-col">
-    <h2 class="text-xl font-bold text-gray-900 mb-2">{{ apartamento.nombreInterno }}</h2>
-    <p class="text-gray-600 mb-3 flex items-center gap-2">
+    <h2 class="text-xl font-serif font-bold text-habitalis-navy mb-2">{{ apartamento.nombreInterno }}</h2>
+    <p class="text-habitalis-navy/70 mb-3 flex items-center gap-2">
       {{ apartamento.ciudad }}
     </p>
-    <p class="text-sm text-gray-500 line-clamp-2 mb-4 flex-1">
+    <p class="text-sm text-habitalis-navy/60 line-clamp-2 mb-4 flex-1">
       {{ apartamento.descripcion }}
     </p>
 
-    <div class="flex justify-between items-center mt-auto pt-4 border-t border-gray-100">
-      <span class="px-3 py-1 bg-green-100 text-green-800 text-xs font-semibold rounded-full uppercase tracking-wider">
+    <div class="flex justify-between items-center mt-auto pt-4 border-t border-habitalis-navy/10">
+      <span class="px-3 py-1 bg-habitalis-olive/20 text-habitalis-olive text-xs font-semibold rounded-full uppercase tracking-wider">
         {{ apartamento.estado }}
       </span>
-      <a [routerLink]="['/apartamento', apartamento.id]" class="text-blue-600 hover:text-blue-800 font-medium text-sm transition-colors">
+      <a [routerLink]="['/apartamento', apartamento.id]" class="text-habitalis-navy hover:text-habitalis-olive font-semibold text-sm transition-colors">
         Ver Detalles →
       </a>
     </div>
   </div>
 </article>
-

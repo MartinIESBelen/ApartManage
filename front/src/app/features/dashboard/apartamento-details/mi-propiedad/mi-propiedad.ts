@@ -59,6 +59,11 @@ export class MiPropiedad {
     });
   }
 
+  tieneAlertaInventario(): boolean {
+    const alertas = this.apartamento().alertas;
+    return alertas ? alertas.includes('INVENTARIO_ROTO') : false;
+  }
+
   copiarCodigo() {
     const codigo = this.codigoGenerado();
     if (codigo) {

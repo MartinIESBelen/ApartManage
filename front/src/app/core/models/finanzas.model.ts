@@ -15,7 +15,7 @@ export interface FinanzasMes {
 
 export interface TransaccionRequest {
   apartamentoId: number;
-  reservaId?: number | null;
+  contratoId?: number | null;
   tipo: 'INGRESO' | 'GASTO';
   categoria: string;
   estado: 'PENDIENTE' | 'PAGADO' | 'VENCIDO';
@@ -30,7 +30,7 @@ export interface TransaccionResponse {
   id: number;
   apartamentoId: number;
   apartamentoNombre?: string;
-  reservaId?: number;
+  contratoId?: number;
   inquilinoNombre?: string;
   tipo: 'INGRESO' | 'GASTO';
   categoria: string;

@@ -1,71 +1,68 @@
-<header class="bg-blue-900 text-white shadow-lg border-b border-blue-800">
-  <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+<header class="bg-white text-habitalis-navy shadow-md border-b border-habitalis-navy/10">
 
-    <a routerLink="/home" class="text-xl font-bold flex items-center gap-2 hover:opacity-90 transition-opacity">
-      <span class="text-2xl"></span>
-      <span class="tracking-tight">ApartManage</span>
+  <div class="container mx-auto px-6 md:px-12 lg:px-20 py-6 flex justify-between items-center">
+
+    <a routerLink="/" class="flex items-center gap-4 group shrink-0">
+      <div class="h-16 w-16 md:h-32 md:w-32 shrink-0 bg-white rounded-full flex items-center justify-center shadow-sm border border-habitalis-navy/10 overflow-hidden transition-transform duration-200 group-hover:scale-105 relative">
+        <img src="/logos/logo-circular.jpeg" alt="Habitalis Logo" class="h-full w-full object-cover scale-125">
+      </div>
     </a>
 
     @if (estaLogueado()) {
-      <nav class="flex justify-center items-center gap-1 md:gap-4">
+      <nav class="flex justify-center items-center gap-1 md:gap-4 font-sans">
         <a routerLink="/home"
-           routerLinkActive="bg-blue-800 text-blue-200"
+           routerLinkActive="bg-habitalis-navy/10 text-habitalis-navy font-semibold"
            [routerLinkActiveOptions]="{exact: true}"
-           class="px-3 py-2 rounded-md hover:text-blue-300 font-medium transition-all">Inicio</a>
+           class="px-3 py-2 rounded-md hover:text-habitalis-olive font-medium transition-all">Inicio</a>
 
         <div class="relative" (mouseleave)="cerrarMenuFinanzas()">
           <button (click)="toggleMenuFinanzas()"
                   (mouseenter)="abrirMenuFinanzas()"
-                  class="px-3 py-2 rounded-md hover:text-blue-300 font-medium transition-all flex items-center gap-1 focus:outline-none"
-                  [ngClass]="{'bg-blue-800 text-blue-200': menuFinanzasAbierto}">
+                  class="px-3 py-2 rounded-md hover:text-habitalis-olive font-medium transition-all flex items-center gap-1 focus:outline-none"
+                  [ngClass]="{'bg-habitalis-navy/10 text-habitalis-navy font-semibold': menuFinanzasAbierto}">
             Finanzas
-            <!-- Icono de flechita hacia abajo -->
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transition-transform duration-200" [ngClass]="{'rotate-180': menuFinanzasAbierto}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
             </svg>
           </button>
 
           @if (menuFinanzasAbierto) {
-            <!-- EL PUENTE DEFINITIVO: Solapamos hacia arriba con -mt-2 y empujamos el contenido con pt-4 -->
             <div class="absolute top-full left-0 w-48 z-50 -mt-2 pt-4">
-
-              <!-- LA CAJA BLANCA VISIBLE -->
-              <div class="bg-white rounded-md shadow-xl border border-gray-100 py-2 overflow-hidden">
+              <div class="bg-white rounded-md shadow-sm border border-habitalis-navy/10 py-2 overflow-hidden">
                 <a routerLink="/finanzas/balance"
                    (click)="cerrarMenuFinanzas()"
-                   class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 font-medium transition-colors">
+                   class="block px-4 py-2 text-sm text-habitalis-navy hover:bg-habitalis-cream hover:text-habitalis-olive font-medium transition-colors">
                   Balance
                 </a>
                 <a routerLink="/finanzas/nuevo-movimiento"
                    (click)="cerrarMenuFinanzas()"
-                   class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 font-medium transition-colors">
+                   class="block px-4 py-2 text-sm text-habitalis-navy hover:bg-habitalis-cream hover:text-habitalis-olive font-medium transition-colors">
                   Nuevo Movimiento
                 </a>
               </div>
-
             </div>
           }
         </div>
 
         <a routerLink="/contratos"
-           routerLinkActive="bg-blue-800 text-blue-200"
-           class="px-3 py-2 rounded-md hover:text-blue-300 font-medium transition-all">Contratos</a>
+           routerLinkActive="bg-habitalis-navy/10 text-habitalis-navy font-semibold"
+           class="px-3 py-2 rounded-md hover:text-habitalis-olive font-medium transition-all">Contratos</a>
 
         <a routerLink="/perfil"
-           routerLinkActive="bg-blue-800 text-blue-200"
-           class="px-3 py-2 rounded-md hover:text-blue-300 font-medium transition-all">Mi Perfil</a>
+           routerLinkActive="bg-habitalis-navy/10 text-habitalis-navy font-semibold"
+           class="px-3 py-2 rounded-md hover:text-habitalis-olive font-medium transition-all">Mi Perfil</a>
 
-        <div class="h-6 w-px bg-blue-800 mx-2 hidden md:block"></div>
+        <div class="h-6 w-px bg-habitalis-navy/10 mx-2 hidden md:block"></div>
 
         <button (click)="logout()"
-                class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-bold transition-transform active:scale-95 text-sm">
+                class="bg-transparent border border-habitalis-navy text-habitalis-navy hover:bg-habitalis-navy/5 px-4 py-2 rounded-lg font-medium transition-transform active:scale-95 text-sm">
           Cerrar Sesión
         </button>
       </nav>
     } @else {
       <nav>
         <a routerLink="/login"
-           class="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg font-medium transition-all border border-white/20">
+           class="bg-habitalis-navy text-white hover:bg-habitalis-navy/90 px-4 py-2 rounded-lg font-medium transition-all">
           Iniciar Sesión
         </a>
       </nav>

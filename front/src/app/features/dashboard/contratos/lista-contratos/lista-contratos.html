@@ -1,25 +1,28 @@
-<div class="p-4 sm:p-8 max-w-7xl mx-auto">
+<div class="p-4 sm:p-8 max-w-7xl mx-auto font-sans bg-habitalis-cream min-h-screen">
 
   <div class="mb-8">
-    <h1 class="text-3xl font-extrabold text-gray-900">Mis Contratos</h1>
-    <p class="text-gray-500 mt-1">Gestiona los alquileres y vinculaciones de tus propiedades</p>
+    <h1 class="text-3xl font-serif font-bold text-habitalis-navy">Mis Contratos</h1>
+    <p class="text-habitalis-navy/60 mt-1">Gestiona los alquileres y vinculaciones de tus propiedades</p>
   </div>
 
-  <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col">
+  <div class="bg-white p-6 rounded-xl shadow-sm border border-habitalis-navy/10 flex flex-col">
 
-    <div class="flex flex-col md:flex-row gap-4 mb-6 bg-gray-50 p-4 rounded-xl border border-gray-100">
+    <div class="flex flex-col md:flex-row gap-4 mb-6 bg-habitalis-cream/50 p-4 rounded-lg border border-habitalis-navy/10">
 
-      <div class="flex-1 relative">
-        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">🔍</span>
+      <div class="flex-1 relative group">
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <img src="/iconos/lupa.png" alt="Buscar"
+               class="h-5 w-5 opacity-40 group-focus-within:opacity-100 transition-opacity duration-300">
+        </div>
         <input type="text"
                [(ngModel)]="terminoBusqueda"
                placeholder="Buscar por piso, inquilino o código..."
-               class="w-full pl-10 pr-4 py-2 bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 outline-none transition-all">
+               class="w-full pl-10 pr-4 py-2 bg-white border border-habitalis-navy/20 text-habitalis-navy text-sm rounded-lg focus:ring-1 focus:ring-habitalis-navy focus:border-habitalis-navy outline-none transition-all">
       </div>
 
       <div class="md:w-64">
         <select [(ngModel)]="filtroEstado"
-                class="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2 outline-none">
+                class="w-full bg-white border border-habitalis-navy/20 text-habitalis-navy text-sm rounded-lg focus:ring-1 focus:ring-habitalis-navy focus:border-habitalis-navy block p-2 outline-none">
           <option value="TODOS">Todos los estados</option>
           <option value="CONFIRMADA">Activos (Confirmada)</option>
           <option value="PENDIENTE">Pendientes de vincular</option>
@@ -32,7 +35,7 @@
     <div class="overflow-x-auto flex-1">
       <table class="w-full text-left border-collapse min-w-max">
         <thead>
-        <tr class="border-b border-gray-200 text-xs font-bold text-gray-500 uppercase tracking-wider">
+        <tr class="border-b border-habitalis-navy/10 text-xs font-bold text-habitalis-navy/50 uppercase tracking-wider">
           <th class="py-3 px-2">Código</th>
           <th class="py-3 px-2 w-full md:w-auto">Propiedad</th>
           <th class="py-3 px-2">Inquilino</th>
@@ -41,48 +44,48 @@
           <th class="py-3 px-2 text-center">Acciones</th>
         </tr>
         </thead>
-        <tbody class="divide-y divide-gray-100">
+        <tbody class="divide-y divide-habitalis-navy/5">
 
           @for (contrato of contratosFiltrados(); track contrato.id) {
-            <tr class="hover:bg-blue-50/50 transition-colors group">
+            <tr class="hover:bg-habitalis-cream/50 transition-colors group">
 
               <td class="py-3 px-2">
-                <span class="font-mono text-xs font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded border border-blue-100">
+                <span class="font-mono text-xs font-bold text-habitalis-navy bg-habitalis-navy/10 px-2 py-1 rounded">
                   {{ contrato.codigoVinculacion }}
                 </span>
               </td>
 
-              <td class="py-3 px-2 text-sm font-bold text-gray-900">
-                 {{ contrato.nombreApartamento }}
+              <td class="py-3 px-2 text-sm font-bold text-habitalis-navy">
+                {{ contrato.nombreApartamento }}
               </td>
 
-              <td class="py-3 px-2 text-sm text-gray-700">
+              <td class="py-3 px-2 text-sm text-habitalis-navy/80">
                 {{ contrato.nombreInquilino }}
               </td>
 
-              <td class="py-3 px-2 text-sm font-medium text-gray-600 hidden md:table-cell">
+              <td class="py-3 px-2 text-sm font-medium text-habitalis-navy/70 hidden md:table-cell">
                 {{ contrato.precioBaseAlquiler | currency:'EUR' }}/mes
               </td>
 
               <td class="py-3 px-2 text-center">
-                <span class="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full"
-                      [class.bg-green-100]="contrato.estado === 'CONFIRMADA'" [class.text-green-800]="contrato.estado === 'CONFIRMADA'"
-                      [class.bg-yellow-100]="contrato.estado === 'PENDIENTE'" [class.text-yellow-800]="contrato.estado === 'PENDIENTE'"
-                      [class.bg-gray-100]="contrato.estado === 'FINALIZADA'" [class.text-gray-800]="contrato.estado === 'FINALIZADA'">
-                  {{ contrato.estado }}
+                <span class="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full shadow-sm"
+                      [class.bg-habitalis-olive/20]="contrato.estado === 'CONFIRMADA'" [class.text-habitalis-olive]="contrato.estado === 'CONFIRMADA'"
+                [class.bg-habitalis-gold/20]="contrato.estado === 'PENDIENTE'" [class.text-habitalis-gold]="contrato.estado === 'PENDIENTE'"
+                [class.bg-habitalis-navy/10]="contrato.estado === 'FINALIZADA'" [class.text-habitalis-navy]="contrato.estado === 'FINALIZADA'">
+                {{ contrato.estado }}
                 </span>
               </td>
 
               <td class="py-3 px-2 text-center">
                 <a [routerLink]="['/contratos', contrato.id]"
-                   class="inline-block text-blue-600 hover:text-blue-800 hover:bg-blue-50 p-2 rounded-lg transition-colors font-bold text-sm cursor-pointer">
+                   class="inline-block text-habitalis-navy hover:text-habitalis-olive hover:bg-habitalis-olive/5 p-2 rounded-lg transition-colors font-bold text-sm cursor-pointer">
                   Ver detalle &rarr;
                 </a>
               </td>
             </tr>
           } @empty {
             <tr>
-              <td colspan="6" class="py-12 text-center text-gray-400 text-sm font-medium bg-gray-50/50 rounded-lg">
+              <td colspan="6" class="py-12 text-center text-habitalis-navy/40 text-sm font-medium bg-habitalis-cream/30 rounded-lg">
                 No se encontraron contratos con estos filtros.
               </td>
             </tr>

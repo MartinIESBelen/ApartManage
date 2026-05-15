@@ -1,56 +1,93 @@
-<div class="border-t border-gray-200 pt-6 mt-6">
-  <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-3">
-    <span class="bg-green-100 text-green-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">
+<div class="border-t border-habitalis-navy/10 pt-6 mt-6 font-sans">
+  <h3 class="text-xl font-serif font-bold text-habitalis-navy mb-4 flex items-center gap-3">
+    <span class="bg-habitalis-olive/20 text-habitalis-olive text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">
       Mi Alquiler
     </span>
     Panel de Inquilino
   </h3>
 
-  <!-- ZONA DE FINANZAS (Contrato y Recibo lado a lado en pantallas grandes) -->
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
 
-    <!-- Mi Contrato -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
-      <h4 class="font-bold text-gray-800 mb-3 flex items-center gap-2"> Mi Contrato</h4>
-      <p class="text-sm text-gray-600">Precio Base: <span class="font-bold text-blue-600 text-lg">1.200,00 € <span class="text-xs font-normal">/mes</span></span></p>
-      <p class="text-xs text-gray-500 mt-2">Válido hasta: 01/05/2027</p>
+    <div class="bg-white rounded-xl shadow-sm border border-habitalis-navy/10 p-5">
+      <h4 class="font-serif font-bold text-habitalis-navy mb-3 flex items-center gap-2"> Mi Contrato</h4>
+      <p class="text-sm text-habitalis-navy/70">Precio Base: <span class="font-bold text-habitalis-navy text-lg">1.200,00 € <span class="text-xs font-normal">/mes</span></span></p>
+      <p class="text-xs text-habitalis-navy/50 mt-2">Válido hasta: 01/05/2027</p>
     </div>
 
-    <!-- Recibo Actual -->
-    <div class="bg-white rounded-xl shadow-sm border border-red-200 p-5 relative overflow-hidden">
-      <div class="absolute top-0 right-0 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-bl-lg">PENDIENTE</div>
-      <h4 class="font-bold text-gray-800 mb-3 flex items-center gap-2"> Recibo Actual</h4>
-      <div class="flex justify-between items-center mb-4">
-        <div>
-          <p class="text-xs text-gray-500">Marzo 2026 (Incl. suministros)</p>
-          <span class="font-bold text-gray-900 text-2xl">1.265,50 €</span>
+    @if (recibosPendientes().length > 0) {
+      <div class="bg-white rounded-xl shadow-sm border border-habitalis-gold/30 p-5 relative overflow-hidden">
+        <div class="absolute top-0 right-0 bg-habitalis-gold/10 text-habitalis-gold text-xs font-bold px-3 py-1 rounded-bl-lg border-b border-l border-habitalis-gold/30">
+          PENDIENTE
+        </div>
+
+        <h4 class="font-serif font-bold text-habitalis-navy mb-3 flex items-center gap-2"> Recibos Actuales</h4>
+
+        <div class="mb-4">
+          <ul class="text-xs text-habitalis-navy/70 mb-3 space-y-1">
+            @for (recibo of recibosPendientes(); track recibo.id) {
+              <li class="flex justify-between border-b border-habitalis-navy/5 pb-1">
+                <span>{{ recibo.concepto }}</span>
+                <span class="font-bold">{{ recibo.importe }} €</span>
+              </li>
+            }
+          </ul>
+
+          <p class="text-xs font-bold text-habitalis-navy/60 uppercase tracking-wider">Total a Pagar</p>
+          <span class="font-bold text-habitalis-navy text-2xl">{{ totalPendiente() }} €</span>
+        </div>
+
+        <div class="bg-habitalis-cream p-3 rounded-lg border border-habitalis-navy/10">
+          <p class="text-xs text-habitalis-navy/70 flex items-start gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-habitalis-navy/40 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Recuerda abonar este importe mediante transferencia bancaria o el método acordado con tu propietario.
+          </p>
         </div>
       </div>
-      <button (click)="pagarRecibo()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded-lg transition-colors shadow-sm">
-        Pagar Ahora
-      </button>
-    </div>
+
+    } @else {
+      <div class="bg-white rounded-xl shadow-sm border border-habitalis-olive/30 p-5 relative overflow-hidden">
+        <div class="absolute top-0 right-0 bg-habitalis-olive/10 text-habitalis-olive text-xs font-bold px-3 py-1 rounded-bl-lg border-b border-l border-habitalis-olive/30">
+          AL DÍA
+        </div>
+
+        <h4 class="font-serif font-bold text-habitalis-navy mb-3 flex items-center gap-2"> Estado de Pagos</h4>
+        <div class="mb-2">
+          <p class="text-sm text-habitalis-navy/70">No tienes ningún recibo pendiente de pago.</p>
+          <span class="font-bold text-habitalis-olive text-2xl mt-2 block">0,00 €</span>
+        </div>
+      </div>
+    }
 
   </div>
 
-  <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+  <div class="bg-white rounded-xl shadow-sm border border-habitalis-navy/10 p-5">
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
-      <h4 class="font-bold text-gray-800 flex items-center gap-2"> Averías y Desperfectos</h4>
+      <h4 class="font-serif font-bold text-habitalis-navy flex items-center gap-2"> Averías y Desperfectos</h4>
 
-      <a [routerLink]="['/apartamento', apartamento().id, 'inventario']"
-         class="text-sm bg-gray-900 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded-lg shadow-sm transition flex items-center gap-2">
-        <span>Ir al Inventario a Reportar</span> &rarr;
-      </a>
+      <div class="flex flex-wrap items-center gap-3">
+        @if (tieneAlertaInventario()){
+          <span class="text-sm font-bold text-habitalis-gold flex items-center gap-1.5 bg-habitalis-gold/10 px-3 py-1.5 rounded-lg border border-habitalis-gold/30">
+            <img src="/iconos/exclamacion.png" alt="Alerta" class="h-4 w-4 opacity-80">
+            Revisa el inventario
+          </span>
+        }
+
+        <a [routerLink]="['/apartamento', apartamento().id, 'inventario']"
+           class="text-sm bg-habitalis-navy hover:bg-habitalis-navy/90 text-white font-semibold py-2 px-4 rounded-lg shadow-sm transition-colors flex items-center gap-2 active:scale-95">
+          <span>Ir al Inventario a Reportar</span> &rarr;
+        </a>
+      </div>
     </div>
 
-    <!-- Lista Mockeada -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-      <div class="p-3 border border-yellow-200 bg-yellow-50 rounded-lg">
+      <div class="p-3 border border-habitalis-gold/30 bg-habitalis-gold/5 rounded-lg">
         <div class="flex justify-between items-start">
-          <p class="font-semibold text-gray-800 text-sm">Lavadora no centrifuga</p>
-          <span class="text-[10px] font-bold bg-yellow-200 text-yellow-800 px-2 py-0.5 rounded uppercase">En Proceso</span>
+          <p class="font-semibold text-habitalis-navy text-sm">Lavadora no centrifuga</p>
+          <span class="text-[10px] font-bold bg-habitalis-gold/20 text-habitalis-gold px-2 py-0.5 rounded uppercase">En Proceso</span>
         </div>
-        <p class="text-xs text-gray-500 mt-1">Reportado el 25/04/2026</p>
+        <p class="text-xs text-habitalis-navy/50 mt-1">Reportado el 25/04/2026</p>
       </div>
     </div>
   </div>

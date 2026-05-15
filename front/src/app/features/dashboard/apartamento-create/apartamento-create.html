@@ -1,43 +1,46 @@
-<div class="min-h-screen bg-gray-50 p-8">
+<div class="min-h-screen bg-habitalis-cream p-4 md:p-8 font-sans">
   <div class="max-w-3xl mx-auto">
 
     <div class="mb-8">
-      <h1 class="text-3xl font-bold text-gray-900">Añadir Nueva Vivienda</h1>
-      <p class="text-gray-600 mt-2">Registra un nuevo apartamento en tu catálogo.</p>
+      <h1 class="text-3xl font-serif font-bold text-habitalis-navy">Añadir Nueva Vivienda</h1>
+      <p class="text-habitalis-navy/70 mt-2">Registra un nuevo apartamento en tu catálogo.</p>
     </div>
 
     @if (mensajeError) {
-      <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6"> {{ mensajeError }}</div>
+      <div class="bg-habitalis-gold/10 border border-habitalis-gold text-habitalis-gold px-4 py-3 rounded-lg mb-6 shadow-sm">
+        {{ mensajeError }}
+      </div>
     }
 
-    <div class="bg-white rounded-lg shadow-md p-8">
+    <div class="bg-white rounded-xl shadow-sm border border-habitalis-navy/10 p-6 md:p-8">
       <form [formGroup]="formApartamento" (ngSubmit)="onSubmit()">
 
         <div class="mb-6">
-          <label class="block text-sm font-bold text-gray-700 mb-2">Nombre Interno <span class="text-red-500">*</span></label>
-          <input type="text" formControlName="nombre" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-3 border" placeholder="Ej. Loft Centro">
+          <label class="block text-sm font-bold text-habitalis-navy mb-2">Nombre Interno <span class="text-habitalis-gold">*</span></label>
+          <input type="text" formControlName="nombre" class="w-full border-habitalis-navy/20 rounded-lg shadow-sm focus:ring-habitalis-navy focus:border-habitalis-navy p-3 border transition-colors outline-none text-habitalis-navy" placeholder="Ej. Loft Centro">
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           <div>
-            <label class="block text-sm font-bold text-gray-700 mb-2">Dirección <span class="text-red-500">*</span></label>
-            <input type="text" formControlName="direccion" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-3 border" placeholder="Ej. Gran Vía, 5">
+            <label class="block text-sm font-bold text-habitalis-navy mb-2">Dirección <span class="text-habitalis-gold">*</span></label>
+            <input type="text" formControlName="direccion" class="w-full border-habitalis-navy/20 rounded-lg shadow-sm focus:ring-habitalis-navy focus:border-habitalis-navy p-3 border transition-colors outline-none text-habitalis-navy" placeholder="Ej. Gran Vía, 5">
           </div>
           <div>
-            <label class="block text-sm font-bold text-gray-700 mb-2">Ciudad <span class="text-red-500">*</span></label>
-            <input type="text" formControlName="ciudad" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-3 border" placeholder="Ej. Madrid">
+            <label class="block text-sm font-bold text-habitalis-navy mb-2">Ciudad <span class="text-habitalis-gold">*</span></label>
+            <input type="text" formControlName="ciudad" class="w-full border-habitalis-navy/20 rounded-lg shadow-sm focus:ring-habitalis-navy focus:border-habitalis-navy p-3 border transition-colors outline-none text-habitalis-navy" placeholder="Ej. Madrid">
           </div>
         </div>
+
         <div class="mb-6">
-          <label class="block text-sm font-bold text-gray-700 mb-2">Foto Principal</label>
+          <label class="block text-sm font-bold text-habitalis-navy mb-2">Foto Principal</label>
           <div class="flex items-center justify-center w-full">
-            <label class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors">
+            <label class="flex flex-col items-center justify-center w-full h-32 border-2 border-habitalis-navy/20 border-dashed rounded-lg cursor-pointer bg-habitalis-cream hover:bg-habitalis-navy/5 transition-colors">
               <div class="flex flex-col items-center justify-center pt-5 pb-6">
-                <svg class="w-8 h-8 mb-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+                <svg class="w-8 h-8 mb-4 text-habitalis-navy/50" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
                   <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
                 </svg>
-                <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">Haz clic para subir foto</span></p>
-                <p class="text-xs text-gray-500">PNG, JPG o WEBP</p>
+                <p class="mb-2 text-sm text-habitalis-navy/70"><span class="font-semibold">Haz clic para subir foto</span></p>
+                <p class="text-xs text-habitalis-navy/50">PNG, JPG o WEBP</p>
               </div>
               <input type="file" class="hidden" accept="image/*" (change)="onFileSelected($event)" />
             </label>
@@ -45,19 +48,26 @@
 
           @if (imagenPreview) {
             <div class="mt-4 flex justify-center">
-              <img [src]="imagenPreview" class="h-40 object-cover rounded-md shadow-md border border-gray-200" alt="Vista previa">
+              <img [src]="imagenPreview" class="h-40 object-cover rounded-lg shadow-sm border border-habitalis-navy/10" alt="Vista previa">
             </div>
           }
         </div>
+
         <div class="mb-8">
-          <label class="block text-sm font-bold text-gray-700 mb-2">Descripción</label>
-          <textarea formControlName="descripcion" rows="5" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-3 border" placeholder="Características..."></textarea>
+          <label class="block text-sm font-bold text-habitalis-navy mb-2">Descripción</label>
+          <textarea formControlName="descripcion" rows="5" class="w-full border-habitalis-navy/20 rounded-lg shadow-sm focus:ring-habitalis-navy focus:border-habitalis-navy p-3 border transition-colors outline-none text-habitalis-navy" placeholder="Características..."></textarea>
         </div>
 
-        <div class="flex items-center justify-end gap-4 border-t border-gray-200 pt-6">
-          <a routerLink="/home" class="text-gray-600 hover:text-gray-900 font-medium py-2 px-4 cursor-pointer">Cancelar</a>
-          <button type="submit" [disabled]="formApartamento.invalid || guardando" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded shadow transition-colors disabled:opacity-50 flex items-center gap-2">
-            @if (guardando) { Guardando... } @else {  Crear Vivienda }
+        <div class="flex flex-col-reverse sm:flex-row items-center justify-end gap-3 sm:gap-4 border-t border-habitalis-navy/10 pt-6">
+          <a routerLink="/home" class="w-full sm:w-auto text-center bg-transparent border border-habitalis-navy text-habitalis-navy hover:bg-habitalis-navy/5 font-semibold py-2 px-4 rounded-lg cursor-pointer transition-colors text-sm">
+            Cancelar
+          </a>
+          <button type="submit" [disabled]="formApartamento.invalid || guardando" class="w-full sm:w-auto justify-center bg-habitalis-olive hover:bg-habitalis-olive/90 text-white font-semibold py-2 px-6 rounded-lg shadow-sm transition-all disabled:opacity-50 flex items-center gap-2 text-sm active:scale-95">
+            @if (guardando) {
+              <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div> Guardando...
+            } @else {
+              Crear Vivienda
+            }
           </button>
         </div>
       </form>

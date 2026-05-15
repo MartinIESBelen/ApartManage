@@ -7,7 +7,7 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "front": {
+    "habitalis": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -57,10 +57,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "front:build:production"
+              "buildTarget": "habitalis:build:production"
             },
             "development": {
-              "buildTarget": "front:build:development"
+              "buildTarget": "habitalis:build:development"
             }
           },
           "defaultConfiguration": "development"

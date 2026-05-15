@@ -1,40 +1,44 @@
-<div class="min-h-screen bg-gray-50 p-4 sm:p-8">
+<div class="min-h-screen bg-habitalis-cream p-4 sm:p-8 font-sans">
   <div class="max-w-4xl mx-auto">
 
     @if (!apartamentoSeleccionado()) {
       <div class="mb-8">
-        <h1 class="text-3xl font-extrabold text-gray-900">Nuevo Movimiento</h1>
-        <p class="text-gray-500 mt-1">Selecciona la propiedad a la que pertenece la transacción</p>
+        <h1 class="text-3xl font-serif font-bold text-habitalis-navy">Nuevo Movimiento</h1>
+        <p class="text-habitalis-navy/60 mt-1">Selecciona la propiedad a la que pertenece la transacción</p>
       </div>
 
-      <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-        <div class="mb-6 relative">
-          <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">🔍</span>
+      <div class="bg-white p-6 rounded-xl shadow-sm border border-habitalis-navy/10">
+
+        <div class="mb-6 relative group">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <img src="/iconos/lupa.png" alt="Buscar" class="h-5 w-5 opacity-40 group-focus-within:opacity-100 transition-opacity duration-300">
+          </div>
           <input type="text"
                  [(ngModel)]="terminoBusqueda"
                  placeholder="Buscar por nombre o ciudad..."
-                 class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none">
+                 class="w-full pl-10 pr-4 py-3 bg-habitalis-cream/30 border border-habitalis-navy/10 rounded-lg focus:ring-1 focus:ring-habitalis-navy focus:border-habitalis-navy transition-all outline-none text-habitalis-navy">
         </div>
 
         <div class="space-y-3">
           @for (apto of apartamentosFiltrados(); track apto.id) {
             <div (click)="seleccionarApartamento(apto)"
-                 class="group flex items-center justify-between p-4 rounded-xl border border-gray-100 hover:border-blue-300 hover:bg-blue-50 cursor-pointer transition-all">
+                 class="group flex items-center justify-between p-4 rounded-xl border border-habitalis-navy/10 hover:border-habitalis-olive hover:bg-habitalis-olive/5 cursor-pointer transition-all">
+
               <div class="flex items-center gap-4">
-                <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center text-xl shadow-sm group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                  🏢
+                <div class="w-10 h-10 bg-habitalis-navy/5 rounded-lg flex items-center justify-center shadow-sm group-hover:bg-habitalis-navy transition-colors duration-300 shrink-0">
+                  <img src="/iconos/gestion-del-hogar.png" alt="gestion" class="w-6 h-6 transition-all duration-300 group-hover:brightness-0 group-hover:invert">
                 </div>
                 <div>
-                  <h3 class="font-bold text-gray-900">{{ apto.nombreInterno }}</h3>
-                  <p class="text-sm text-gray-500">{{ apto.ciudad }}</p>
+                  <h3 class="font-serif font-bold text-habitalis-navy text-lg leading-tight">{{ apto.nombreInterno }}</h3>
+                  <p class="text-sm text-habitalis-navy/50">{{ apto.ciudad }}</p>
                 </div>
               </div>
-              <div class="text-gray-400 group-hover:text-blue-600 font-bold">
+              <div class="text-habitalis-navy/30 group-hover:text-habitalis-olive font-bold text-sm transition-colors uppercase tracking-wider">
                 Seleccionar &rarr;
               </div>
             </div>
           } @empty {
-            <div class="text-center py-10 text-gray-500">
+            <div class="text-center py-12 text-habitalis-navy/40 italic">
               No se encontraron propiedades con ese nombre.
             </div>
           }
@@ -42,12 +46,10 @@
       </div>
     }
     @else {
-
       <app-formulario-transaccion
         [apartamento]="apartamentoSeleccionado()"
         (volver)="volverALista()"
         (guardadoExitoso)="irABalance()" />
-
     }
   </div>
 </div>

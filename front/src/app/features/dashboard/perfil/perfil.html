@@ -1,100 +1,117 @@
-<div class="min-h-screen bg-gray-50 p-4 sm:p-8">
+<div class="min-h-screen bg-habitalis-cream p-4 sm:p-8 font-sans">
   <div class="max-w-4xl mx-auto">
 
     <div class="flex justify-between items-center mb-8">
-      <h1 class="text-3xl font-bold text-gray-900">Mi Cuenta</h1>
-      <a routerLink="/editar-cuenta" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 sm:px-6 rounded-md shadow transition-colors flex items-center gap-2">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-          <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-        </svg>
+      <h1 class="text-3xl font-serif font-bold text-habitalis-navy">Mi Perfil</h1>
+      <a routerLink="/editar-cuenta"
+         class="bg-habitalis-olive hover:bg-habitalis-olive/90 text-white font-bold py-2 px-5 rounded-lg shadow-sm transition-all flex items-center gap-2 text-sm active:scale-95">
+        <img src="/iconos/pluma-pluma.png" alt="Editar Perfil" class="h-4 w-4 brightness-0 invert">
         <span class="hidden sm:inline">Editar Perfil</span>
       </a>
     </div>
-    @if (cargando) {
+
+    @if (cargando()) {
       <div class="flex justify-center items-center py-20">
-        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-habitalis-navy"></div>
       </div>
-    }
-    @else if (error) {
-      <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6 shadow-sm">
-        {{ error }}
+    } @else if (error()) {
+      <div class="bg-habitalis-gold/10 border border-habitalis-gold/30 text-habitalis-gold px-4 py-3 rounded-lg font-bold">
+        {{ error() }}
       </div>
-    }
-    @else if (usuario) {
-      <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-        <div class="bg-gradient-to-r from-blue-500 to-indigo-600 h-32"></div>
-        <div class="px-8 pb-8 relative">
+    } @else if (usuario()) {
 
-          <div class="flex justify-center -mt-16 mb-4">
-            <label class="relative h-32 w-32 rounded-full border-4 border-white overflow-hidden bg-white shadow-lg flex items-center justify-center cursor-pointer group">
+      <div class="bg-white rounded-xl shadow-sm border border-habitalis-navy/10 overflow-hidden">
 
-              <input type="file" class="hidden" accept="image/*" (change)="subirFoto($event)">
+        <div class="bg-habitalis-navy h-28"></div>
+        <div class="px-6 sm:px-8 pb-8 relative">
 
-              @if (subiendoFoto) {
-                <div class="absolute inset-0 bg-black/60 z-20 flex items-center justify-center">
-                  <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+          <div class="flex justify-center -mt-20 mb-4">
+
+            <div class="relative w-40 h-40 flex items-center justify-center">
+
+              <img
+                src="/iconos/corona-de-laurel.png"
+                alt=""
+                aria-hidden="true"
+                class="absolute inset-0 w-full h-full object-contain pointer-events-none"
+              >
+
+              <label
+                class="relative h-28 w-28 rounded-full border-4 border-white overflow-hidden bg-habitalis-cream shadow-lg flex items-center justify-center cursor-pointer group z-10"
+                [class.pointer-events-none]="subiendoFoto()"
+              >
+
+                <input type="file" class="hidden" accept="image/*" (change)="subirFoto($event)" [disabled]="subiendoFoto()">
+
+                @if (subiendoFoto()) {
+                  <div class="absolute inset-0 bg-black/60 z-20 flex items-center justify-center">
+                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+                  </div>
+                }
+
+                @if (imagenSaneada()) {
+                  <img [src]="imagenSaneada()" alt="Foto de perfil" class="h-full w-full object-cover z-0">
+                } @else {
+                  <div class="h-full w-full bg-habitalis-navy text-white flex items-center justify-center text-4xl font-serif font-bold z-0">
+                    {{ usuario()!.nombre.charAt(0).toUpperCase() }}{{ usuario()!.apellidos.charAt(0).toUpperCase() }}
+                  </div>
+                }
+
+                <div class="absolute inset-0 bg-black/50 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-white text-xs font-bold z-10">
+                  <img src="/iconos/camara.png" alt="Cambiar foto" class="w-6 h-6 mb-1 brightness-0 invert">
+                  CAMBIAR
                 </div>
-              }
 
-              @if (imagenSegura) {
-                <img [src]="imagenSegura" alt="Foto de perfil" class="h-full w-full object-cover">
-              }
-              @else {
-                <div class="h-full w-full bg-blue-600 text-white flex items-center justify-center text-4xl font-bold tracking-wider">
-                  {{ usuario.nombre.charAt(0) | uppercase }}{{ usuario.apellidos.charAt(0) | uppercase }}
-                </div>
-              }
-
-              <div class="absolute inset-0 bg-black/50 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-white text-xs font-bold z-10">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8 mb-1">
-                </svg>
-                CAMBIAR
-              </div>
-
-            </label>
+              </label>
+            </div>
           </div>
 
           <div class="text-center mb-8">
-            <h2 class="text-2xl font-bold text-gray-900">{{ usuario.nombre }} {{ usuario.apellidos }}</h2>
-            <span class="inline-flex mt-2 items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-              {{ usuario.rol }}
-            </span>
+            <h2 class="text-2xl font-serif font-bold text-habitalis-navy">
+              {{ usuario()!.nombre }} {{ usuario()!.apellidos }}
+            </h2>
+            <!--<span class="inline-block mt-2 px-3 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full bg-habitalis-olive/10 text-habitalis-olive border border-habitalis-olive/20">
+              {{ usuario()!.rol }}
+            </span>-->
           </div>
 
-          <hr class="mb-8 border-gray-100">
+          <hr class="mb-8 border-habitalis-navy/10">
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
             <div>
-              <h3 class="text-lg font-semibold text-gray-900 mb-4 border-b pb-2">Información de Contacto</h3>
+              <h3 class="text-xs font-bold uppercase tracking-widest text-habitalis-navy/40 mb-4 pb-2 border-b border-habitalis-navy/10">
+                Información de Contacto
+              </h3>
               <div class="space-y-4">
                 <div>
-                  <p class="text-sm text-gray-500">Correo Electrónico</p>
-                  <p class="font-medium text-gray-900">{{ usuario.email }}</p>
+                  <p class="text-[10px] font-bold uppercase tracking-widest text-habitalis-navy/40 mb-1">Correo Electrónico</p>
+                  <p class="font-medium text-habitalis-navy">{{ usuario()!.email }}</p>
                 </div>
                 <div>
-                  <p class="text-sm text-gray-500">Teléfono</p>
-                  <p class="font-medium text-gray-900">{{ usuario.telefono || 'No especificado' }}</p>
+                  <p class="text-[10px] font-bold uppercase tracking-widest text-habitalis-navy/40 mb-1">Teléfono</p>
+                  <p class="font-medium text-habitalis-navy">{{ usuario()!.telefono || '—' }}</p>
                 </div>
               </div>
             </div>
 
             <div>
-              <h3 class="text-lg font-semibold text-gray-900 mb-4 border-b pb-2">Información Personal</h3>
+              <h3 class="text-xs font-bold uppercase tracking-widest text-habitalis-navy/40 mb-4 pb-2 border-b border-habitalis-navy/10">
+                Información Personal
+              </h3>
               <div class="space-y-4">
                 <div>
-                  <p class="text-sm text-gray-500">DNI / Pasaporte</p>
-                  <p class="font-medium text-gray-900">{{ usuario.dniPasaporte || 'No especificado' }}</p>
+                  <p class="text-[10px] font-bold uppercase tracking-widest text-habitalis-navy/40 mb-1">DNI / Pasaporte</p>
+                  <p class="font-medium text-habitalis-navy">{{ usuario()!.dniPasaporte || '—' }}</p>
                 </div>
                 <div>
-                  <p class="text-sm text-gray-500">Fecha de Nacimiento</p>
-                  <p class="font-medium text-gray-900">
-                    {{ usuario.fechaNacimiento ? (usuario.fechaNacimiento | date:'dd/MM/yyyy') : 'No especificada' }}
-                  </p>
+                  <p class="text-[10px] font-bold uppercase tracking-widest text-habitalis-navy/40 mb-1">Fecha de Nacimiento</p>
+                  <p class="font-medium text-habitalis-navy">{{ usuario()!.fechaNacimiento || '—' }}</p>
                 </div>
               </div>
             </div>
+
           </div>
-
         </div>
       </div>
     }

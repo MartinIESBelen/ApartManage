@@ -1,3 +1,5 @@
+export type TipoAlerta = 'INVENTARIO_ROTO' | 'NUEVA_INCIDENCIA';
+
 export interface ApartamentoModel {
   id: number;
   nombreInterno: string;
@@ -5,7 +7,7 @@ export interface ApartamentoModel {
   ciudad: string;
   descripcion: string;
   estado: string;
-  alertas?: string[];
+  alertas?: TipoAlerta[];
   relacion: 'PROPIETARIO' | 'INQUILINO';
   inquilinoActual?: string;
   reservaActivaId?: number;

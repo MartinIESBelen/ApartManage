@@ -1,85 +1,86 @@
-<div class="p-4 sm:p-8 max-w-5xl mx-auto">
+<div class="p-4 sm:p-8 max-w-5xl mx-auto font-sans">
 
   <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
     <div>
-      <a [routerLink]="['/apartamento', apartamentoId]" class="text-blue-600 hover:text-blue-800 text-sm font-medium mb-2 inline-block">
+      <a [routerLink]="['/apartamento', apartamentoId]"
+         class="text-habitalis-navy/70 hover:text-habitalis-olive text-sm font-medium mb-2 inline-block transition-colors">
         &larr; Volver al Apartamento
       </a>
-      <h1 class="text-3xl font-extrabold text-gray-900">Inventario</h1>
-      <p class="text-gray-500 mt-1">Controla los muebles y electrodomésticos de la propiedad</p>
+      <h1 class="text-3xl font-serif font-bold text-habitalis-navy">Inventario</h1>
+      <p class="text-habitalis-navy/60 mt-1">Controla los muebles y electrodomésticos de la propiedad</p>
     </div>
+
     @if (esPropietario()) {
-    <a [routerLink]="['/apartamento', apartamentoId, 'inventario', 'nuevo']"
-       class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-bold shadow-sm transition-colors flex items-center gap-2">
-      <span>+</span> Añadir Elemento
-    </a>
+      <a [routerLink]="['/apartamento', apartamentoId, 'inventario', 'nuevo']"
+         class="bg-habitalis-olive hover:bg-habitalis-olive/90 text-white px-5 py-2.5 rounded-lg font-bold shadow-sm transition-all flex items-center gap-2 active:scale-95 text-sm">
+        <span>+</span> Añadir Elemento
+      </a>
     }
   </div>
 
   @if (cargando()) {
     <div class="flex justify-center py-20">
-      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-habitalis-navy"></div>
     </div>
   } @else {
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+    <div class="bg-white rounded-xl shadow-sm border border-habitalis-navy/10 overflow-hidden">
       <table class="w-full text-left border-collapse">
         <thead>
-        <tr class="bg-gray-50 border-b border-gray-100 text-xs font-bold text-gray-500 uppercase tracking-wider">
+        <tr class="bg-habitalis-cream/50 border-b border-habitalis-navy/10 text-xs font-bold text-habitalis-navy/50 uppercase tracking-widest">
           <th class="py-4 px-6">Elemento</th>
           <th class="py-4 px-6">Categoría</th>
           <th class="py-4 px-6">Estado</th>
           <th class="py-4 px-6 text-right">Acción</th>
         </tr>
         </thead>
-        <tbody class="divide-y divide-gray-100">
+        <tbody class="divide-y divide-habitalis-navy/5">
 
           @for (item of inventario(); track item.id) {
             <tr [routerLink]="['/apartamento', apartamentoId, 'inventario', item.id]"
-                class="hover:bg-blue-50/50 transition-colors cursor-pointer group">
+                class="transition-colors cursor-pointer group"
+                [class]="filaClases(item)">
 
-              <td class="py-4 px-6 font-bold text-gray-900">
-                {{ item.nombre }}
+              <td class="py-4 px-6 font-bold" [class]="nombreClases(item)">
+                <div class="flex items-center gap-2">
+                  @if (estaRoto(item)) {
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-habitalis-gold animate-pulse" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                    </svg>
+                  }
+                  {{ item.nombre }}
+                </div>
               </td>
 
-              <td class="py-4 px-6 text-sm text-gray-600">
-                <span class="bg-gray-100 text-gray-700 px-2.5 py-1 rounded-md text-xs font-medium border border-gray-200">
+              <td class="py-4 px-6 text-sm text-habitalis-navy/70">
+                <span class="px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider border"
+                      [class]="categoriaClases(item)">
                   {{ item.categoria }}
                 </span>
               </td>
 
               <td class="py-4 px-6">
-                <span class="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full flex w-max items-center gap-1"
-                      [class.bg-green-100]="item.estado === 'NUEVO' || item.estado === 'BUENO'"
-                      [class.text-green-800]="item.estado === 'NUEVO' || item.estado === 'BUENO'"
-                      [class.bg-yellow-100]="item.estado === 'DESGASTADO'"
-                      [class.text-yellow-800]="item.estado === 'DESGASTADO'"
-                      [class.bg-orange-100]="item.estado === 'AVERIADO'"
-                      [class.text-orange-800]="item.estado === 'AVERIADO'"
-                      [class.bg-red-100]="item.estado === 'ROTO'"
-                      [class.text-red-800]="item.estado === 'ROTO'">
-                  <span class="w-1.5 h-1.5 rounded-full block"
-                        [class.bg-green-600]="item.estado === 'NUEVO' || item.estado === 'BUENO'"
-                        [class.bg-yellow-500]="item.estado === 'DESGASTADO'"
-                        [class.bg-orange-500]="item.estado === 'AVERIADO'"
-                        [class.bg-red-600]="item.estado === 'ROTO'"></span>
+                <span class="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full flex w-max items-center gap-1 shadow-sm border"
+                      [class]="estadoBadgeClases(item)">
+                  <span class="w-1.5 h-1.5 rounded-full block" [class]="estadoPuntoClases(item)"></span>
                   {{ item.estado }}
                 </span>
               </td>
 
-              <td class="py-4 px-6 text-right text-gray-400 group-hover:text-blue-600 transition-colors">
+              <td class="py-4 px-6 text-right transition-colors" [class]="accionClases(item)">
                 <span class="text-xl">&rsaquo;</span>
               </td>
 
             </tr>
           } @empty {
             <tr>
-              <td colspan="4" class="py-16 text-center text-gray-400 bg-gray-50/30">
-                <p class="text-4xl mb-2">📦</p>
-                <p class="font-medium text-gray-600">El inventario está vacío</p>
+              <td colspan="4" class="py-16 text-center bg-habitalis-cream/20">
+                <p class="text-4xl mb-3 opacity-30">📦</p>
+                <p class="font-serif font-bold text-habitalis-navy/60 text-lg">El inventario está vacío</p>
                 <p class="text-sm">Añade tu primer elemento para empezar a gestionarlo.</p>
               </td>
             </tr>
           }
+
         </tbody>
       </table>
     </div>

@@ -1,34 +1,38 @@
-<div class="mb-6 flex items-center justify-between">
+<div class="mb-6 flex items-center justify-between font-sans">
   <div>
-    <button (click)="cancelar()" class="text-sm font-semibold text-blue-600 hover:text-blue-800 flex items-center gap-1 mb-2 transition">
+    <button (click)="cancelar()" class="text-sm font-semibold text-habitalis-navy hover:text-habitalis-olive flex items-center gap-1 mb-2 transition-colors">
       &larr; Volver
     </button>
-    <h1 class="text-3xl font-extrabold text-gray-900">
+    <h1 class="text-3xl font-serif font-bold text-habitalis-navy">
       {{ transaccionAEditar() ? 'Editar Movimiento' : 'Nuevo Movimiento' }}
     </h1>
-    <p class="text-gray-500 mt-1">Vinculado a <span class="font-bold text-gray-700">{{ apartamento()?.nombreInterno }}</span></p>
+    <p class="text-habitalis-navy/60 mt-1">Vinculado a <span class="font-bold text-habitalis-navy">{{ apartamento()?.nombreInterno }}</span></p>
   </div>
 </div>
 
-<div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-100">
+<div class="bg-white p-6 md:p-8 rounded-xl shadow-sm border border-habitalis-navy/10">
 
   @if (mensajeError) {
-    <div class="mb-6 bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm font-medium">
+    <div class="mb-6 bg-habitalis-gold/10 border border-habitalis-gold/30 text-habitalis-gold px-4 py-3 rounded-lg text-sm font-bold">
       {{ mensajeError }}
     </div>
   }
 
-  <div class="flex p-1 bg-gray-100 rounded-xl mb-8">
+  <div class="flex p-1 bg-habitalis-cream rounded-xl mb-8 border border-habitalis-navy/10">
     <button (click)="cambiarTipo('INGRESO')" type="button"
             class="flex-1 py-2.5 text-sm font-bold rounded-lg transition-all"
-            [class.bg-white]="tipoActual === 'INGRESO'" [class.text-green-600]="tipoActual === 'INGRESO'" [class.shadow-sm]="tipoActual === 'INGRESO'"
-            [class.text-gray-500]="tipoActual !== 'INGRESO'">
+            [ngClass]="{
+              'bg-white text-habitalis-olive shadow-sm': tipoActual === 'INGRESO',
+              'text-habitalis-navy/40': tipoActual !== 'INGRESO'
+            }">
       ↓ Ingreso
     </button>
     <button (click)="cambiarTipo('GASTO')" type="button"
             class="flex-1 py-2.5 text-sm font-bold rounded-lg transition-all"
-            [class.bg-white]="tipoActual === 'GASTO'" [class.text-red-600]="tipoActual === 'GASTO'" [class.shadow-sm]="tipoActual === 'GASTO'"
-            [class.text-gray-500]="tipoActual !== 'GASTO'">
+            [ngClass]="{
+              'bg-white text-habitalis-gold shadow-sm': tipoActual === 'GASTO',
+              'text-habitalis-navy/40': tipoActual !== 'GASTO'
+            }">
       ↑ Gasto
     </button>
   </div>
@@ -37,34 +41,34 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
       <div class="md:col-span-2">
-        <label class="block text-sm font-bold text-gray-700 mb-1">Concepto <span class="text-red-500">*</span></label>
+        <label class="block text-sm font-bold text-habitalis-navy mb-1">Concepto <span class="text-habitalis-gold">*</span></label>
         <input type="text" formControlName="concepto" placeholder="Ej: Reparación de caldera..."
-               class="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
-               [class.border-red-500]="formTransaccion.get('concepto')?.invalid && formTransaccion.get('concepto')?.touched">
+               class="w-full bg-habitalis-cream/30 border border-habitalis-navy/20 text-habitalis-navy rounded-lg focus:ring-1 focus:ring-habitalis-navy focus:border-habitalis-navy block p-2.5 outline-none transition-all"
+               [class.border-habitalis-gold]="formTransaccion.get('concepto')?.invalid && formTransaccion.get('concepto')?.touched">
         @if (formTransaccion.get('concepto')?.invalid && formTransaccion.get('concepto')?.touched) {
-          <p class="text-red-500 text-xs mt-1">El concepto es obligatorio y debe tener al menos 3 letras.</p>
+          <p class="text-habitalis-gold text-xs mt-1 font-bold italic">El concepto es obligatorio y debe tener al menos 3 letras.</p>
         }
       </div>
 
       <div>
-        <label class="block text-sm font-bold text-gray-700 mb-1">Importe (€) <span class="text-red-500">*</span></label>
+        <label class="block text-sm font-bold text-habitalis-navy mb-1">Importe (€) <span class="text-habitalis-gold">*</span></label>
         <input type="number" step="0.01" formControlName="importe" placeholder="0.00"
-               class="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
-               [class.border-red-500]="formTransaccion.get('importe')?.invalid && formTransaccion.get('importe')?.touched">
+               class="w-full bg-habitalis-cream/30 border border-habitalis-navy/20 text-habitalis-navy rounded-lg focus:ring-1 focus:ring-habitalis-navy focus:border-habitalis-navy block p-2.5 outline-none transition-all"
+               [class.border-habitalis-gold]="formTransaccion.get('importe')?.invalid && formTransaccion.get('importe')?.touched">
         @if (formTransaccion.get('importe')?.invalid && formTransaccion.get('importe')?.touched) {
-          <p class="text-red-500 text-xs mt-1">Introduce un importe válido mayor a 0.</p>
+          <p class="text-habitalis-gold text-xs mt-1 font-bold italic">Introduce un importe válido mayor a 0.</p>
         }
       </div>
 
       <div>
-        <label class="block text-sm font-bold text-gray-700 mb-1">Fecha de Emisión <span class="text-red-500">*</span></label>
+        <label class="block text-sm font-bold text-habitalis-navy mb-1">Fecha de Emisión <span class="text-habitalis-gold">*</span></label>
         <input type="date" formControlName="fechaEmision"
-               class="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5">
+               class="w-full bg-habitalis-cream/30 border border-habitalis-navy/20 text-habitalis-navy rounded-lg focus:ring-1 focus:ring-habitalis-navy focus:border-habitalis-navy block p-2.5 outline-none transition-all">
       </div>
 
       <div>
-        <label class="block text-sm font-bold text-gray-700 mb-1">Categoría</label>
-        <select formControlName="categoria" class="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5">
+        <label class="block text-sm font-bold text-habitalis-navy mb-1">Categoría</label>
+        <select formControlName="categoria" class="w-full bg-habitalis-cream/30 border border-habitalis-navy/20 text-habitalis-navy rounded-lg focus:ring-1 focus:ring-habitalis-navy focus:border-habitalis-navy block p-2.5 outline-none transition-all">
           <option value="ALQUILER">Alquiler</option>
           <option value="SUMINISTROS">Suministros (Luz, Agua...)</option>
           <option value="MANTENIMIENTO_RUTINARIO">Mantenimiento</option>
@@ -75,8 +79,8 @@
       </div>
 
       <div>
-        <label class="block text-sm font-bold text-gray-700 mb-1">Estado de Pago</label>
-        <select formControlName="estado" class="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5">
+        <label class="block text-sm font-bold text-habitalis-navy mb-1">Estado de Pago</label>
+        <select formControlName="estado" class="w-full bg-habitalis-cream/30 border border-habitalis-navy/20 text-habitalis-navy rounded-lg focus:ring-1 focus:ring-habitalis-navy focus:border-habitalis-navy block p-2.5 outline-none transition-all">
           <option value="PAGADO">Pagado</option>
           <option value="PENDIENTE">Pendiente</option>
           <option value="VENCIDO">Vencido</option>
@@ -84,22 +88,34 @@
       </div>
     </div>
 
-    @if (tipoActual === 'GASTO' && !transaccionAEditar()) {
-      <div class="flex items-start mt-4 p-4 bg-blue-50 rounded-xl border border-blue-100">
-        <div class="flex items-center h-5">
-          <input id="dividir" type="checkbox" formControlName="dividirGasto" class="w-4 h-4 border border-gray-300 rounded focus:ring-blue-300">
-        </div>
-        <div class="ml-3 text-sm">
-          <label for="dividir" class="font-bold text-blue-900 cursor-pointer">Dividir este gasto entre los inquilinos activos</label>
-        </div>
-      </div>
-    }
+    <div class="mt-6 p-5 bg-habitalis-cream/50 rounded-xl border border-habitalis-navy/10">
+      <label class="block text-sm font-bold text-habitalis-navy mb-2">¿A quién corresponde este movimiento?</label>
+      <select formControlName="asignacion" class="w-full bg-white border border-habitalis-navy/20 text-habitalis-navy rounded-lg focus:ring-1 focus:ring-habitalis-navy focus:border-habitalis-navy block p-2.5 outline-none transition-all cursor-pointer">
 
-    <div class="pt-6 mt-6 border-t border-gray-100 flex justify-end gap-3">
-      <button type="button" (click)="cancelar()" class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+        <option value="GENERAL">General del piso (Solo contabilidad propia)</option>
+
+        @if (tipoActual === 'INGRESO' && contratosActivos().length > 1 && !transaccionAEditar()) {
+          <option value="TODOS">Dividir cobro entre todos los inquilinos activos</option>
+        }
+
+        @if (contratosActivos().length > 0) {
+          <optgroup label="Asignar a un inquilino">
+            @for (contrato of contratosActivos(); track contrato.id) {
+              <option [value]="contrato.id">{{ contrato.nombreInquilino }}</option>
+            }
+          </optgroup>
+        }
+      </select>
+      <p class="text-xs text-habitalis-navy/60 mt-2 leading-relaxed">
+        Selecciona <strong>"General"</strong> si es un gasto o ingreso tuyo. Selecciona <strong>un inquilino</strong> si es un recibo que te debe pagar.
+      </p>
+    </div>
+
+    <div class="pt-6 mt-6 border-t border-habitalis-navy/10 flex justify-end gap-3">
+      <button type="button" (click)="cancelar()" class="px-5 py-2.5 text-sm font-bold text-habitalis-navy bg-transparent border border-habitalis-navy rounded-lg hover:bg-habitalis-navy/5 transition-colors">
         Cancelar
       </button>
-      <button type="submit" [disabled]="formTransaccion.invalid || guardando" class="px-5 py-2.5 text-sm font-bold text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+      <button type="submit" [disabled]="formTransaccion.invalid || guardando" class="px-5 py-2.5 text-sm font-bold text-white bg-habitalis-olive rounded-lg hover:bg-habitalis-olive/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm">
         {{ guardando ? 'Guardando...' : 'Guardar Movimiento' }}
       </button>
     </div>

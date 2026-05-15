@@ -1,73 +1,74 @@
-<div class="min-h-screen bg-gray-50 p-8">
+<div class="min-h-screen bg-habitalis-cream p-4 md:p-8 font-sans">
   <div class="max-w-7xl mx-auto">
 
-    <div class="flex justify-between items-center mb-8">
-      <h1 class="text-3xl font-bold text-gray-900">Mis Espacios</h1>
-      <button routerLink="/apartamento/nuevo" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow transition-colors">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+      <h1 class="text-3xl md:text-4xl font-serif font-bold text-habitalis-navy">Viviendas</h1>
+      <button routerLink="/apartamento/nuevo" class="w-full sm:w-auto bg-habitalis-olive hover:bg-habitalis-olive/90 text-white font-semibold py-2.5 px-5 rounded-lg shadow-sm transition-all active:scale-95 text-sm md:text-base">
         + Añadir Vivienda
       </button>
     </div>
 
-    <div class="bg-white p-6 rounded-lg shadow-md mb-10 flex flex-col md:flex-row gap-4 items-end border-t-4 border-blue-600">
+    <div class="bg-white p-5 md:p-6 rounded-xl shadow-sm mb-10 flex flex-col md:flex-row gap-5 items-end border border-habitalis-navy/10">
       <div class="flex-1 w-full">
-        <label class="block text-sm font-medium text-gray-700 mb-1">Buscar por nombre</label>
+        <label class="block text-sm font-medium text-habitalis-navy/80 mb-1.5">Buscar por nombre</label>
         <input type="text" [(ngModel)]="filtroNombre" placeholder="Ej. Ático Sol..."
-               class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2 border">
+               class="w-full border-habitalis-navy/20 rounded-lg shadow-sm focus:ring-habitalis-navy focus:border-habitalis-navy p-2.5 border transition-colors outline-none text-habitalis-navy">
       </div>
       <div class="w-full md:w-48">
-        <label class="block text-sm font-medium text-gray-700 mb-1">Estado</label>
-        <select [(ngModel)]="filtroEstado" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2 border bg-white">
+        <label class="block text-sm font-medium text-habitalis-navy/80 mb-1.5">Estado</label>
+        <select [(ngModel)]="filtroEstado" class="w-full border-habitalis-navy/20 rounded-lg shadow-sm focus:ring-habitalis-navy focus:border-habitalis-navy p-2.5 border bg-white transition-colors outline-none text-habitalis-navy">
           <option value="">Todos</option>
           <option value="ACTIVO">Activos</option>
           <option value="INACTIVO">Inactivos</option>
         </select>
       </div>
-      <div class="flex items-center w-full md:w-auto pb-2">
+      <div class="flex items-center w-full md:w-auto py-2.5">
         <input type="checkbox" id="alertas" [(ngModel)]="filtroAlertas"
-               class="h-5 w-5 text-red-600 focus:ring-red-500 border-gray-300 rounded cursor-pointer">
-        <label for="alertas" class="ml-2 block text-sm font-bold text-red-600 cursor-pointer">
-           Mostrar solo con Alertas
+               class="h-5 w-5 text-habitalis-gold focus:ring-habitalis-gold border-habitalis-navy/30 rounded shadow-sm cursor-pointer transition-colors">
+        <label for="alertas" class="ml-2 flex items-center gap-1.5 text-sm font-semibold text-habitalis-gold cursor-pointer select-none">
+          <img src="/iconos/advertencia.png" alt="Alertas" class="h-4 w-4 opacity-90">
+          Mostrar solo con Alertas
         </label>
       </div>
-      <button (click)="buscar()" class="w-full md:w-auto bg-gray-800 hover:bg-black text-white font-bold py-2 px-6 rounded shadow transition-colors">
+      <button (click)="buscar()" class="w-full md:w-auto bg-habitalis-navy hover:bg-habitalis-navy/90 text-white font-semibold py-2.5 px-6 rounded-lg shadow-sm transition-all active:scale-95">
         Filtrar
       </button>
     </div>
 
     <section class="mb-12">
-      <h2 class="text-2xl font-bold text-gray-800 border-b-2 border-gray-200 pb-2 mb-6">
+      <h2 class="text-2xl font-serif font-bold text-habitalis-navy border-b border-habitalis-navy/10 pb-3 mb-6">
         Mis Propiedades
       </h2>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         @for (apto of misPropiedades; track apto.id) {
           <app-apartamento-card [apartamento]="apto"></app-apartamento-card>
         } @empty {
-          <div class="col-span-full text-center py-12 bg-white rounded-lg shadow-sm border border-dashed border-gray-300">
-            <p class="text-gray-500 text-lg mb-2">No se encontraron propiedades.</p>
-            <span class="text-sm text-gray-400">Si los filtros están activos, prueba a limpiarlos.</span>
+          <div class="col-span-full text-center py-16 bg-white rounded-xl shadow-sm border border-dashed border-habitalis-navy/20">
+            <p class="text-habitalis-navy font-medium text-lg mb-2">No se encontraron propiedades.</p>
+            <span class="text-sm text-habitalis-navy/60">Si los filtros están activos, prueba a limpiarlos.</span>
           </div>
         }
       </div>
     </section>
 
     <section class="mb-8">
-      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b-2 border-gray-200 pb-2 mb-6 gap-4">
-        <h2 class="text-2xl font-bold text-gray-800">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-habitalis-navy/10 pb-3 mb-6 gap-4">
+        <h2 class="text-2xl font-serif font-bold text-habitalis-navy">
           Mis Alquileres
         </h2>
-        <button routerLink="/vincular-vivienda" class="bg-green-600 hover:bg-green-700 text-white font-bold py-1.5 px-4 rounded text-sm shadow transition-colors">
+        <button routerLink="/vincular-vivienda" class="w-full sm:w-auto bg-habitalis-olive hover:bg-habitalis-olive/90 text-white font-semibold py-2 px-5 rounded-lg text-sm shadow-sm transition-all active:scale-95">
           + Vincular Código
         </button>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         @for (apto of misAlquileres; track apto.id) {
           <app-apartamento-card [apartamento]="apto"></app-apartamento-card>
         } @empty {
-          <div class="col-span-full text-center py-12 bg-white rounded-lg shadow-sm border border-dashed border-gray-300">
-            <p class="text-gray-500 text-lg mb-2">No estás vinculado a ningún alquiler.</p>
-            <span class="text-sm text-gray-400">Introduce un código proporcionado por tu casero.</span>
+          <div class="col-span-full text-center py-16 bg-white rounded-xl shadow-sm border border-dashed border-habitalis-navy/20">
+            <p class="text-habitalis-navy font-medium text-lg mb-2">No estás vinculado a ningún alquiler.</p>
+            <span class="text-sm text-habitalis-navy/60">Introduce un código proporcionado por tu casero.</span>
           </div>
         }
       </div>

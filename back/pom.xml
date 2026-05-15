@@ -6,13 +6,13 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>4.0.2</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <relativePath/>
     </parent>
-    <groupId>com.example</groupId>
-    <artifactId>apartmanageBackend</artifactId>
+    <groupId>com.habitalis</groupId>
+    <artifactId>habitalis</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>apartmanageBackend</name>
-    <description>apartmanageBackend</description>
+    <name>Habitalis</name>
+    <description>Habitalis - Plataforma de gestión de viviendas</description>
     <url/>
     <licenses>
         <license/>

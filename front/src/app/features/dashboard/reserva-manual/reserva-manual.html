@@ -1,131 +1,131 @@
-<div class="min-h-screen bg-gray-50 p-4 sm:p-8">
+<div class="min-h-screen bg-habitalis-cream p-4 sm:p-8 font-sans">
   <div class="max-w-3xl mx-auto">
-    <button [routerLink]="['/apartamento', apartamentoId]" class="text-blue-600 font-semibold hover:text-blue-800 mb-6 flex items-center gap-2 transition-colors">
+    <button [routerLink]="['/apartamento', apartamentoId]" class="text-habitalis-navy font-semibold hover:text-habitalis-olive mb-6 flex items-center gap-2 transition-colors">
       &larr; Cancelar y volver
     </button>
 
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-      <div class="bg-blue-600 p-6 md:p-8 text-white text-center">
-        <h1 class="text-2xl md:text-3xl font-extrabold">Registro Manual de Alquiler</h1>
-        <p class="text-blue-100 mt-2 text-sm md:text-base">
+    <div class="bg-white rounded-xl shadow-sm border border-habitalis-navy/10 overflow-hidden">
+      <div class="bg-habitalis-navy p-6 md:p-8 text-white text-center">
+        <h1 class="text-2xl md:text-3xl font-serif font-bold">Registro Manual de Alquiler</h1>
+        <p class="text-habitalis-cream/80 mt-2 text-sm md:text-base">
           Da de alta el contrato. Se creará automáticamente un perfil para el inquilino.
         </p>
       </div>
 
       @if (mensajeError) {
-        <div class="bg-red-50 border-l-4 border-red-500 p-4 m-6">
-          <p class="text-red-700 text-sm font-medium">{{ mensajeError }}</p>
+        <div class="bg-habitalis-gold/10 border-l-4 border-habitalis-gold p-4 m-6 rounded-r-lg">
+          <p class="text-habitalis-gold text-sm font-bold">{{ mensajeError }}</p>
         </div>
       }
 
       <form [formGroup]="formContrato" (ngSubmit)="guardar()" class="p-6 md:p-8 space-y-8">
 
         <section>
-          <div class="flex items-center gap-2 mb-4 border-b border-gray-100 pb-2">
+          <div class="flex items-center gap-2 mb-4 border-b border-habitalis-navy/10 pb-2">
             <span class="text-xl">📅</span>
-            <h3 class="text-gray-800 font-bold uppercase text-xs tracking-widest">Datos del Contrato</h3>
+            <h3 class="text-habitalis-navy font-bold uppercase text-xs tracking-widest">Datos del Contrato</h3>
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
-              <label class="block text-sm font-bold text-gray-700 mb-1">Fecha de Entrada</label>
+              <label class="block text-sm font-bold text-habitalis-navy/70 mb-1">Fecha de Entrada</label>
               <input type="date" formControlName="fechaEntrada"
-                     class="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-lg p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                     [class.border-red-500]="isInvalid('fechaEntrada')">
+                     class="w-full bg-habitalis-cream/30 border border-habitalis-navy/20 text-habitalis-navy rounded-lg p-2.5 focus:ring-1 focus:ring-habitalis-navy outline-none"
+                     [class.border-habitalis-gold]="isInvalid('fechaEntrada')">
             </div>
             <div>
-              <label class="block text-sm font-bold text-gray-700 mb-1">Fecha de Salida</label>
+              <label class="block text-sm font-bold text-habitalis-navy/70 mb-1">Fecha de Salida</label>
               <input type="date" formControlName="fechaSalida"
-                     class="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-lg p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                     [class.border-red-500]="isInvalid('fechaSalida')">
+                     class="w-full bg-habitalis-cream/30 border border-habitalis-navy/20 text-habitalis-navy rounded-lg p-2.5 focus:ring-1 focus:ring-habitalis-navy outline-none"
+                     [class.border-habitalis-gold]="isInvalid('fechaSalida')">
             </div>
             <div>
-              <label class="block text-sm font-bold text-gray-700 mb-1">Precio Mensual (€)</label>
+              <label class="block text-sm font-bold text-habitalis-navy/70 mb-1">Precio Mensual (€)</label>
               <input type="number" formControlName="precioBaseAlquiler" min="1" placeholder="Ej: 850"
-                     class="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-lg p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                     [class.border-red-500]="isInvalid('precioBaseAlquiler')">
+                     class="w-full bg-habitalis-cream/30 border border-habitalis-navy/20 text-habitalis-navy rounded-lg p-2.5 focus:ring-1 focus:ring-habitalis-navy outline-none"
+                     [class.border-habitalis-gold]="isInvalid('precioBaseAlquiler')">
             </div>
             <div>
-              <label class="block text-sm font-bold text-gray-700 mb-1">Fianza Depositada (€)</label>
+              <label class="block text-sm font-bold text-habitalis-navy/70 mb-1">Fianza Depositada (€)</label>
               <input type="number" formControlName="fianza" min="0" placeholder="Ej: 1700"
-                     class="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-lg p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                     [class.border-red-500]="isInvalid('fianza')">
+                     class="w-full bg-habitalis-cream/30 border border-habitalis-navy/20 text-habitalis-navy rounded-lg p-2.5 focus:ring-1 focus:ring-habitalis-navy outline-none"
+                     [class.border-habitalis-gold]="isInvalid('fianza')">
             </div>
           </div>
         </section>
 
         <section>
-          <div class="flex items-center gap-2 mb-4 border-b border-gray-100 pb-2">
-            <span class="text-xl">👤</span>
-            <h3 class="text-gray-800 font-bold uppercase text-xs tracking-widest">Datos del Inquilino</h3>
+          <div class="flex items-center gap-2 mb-4 border-b border-habitalis-navy/10 pb-2">
+            <img src="/iconos/agregar-usuario.png" alt="Icono Inquilino" class="h-6 w-6">
+            <h3 class="text-habitalis-navy font-bold uppercase text-xs tracking-widest">Datos del Inquilino</h3>
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
             <div>
-              <label class="block text-sm font-bold text-gray-700 mb-1">Nombre</label>
+              <label class="block text-sm font-bold text-habitalis-navy/70 mb-1">Nombre</label>
               <input type="text" formControlName="nombreInquilino" placeholder="Ej: Juan"
-                     class="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-lg p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                     [class.border-red-500]="isInvalid('nombreInquilino')">
-              @if (isInvalid('nombreInquilino')) { <p class="text-red-500 text-xs mt-1">Nombre inválido.</p> }
+                     class="w-full bg-habitalis-cream/30 border border-habitalis-navy/20 text-habitalis-navy rounded-lg p-2.5 focus:ring-1 focus:ring-habitalis-navy outline-none"
+                     [class.border-habitalis-gold]="isInvalid('nombreInquilino')">
+              @if (isInvalid('nombreInquilino')) { <p class="text-habitalis-gold text-xs mt-1 font-bold italic">Nombre obligatorio.</p> }
             </div>
             <div>
-              <label class="block text-sm font-bold text-gray-700 mb-1">Apellidos</label>
+              <label class="block text-sm font-bold text-habitalis-navy/70 mb-1">Apellidos</label>
               <input type="text" formControlName="apellidosInquilino" placeholder="Ej: Pérez Gómez"
-                     class="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-lg p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                     [class.border-red-500]="isInvalid('apellidosInquilino')">
-              @if (isInvalid('apellidosInquilino')) { <p class="text-red-500 text-xs mt-1">Apellidos inválidos.</p> }
+                     class="w-full bg-habitalis-cream/30 border border-habitalis-navy/20 text-habitalis-navy rounded-lg p-2.5 focus:ring-1 focus:ring-habitalis-navy outline-none"
+                     [class.border-habitalis-gold]="isInvalid('apellidosInquilino')">
+              @if (isInvalid('apellidosInquilino')) { <p class="text-habitalis-gold text-xs mt-1 font-bold italic">Apellidos obligatorios.</p> }
             </div>
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
             <div>
-              <label class="block text-sm font-bold text-gray-700 mb-1">DNI / Pasaporte / NIE</label>
+              <label class="block text-sm font-bold text-habitalis-navy/70 mb-1">DNI / Pasaporte / NIE</label>
               <input type="text" formControlName="dniInquilino" placeholder="12345678A"
-                     class="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-lg p-2.5 focus:ring-blue-500 focus:border-blue-500 uppercase"
-                     [class.border-red-500]="isInvalid('dniInquilino')">
-              @if (isInvalid('dniInquilino')) { <p class="text-red-500 text-xs mt-1">Formato inválido.</p> }
+                     class="w-full bg-habitalis-cream/30 border border-habitalis-navy/20 text-habitalis-navy rounded-lg p-2.5 focus:ring-1 focus:ring-habitalis-navy outline-none uppercase"
+                     [class.border-habitalis-gold]="isInvalid('dniInquilino')">
+              @if (isInvalid('dniInquilino')) { <p class="text-habitalis-gold text-xs mt-1 font-bold italic">Formato inválido.</p> }
             </div>
             <div>
-              <label class="block text-sm font-bold text-gray-700 mb-1">Fecha de Nacimiento</label>
+              <label class="block text-sm font-bold text-habitalis-navy/70 mb-1">Fecha de Nacimiento</label>
               <input type="date" formControlName="fechaNacimientoInquilino"
-                     class="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-lg p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                     [class.border-red-500]="isInvalid('fechaNacimientoInquilino')">
-              @if (isInvalid('fechaNacimientoInquilino')) { <p class="text-red-500 text-xs mt-1">Dato obligatorio.</p> }
+                     class="w-full bg-habitalis-cream/30 border border-habitalis-navy/20 text-habitalis-navy rounded-lg p-2.5 focus:ring-1 focus:ring-habitalis-navy outline-none"
+                     [class.border-habitalis-gold]="isInvalid('fechaNacimientoInquilino')">
+              @if (isInvalid('fechaNacimientoInquilino')) { <p class="text-habitalis-gold text-xs mt-1 font-bold italic">Dato obligatorio.</p> }
             </div>
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
-              <label class="block text-sm font-bold text-gray-700 mb-1">Correo Electrónico (Para el alta)</label>
+              <label class="block text-sm font-bold text-habitalis-navy/70 mb-1">Correo Electrónico</label>
               <input type="email" formControlName="emailInquilino" placeholder="juan@email.com"
-                     class="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-lg p-2.5 focus:ring-blue-500 focus:border-blue-500"
-                     [class.border-red-500]="isInvalid('emailInquilino')">
-              @if (isInvalid('emailInquilino')) { <p class="text-red-500 text-xs mt-1">Introduce un email válido.</p> }
+                     class="w-full bg-habitalis-cream/30 border border-habitalis-navy/20 text-habitalis-navy rounded-lg p-2.5 focus:ring-1 focus:ring-habitalis-navy outline-none"
+                     [class.border-habitalis-gold]="isInvalid('emailInquilino')">
+              @if (isInvalid('emailInquilino')) { <p class="text-habitalis-gold text-xs mt-1 font-bold italic">Email válido obligatorio.</p> }
             </div>
             <div>
-              <label class="block text-sm font-bold text-gray-700 mb-1">Teléfono</label>
+              <label class="block text-sm font-bold text-habitalis-navy/70 mb-1">Teléfono</label>
               <input type="tel" formControlName="telefonoInquilino" placeholder="+34 600 000 000"
-                     class="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-lg p-2.5 focus:ring-blue-500 focus:border-blue-500">
+                     class="w-full bg-habitalis-cream/30 border border-habitalis-navy/20 text-habitalis-navy rounded-lg p-2.5 focus:ring-1 focus:ring-habitalis-navy outline-none">
             </div>
           </div>
         </section>
 
-        <div class="bg-gray-50 p-4 rounded-xl border border-gray-200">
+        <div class="bg-habitalis-cream/50 p-4 rounded-xl border border-habitalis-navy/10">
           <div class="flex items-start">
             <div class="flex items-center h-5">
-              <input id="notificar" type="checkbox" formControlName="notificarInquilino" class="w-4 h-4 border border-gray-300 rounded focus:ring-blue-500 bg-white">
+              <input id="notificar" type="checkbox" formControlName="notificarInquilino" class="w-4 h-4 border border-habitalis-navy/20 rounded focus:ring-habitalis-navy text-habitalis-navy bg-white">
             </div>
             <div class="ml-3 text-sm">
-              <label for="notificar" class="font-bold text-gray-700 cursor-pointer">Permitir acceso al inquilino (Recomendado)</label>
-              <p class="text-gray-500 mt-1">El inquilino podrá solicitar una nueva contraseña usando su email en cualquier momento para ver sus recibos y contrato en ApartManage.</p>
+              <label for="notificar" class="font-bold text-habitalis-navy cursor-pointer">Permitir acceso al inquilino (Recomendado)</label>
+              <p class="text-habitalis-navy/60 mt-1 italic text-xs">El inquilino podrá acceder a sus recibos y contrato en Habitalis.</p>
             </div>
           </div>
         </div>
 
-        <div class="pt-4 border-t border-gray-100">
+        <div class="pt-4 border-t border-habitalis-navy/10">
           <button type="submit"
                   [disabled]="cargando || formContrato.invalid"
-                  class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl shadow-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                  class="w-full bg-habitalis-olive hover:bg-habitalis-olive/90 text-white font-bold py-4 rounded-xl shadow-sm transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">
             {{ cargando ? 'Guardando...' : 'Crear Contrato y Perfil' }}
           </button>
         </div>

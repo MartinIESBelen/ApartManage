@@ -32,6 +32,10 @@ export class ContratoService {
     return this.http.post(`${this.apiUrl}/apartamentos/${apartamentoId}/manual`, contratoManualData);
   }
 
+  obtenerContratosPorApartamento(apartamentoId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/apartamentos/${apartamentoId}`);
+  }
+
   subirContratoPdf(contratoId: number, archivo: File): Observable<string> {
     const formData = new FormData();
     formData.append('file', archivo);

@@ -1,98 +1,108 @@
-<div class="min-h-screen bg-gray-50 p-4 sm:p-8">
+<div class="min-h-screen bg-habitalis-cream p-4 sm:p-8 font-sans">
   <div class="max-w-3xl mx-auto">
 
-    <a [routerLink]="['/apartamento', apartamentoId, 'inventario']"
-       class="text-gray-500 hover:text-gray-800 mb-6 flex items-center gap-2 transition-colors w-fit font-medium">
+    <a [routerLink]="['/apartamento', apartamentoId(), 'inventario']"
+       class="text-habitalis-navy/70 hover:text-habitalis-olive mb-6 flex items-center gap-2 transition-colors w-fit font-medium text-sm">
       &larr; Volver al inventario
     </a>
 
     @if (cargando()) {
       <div class="flex justify-center py-20">
-        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-habitalis-navy"></div>
       </div>
     } @else {
+      @let i = item();
 
-      @if (item(); as i) {
-        <!-- ALERTA SI ESTÁ ROTO -->
+      @if (errorMsg()) {
+        <div class="bg-habitalis-gold/10 border border-habitalis-gold/30 text-habitalis-gold px-4 py-3 rounded-lg mb-6 font-bold">
+          {{ errorMsg() }}
+        </div>
+      }
+
+      @if (i) {
+
         @if (i.estado === 'ROTO') {
-          <div class="bg-red-100 border-l-4 border-red-600 text-red-800 p-4 mb-6 rounded-r-lg flex items-start gap-3">
-            <span class="text-xl">⚠️</span>
+          <div class="bg-habitalis-gold/10 border-l-4 border-habitalis-gold text-habitalis-gold p-4 mb-6 rounded-r-lg flex items-start gap-3 shadow-sm">
+            <img src="/iconos/advertencia.png" alt="" class="h-5 w-5 mt-0.5 opacity-80">
             <div>
               <p class="font-bold">Este elemento está reportado como ROTO.</p>
-              <p class="text-sm">Se requiere atención para su reparación o reemplazo.</p>
+              <p class="text-sm font-normal">Se requiere atención para su reparación o reemplazo.</p>
             </div>
           </div>
         }
 
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        @if (confirmando()) {
+          <div class="bg-white border border-habitalis-navy/10 rounded-xl shadow-sm p-6 mb-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p class="font-bold text-habitalis-navy">
+              @if (confirmando() === 'roto') { ¿Confirmas marcar este elemento como ROTO? }
+              @if (confirmando() === 'eliminar') { ¿Seguro que quieres eliminar este elemento? Esta acción no se puede deshacer. }
+            </p>
+            <div class="flex gap-3 shrink-0">
+              <button (click)="cancelarConfirmacion()"
+                      class="px-4 py-2 border border-habitalis-navy text-habitalis-navy font-bold rounded-lg hover:bg-habitalis-navy/5 transition-colors text-sm">
+                Cancelar
+              </button>
+              <button (click)="confirmarAccion()"
+                      class="px-4 py-2 bg-habitalis-gold text-white font-bold rounded-lg hover:bg-habitalis-gold/90 transition-all shadow-sm text-sm">
+                Confirmar
+              </button>
+            </div>
+          </div>
+        }
 
-          <!-- CABECERA DE LA FICHA -->
-          <div class="p-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-gray-100 bg-gray-50/50">
+        <div class="bg-white rounded-xl shadow-sm border border-habitalis-navy/10 overflow-hidden">
+
+          <div class="p-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-habitalis-navy/10 bg-habitalis-cream/30">
             <div>
-              <span class="text-xs font-bold uppercase tracking-widest text-blue-600 bg-blue-100 px-3 py-1 rounded-full mb-3 inline-block">
+              <span class="text-xs font-bold uppercase tracking-widest text-habitalis-navy/60 bg-habitalis-navy/10 px-3 py-1 rounded-full mb-3 inline-block">
                 {{ i.categoria }}
               </span>
-              <h1 class="text-3xl font-extrabold text-gray-900">{{ i.nombre }}</h1>
+              <h1 class="text-3xl font-serif font-bold text-habitalis-navy">{{ i.nombre }}</h1>
             </div>
 
             <span class="px-4 py-2 text-sm font-bold uppercase tracking-wider rounded-full flex items-center gap-2 border shadow-sm"
-                  [class.bg-green-50]="i.estado === 'NUEVO' || i.estado === 'BUENO'"
-                  [class.text-green-800]="i.estado === 'NUEVO' || i.estado === 'BUENO'"
-                  [class.border-green-200]="i.estado === 'NUEVO' || i.estado === 'BUENO'"
-                  [class.bg-yellow-50]="i.estado === 'DESGASTADO'"
-                  [class.text-yellow-800]="i.estado === 'DESGASTADO'"
-                  [class.border-yellow-200]="i.estado === 'DESGASTADO'"
-                  [class.bg-orange-50]="i.estado === 'AVERIADO'"
-                  [class.text-orange-800]="i.estado === 'AVERIADO'"
-                  [class.border-orange-200]="i.estado === 'AVERIADO'"
-                  [class.bg-red-50]="i.estado === 'ROTO'"
-                  [class.text-red-800]="i.estado === 'ROTO'"
-                  [class.border-red-200]="i.estado === 'ROTO'">
-              <span class="w-2 h-2 rounded-full block"
-                    [class.bg-green-600]="i.estado === 'NUEVO' || i.estado === 'BUENO'"
-                    [class.bg-yellow-500]="i.estado === 'DESGASTADO'"
-                    [class.bg-orange-500]="i.estado === 'AVERIADO'"
-                    [class.bg-red-600]="i.estado === 'ROTO'"></span>
+                  [class]="estadoBadgeClases(i)">
+              <span class="w-2 h-2 rounded-full block" [class]="estadoPuntoClases(i)"></span>
               {{ i.estado }}
             </span>
           </div>
 
-          <!-- DATOS ECONÓMICOS / FECHAS -->
           <div class="p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
             <div>
-              <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Fecha de Compra / Alta</p>
-              <p class="text-lg font-medium text-gray-900 bg-gray-50 p-3 rounded-lg border border-gray-100">
-                {{ (i.fechaCompra | date:'dd MMM yyyy') || 'No registrada' }}
+              <p class="text-xs font-bold text-habitalis-navy/40 uppercase tracking-wider mb-2">Fecha de Compra / Alta</p>
+              <p class="text-lg font-medium text-habitalis-navy bg-habitalis-cream/50 p-3 rounded-lg border border-habitalis-navy/10">
+                {{ formatearFecha(i.fechaCompra) }}
               </p>
             </div>
             <div>
-              <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Valor Estimado</p>
-              <p class="text-lg font-medium text-gray-900 bg-gray-50 p-3 rounded-lg border border-gray-100">
-                {{ i.precioCompra ? (i.precioCompra | currency:'EUR') : 'No registrado' }}
+              <p class="text-xs font-bold text-habitalis-navy/40 uppercase tracking-wider mb-2">Valor Estimado</p>
+              <p class="text-lg font-medium text-habitalis-navy bg-habitalis-cream/50 p-3 rounded-lg border border-habitalis-navy/10">
+                {{ formatearPrecio(i.precioCompra) }}
               </p>
             </div>
           </div>
 
-          <!-- PANEL DE ACCIONES -->
-          <div class="p-8 bg-gray-50 border-t border-gray-100 flex flex-wrap gap-4">
+          <div class="p-8 bg-habitalis-cream/20 border-t border-habitalis-navy/10 flex flex-wrap gap-4">
 
-            <!-- Botón Roto (Para ambos) -->
-            <button (click)="marcarComoRoto()"
-                    [disabled]="i.estado === 'ROTO'"
-                    class="bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 font-bold py-2 px-6 rounded-lg transition-colors flex-1 md:flex-none disabled:opacity-50 disabled:cursor-not-allowed text-sm">
-              🚨 Reportar Roto
+            <button (click)="pedirConfirmacion('roto')"
+                    [disabled]="i.estado === 'ROTO' || procesando()"
+                    class="bg-transparent hover:bg-habitalis-gold/10 text-habitalis-gold border border-habitalis-gold font-bold py-2.5 px-6 rounded-lg transition-all flex-1 md:flex-none disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm uppercase tracking-wide">
+              <img src="/iconos/advertencia.png" alt="" class="h-4 w-4 opacity-80">
+              <span>Reportar Roto</span>
             </button>
 
-            <!-- Botones Propietario -->
             @if (esPropietario()) {
-              <a [routerLink]="['/apartamento', apartamentoId, 'inventario', 'editar', i.id]"
-                 class="bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-6 rounded-lg shadow-sm transition-colors flex-1 md:flex-none text-center text-sm">
-                ✏️ Editar
+              <a [routerLink]="['/apartamento', apartamentoId(), 'inventario', 'editar', i.id]"
+                 class="bg-transparent hover:bg-habitalis-navy/5 text-habitalis-navy border border-habitalis-navy font-bold py-2.5 px-6 rounded-lg transition-all flex-1 md:flex-none flex items-center justify-center gap-2 text-sm uppercase tracking-wide">
+                <img src="/iconos/pluma-pluma.png" alt="" class="h-4 w-4 brightness-0 opacity-80">
+                <span>Editar</span>
               </a>
 
-              <button (click)="eliminar()"
-                      class="bg-gray-800 hover:bg-gray-900 text-white font-bold py-2 px-6 rounded-lg shadow-sm transition-colors flex-1 md:flex-none text-sm ml-auto">
-                🗑️ Eliminar
+              <button (click)="pedirConfirmacion('eliminar')"
+                      [disabled]="procesando()"
+                      class="bg-habitalis-navy hover:bg-habitalis-navy/90 text-white font-bold py-2.5 px-6 rounded-lg shadow-sm transition-all flex-1 md:flex-none flex items-center justify-center gap-2 text-sm uppercase tracking-wide ml-auto disabled:opacity-50">
+                <img src="/iconos/papelera-de-reciclaje.png" alt="" class="h-4 w-4 brightness-0 invert">
+                <span>Eliminar</span>
               </button>
             }
 
