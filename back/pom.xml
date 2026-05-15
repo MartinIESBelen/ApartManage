@@ -12,7 +12,7 @@
     <artifactId>habitalis</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>Habitalis</name>
-    <description>Habitalis - Plataforma de gestión de viviendas</description>
+    <description>Habitalis - Plataforma de gestion de viviendas</description>
 
     <properties>
         <java.version>21</java.version>
