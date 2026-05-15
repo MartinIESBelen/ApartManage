@@ -17,8 +17,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
       }
     });
   }
-
-  //  Enviamos la petición y estamos atentos por si el backend nos echa (401 o 403)
+  
   return next(requestToForward).pipe(
     catchError((error: HttpErrorResponse) => {
       if (error.status === 401) {
@@ -26,11 +25,9 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
         authService.logout();
 
-        // Expulsamos al usuario a la pantalla de login
         router.navigate(['/login']);
       }
 
-      // Dejamos que el error siga su camino por si el componente quiere hacer algo más
       return throwError(() => error);
     })
   );
