@@ -35,12 +35,12 @@ public class AuthService {
 
         Usuario user = Usuario.builder()
                 .nombre(request.nombre())
-                .apellidos(request.apellidos()) // Añadido
+                .apellidos(request.apellidos())
                 .email(request.email())
                 .password(passwordEncoder.encode(request.password()))
-                .dniPasaporte(request.dniPasaporte()) // Añadido
-                .fechaNacimiento(request.fechaNacimiento()) // Añadido
-                .rol(request.rol()) // Se guarda el rol, pero ya no limita su tipo de clase
+                .dniPasaporte(request.dniPasaporte())
+                .fechaNacimiento(request.fechaNacimiento())
+                .rol(request.rol())
                 .build();
 
         Usuario usuarioGuardado = usuarioRepository.save(user);

@@ -15,13 +15,10 @@ import java.util.List;
 @Repository
 public interface TransaccionRepository extends JpaRepository<Transaccion,Long> {
 
-    // Para ver todas las transacciones de un piso concreto
     List<Transaccion> findByApartamentoIdOrderByFechaEmisionDesc(Long apartamentoId);
 
-    // Para ver las transacciones que le corresponden a un inquilino
     List<Transaccion> findByContratoIdOrderByFechaEmisionDesc(Long contratoId);
 
-    // Para calcular ingresos/gastos globales del propietario en el Dashboard
     @Query("SELECT t FROM Transaccion t WHERE t.apartamento.propietario.id = :propietarioId AND t.tipo = :tipo AND YEAR(t.fechaEmision) = :anio")
     List<Transaccion> findByPropietarioIdAndTipoAndAnio(Long propietarioId, TipoTransaccion tipo, Integer anio);
 

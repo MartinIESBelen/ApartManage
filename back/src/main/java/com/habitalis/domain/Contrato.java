@@ -62,7 +62,6 @@ public class Contrato {
     @Column(name = "contrato_pdf")
     private String contratoPdf;
 
-    // 1:N con Transaccion
     @OneToMany(mappedBy = "contrato", cascade = CascadeType.ALL)
     @Builder.Default
     @ToString.Exclude

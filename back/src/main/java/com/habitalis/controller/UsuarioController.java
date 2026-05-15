@@ -19,13 +19,11 @@ public class UsuarioController {
     private final UsuarioService usuarioService;
 
 
-    // GET: /api/v1/usuarios/me -> Devuelve los datos del perfil actual
     @GetMapping("/me")
     public ResponseEntity<UsuarioPerfilResponse> obtenerMiPerfil(Principal principal) {
         return ResponseEntity.ok(usuarioService.obtenerMiPerfil(principal.getName()));
     }
 
-    // PUT: /api/v1/usuarios/me -> Actualiza los datos del perfil actual
     @PutMapping("/me")
     public ResponseEntity<UsuarioPerfilResponse> actualizarMiPerfil(
             Principal principal,
@@ -34,7 +32,6 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioService.actualizarMiPerfil(principal.getName(), request));
     }
 
-    // POST: /api/v1/usuarios/{usuarioId}/imagen
     @PostMapping("/{usuarioId}/imagen")
     public ResponseEntity<String> subirImagenPerfil(
             @PathVariable Long usuarioId,

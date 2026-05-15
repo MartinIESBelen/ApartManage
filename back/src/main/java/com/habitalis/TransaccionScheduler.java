@@ -24,10 +24,7 @@ public class TransaccionScheduler {
     private final ContratoRepository contratoRepository;
     private final TransaccionRepository transaccionRepository;
 
-    /**
-     * TAREA 1: GENERAR COBROS
-     * Se ejecuta el día 1 de cada mes a las 00:00:00
-     */
+
     @Scheduled(cron = "0 0 0 1 * *")
     public void generarAlquileresMensuales() {
         log.info("Iniciando generación automática de alquileres mensuales...");
@@ -58,10 +55,6 @@ public class TransaccionScheduler {
         log.info("Se han generado {} transacciones de alquiler.", creados);
     }
 
-    /**
-     * TAREA 2: ALERTA PREVENTIVA
-     * Se ejecuta el día 16 de cada mes a las 00:01
-     */
     @Scheduled(cron = "0 1 0 16 * *")
     public void detectarRetrasosQuincena() {
         log.info("Ejecutando vigilancia del día 15...");
@@ -79,10 +72,7 @@ public class TransaccionScheduler {
         }
     }
 
-    /**
-     * TAREA 3: MARCAR COMO VENCIDOS
-     * Se ejecuta el día 1 de cada mes a las 00:05 (Justo después de generar los nuevos)
-     */
+
     @Scheduled(cron = "0 5 0 1 * *")
     public void marcarRecibosVencidos() {
         log.info("Marcando alquileres antiguos como VENCIDOS...");

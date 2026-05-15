@@ -14,7 +14,7 @@ public record ContratoRequest(
         LocalDate fechaEntrada,
 
         @NotNull
-        LocalDate fechaSalida, // La validación lógica (que sea posterior) la hacemos en el servicio
+        LocalDate fechaSalida,
 
         @NotNull
         @Positive(message = "El precio base debe ser mayor a 0")

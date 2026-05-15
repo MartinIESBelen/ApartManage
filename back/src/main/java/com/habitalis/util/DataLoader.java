@@ -18,7 +18,6 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 public class DataLoader implements CommandLineRunner {
 
-    // AHORA SOLO USAMOS EL USUARIO REPOSITORY
     private final UsuarioRepository usuarioRepository;
     private final ApartamentoRepository apartamentoRepository;
     private final ElementoInventarioRepository inventarioRepository;
@@ -31,13 +30,11 @@ public class DataLoader implements CommandLineRunner {
     public void run(String... args) throws Exception {
         log.info("Iniciando la carga de datos de prueba para ApartManage...");
 
-        // Evitar duplicados: si ya hay usuarios, no hacemos nada
         if (usuarioRepository.count() > 0) {
             log.info("La base de datos ya contiene información. Saltando DataLoader.");
             return;
         }
 
-        // Crear USUARIO 1 (Hará de Propietario)
         Usuario propietario = Usuario.builder()
                 .nombre("Martin")
                 .apellidos("Sierra")
@@ -51,7 +48,6 @@ public class DataLoader implements CommandLineRunner {
                 .build();
         usuarioRepository.save(propietario);
 
-        // Crear USUARIO 2 (Hará de Propietario)
         Usuario propietario2 = Usuario.builder()
                 .nombre("Martin2")
                 .apellidos("Sierra")
@@ -65,7 +61,6 @@ public class DataLoader implements CommandLineRunner {
                 .build();
         usuarioRepository.save(propietario2);
 
-        // Crear USUARIO 3 (Hará de Inquilino)
         Usuario inquilino = Usuario.builder()
                 .nombre("Martin")
                 .apellidos("Godinez")
@@ -79,7 +74,6 @@ public class DataLoader implements CommandLineRunner {
                 .build();
         usuarioRepository.save(inquilino);
 
-        // Crear APARTAMENTO
         Apartamento apartamento = Apartamento.builder()
                 .propietario(propietario)
                 .nombreInterno("Ático Sol")
@@ -90,7 +84,6 @@ public class DataLoader implements CommandLineRunner {
                 .build();
         apartamentoRepository.save(apartamento);
 
-        // Crear ELEMENTOS DE INVENTARIO
         ElementoInventario sofa = ElementoInventario.builder()
                 .apartamento(apartamento)
                 .nombre("Sofá de 3 plazas (Ikea)")
@@ -121,7 +114,6 @@ public class DataLoader implements CommandLineRunner {
                 .build();
         apartamentoRepository.save(apartamentoVacio);
 
-        // Inventario para el apartamento vacío
         ElementoInventario cama = ElementoInventario.builder()
                 .apartamento(apartamentoVacio)
                 .nombre("Cama de matrimonio 150cm")
@@ -143,7 +135,7 @@ public class DataLoader implements CommandLineRunner {
         inventarioRepository.save(microondas);
 
         Apartamento apartamentoAlquilado = Apartamento.builder()
-                .propietario(propietario2) // El dueño es el usuario 2
+                .propietario(propietario2)
                 .nombreInterno("Piso Sierra Nevada")
                 .direccion("Av. de las Nieves 12")
                 .ciudad("Granada")
@@ -152,7 +144,6 @@ public class DataLoader implements CommandLineRunner {
                 .build();
         apartamentoRepository.save(apartamentoAlquilado);
 
-        // Inventario para el apartamento alquilado
         ElementoInventario estufa = ElementoInventario.builder()
                 .apartamento(apartamentoAlquilado)
                 .nombre("Estufa de Pellets")
@@ -184,7 +175,6 @@ public class DataLoader implements CommandLineRunner {
                 .build();
         contratoRepository.save(contratoMartinInquilino);
 
-        // Crear CONTRATO
         Contrato contrato = Contrato.builder()
                 .apartamento(apartamento)
                 .inquilino(inquilino)
@@ -196,21 +186,15 @@ public class DataLoader implements CommandLineRunner {
                 .build();
         contratoRepository.save(contrato);
 
-        // --- INICIO DE CARGA DE TRANSACCIONES ---
 
-        // Enero: Alquiler 1200, Gasto 250
         crearMesCompleto(contrato, 1, 2026, new BigDecimal("1200"), new BigDecimal("250"), "Revisión Caldera", CategoriaTransaccion.MANTENIMIENTO_RUTINARIO);
 
-        // Febrero: Alquiler 1200, Gasto 100
         crearMesCompleto(contrato, 2, 2026, new BigDecimal("1200"), new BigDecimal("100"), "Limpieza profunda", CategoriaTransaccion.LIMPIEZA);
 
-        // Marzo: Alquiler 1200, Gasto 450 (Reparación cara)
         crearMesCompleto(contrato, 3, 2026, new BigDecimal("1200"), new BigDecimal("450"), "Reparación Termo Eléctrico", CategoriaTransaccion.REPARACION_INCIDENCIA);
 
-        // Abril: Alquiler 1250 (Simulamos una subida), Gasto 100
         crearMesCompleto(contrato, 4, 2026, new BigDecimal("1250"), new BigDecimal("100"), "Cuota Comunidad", CategoriaTransaccion.COMUNIDAD);
 
-        // Mayo: Alquiler PENDIENTE
         Transaccion alquilerMayo = Transaccion.builder()
                 .apartamento(apartamento)
                 .contrato(contrato)
@@ -224,7 +208,6 @@ public class DataLoader implements CommandLineRunner {
                 .build();
         transaccionRepository.save(alquilerMayo);
 
-        // Suministros separados (La magia de tu nueva arquitectura)
         Transaccion reciboLuz = Transaccion.builder()
                 .apartamento(apartamento)
                 .contrato(contrato)
@@ -256,7 +239,6 @@ public class DataLoader implements CommandLineRunner {
 
     private void crearMesCompleto(Contrato r, int mes, int anio, BigDecimal alquiler, BigDecimal montoGasto, String conceptoGasto, CategoriaTransaccion catGasto) {
 
-        // 1. Ingreso por alquiler (Asociado a el contrato del inquilino)
         Transaccion ingreso = Transaccion.builder()
                 .apartamento(r.getApartamento())
                 .contrato(r)
@@ -270,7 +252,6 @@ public class DataLoader implements CommandLineRunner {
                 .build();
         transaccionRepository.save(ingreso);
 
-        // 2. Gasto del piso (El contrato va en null porque es un gasto del propietario, no del inquilino)
         Transaccion gasto = Transaccion.builder()
                 .apartamento(r.getApartamento())
                 .contrato(null)

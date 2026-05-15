@@ -32,10 +32,8 @@ public class StatsService {
         Long idPropietario = prop.getId();
         LocalDate hoy = LocalDate.now();
 
-        // Total de apartamentos del propietario
         long totalAptos = apartamentoRepository.findByPropietarioId(idPropietario).size();
 
-        // Cálculo de apartamentos OCUPADOS actualmente
         long ocupados = contratoRepository.findAll().stream()
                 .filter(r -> r.getApartamento().getPropietario().getId().equals(idPropietario))
                 .filter(r -> r.getEstado() == EstadoContrato.CONFIRMADA)
@@ -44,7 +42,6 @@ public class StatsService {
                 .distinct()
                 .count();
 
-        // Ingresos del mes actual (Solo sumamos transacciones tipo INGRESO y estado PAGADO)
         BigDecimal ingresos = transaccionRepository.findAll().stream()
                 .filter(t -> t.getApartamento().getPropietario().getId().equals(idPropietario))
                 .filter(t -> t.getTipo() == TipoTransaccion.INGRESO)
@@ -53,7 +50,6 @@ public class StatsService {
                 .map(Transaccion::getImporte)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        // Deuda pendiente total (Ingresos que no se han pagado, PENDIENTE o VENCIDO)
         BigDecimal deuda = transaccionRepository.findAll().stream()
                 .filter(t -> t.getApartamento().getPropietario().getId().equals(idPropietario))
                 .filter(t -> t.getTipo() == TipoTransaccion.INGRESO)
@@ -61,7 +57,6 @@ public class StatsService {
                 .map(Transaccion::getImporte)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        // Incidencias abiertas
         long incidencias = incidenciaRepository.findAll().stream()
                 .filter(i -> i.getApartamento().getPropietario().getId().equals(idPropietario))
                 .filter(i -> i.getEstado() != EstadoIncidencia.SOLUCIONADA)
@@ -73,21 +68,17 @@ public class StatsService {
     public List<FinanzasMesResponse> obtenerBalanceConsolidado(String emailPropietario, Integer anio) {
         Usuario prop = usuarioRepository.findByEmail(emailPropietario).orElseThrow();
 
-        // 1. Obtenemos de golpe TODAS las transacciones del propietario de ese año
         List<Transaccion> transaccionesAnio = transaccionRepository.findAll().stream()
                 .filter(t -> t.getApartamento().getPropietario().getId().equals(prop.getId()))
                 .filter(t -> t.getFechaEmision().getYear() == anio)
                 .toList();
 
-        // Agrupar por mes (Enero a Diciembre) y devolver el DTO
         String[] nombresMeses = {"Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"};
         List<FinanzasMesResponse> balanceAnual = new java.util.ArrayList<>();
 
-        // Recorremos los 12 meses del año
         for (int i = 1; i <= 12; i++) {
             final int mesActual = i;
 
-            // Sumamos los INGRESOS PAGADOS de este mes
             BigDecimal ingresosMes = transaccionesAnio.stream()
                     .filter(t -> t.getTipo() == TipoTransaccion.INGRESO)
                     .filter(t -> t.getEstado() == EstadoTransaccion.PAGADO)
@@ -95,14 +86,12 @@ public class StatsService {
                     .map(Transaccion::getImporte)
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-            // Sumamos los GASTOS de este mes (Aquí podemos sumar todos, pagados o no, para saber el gasto incurrido)
             BigDecimal gastosMes = transaccionesAnio.stream()
                     .filter(t -> t.getTipo() == TipoTransaccion.GASTO)
                     .filter(t -> t.getFechaEmision().getMonthValue() == mesActual)
                     .map(Transaccion::getImporte)
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-            // Creamos el objeto del mes y lo metemos en la lista
             balanceAnual.add(new FinanzasMesResponse(nombresMeses[i - 1], ingresosMes, gastosMes));
         }
 

@@ -18,7 +18,6 @@ public class InventarioController {
 
     private final InventarioService inventarioService;
 
-    // POST: Crear un nuevo mueble en un apartamento específico
     @PostMapping
     public ResponseEntity<InventarioResponse> agregarItem(
             @PathVariable Long apartamentoId,
@@ -29,7 +28,6 @@ public class InventarioController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    // GET: Ver todos los muebles de un apartamento específico
     @GetMapping
     public ResponseEntity<List<InventarioResponse>> obtenerInventario(
             @PathVariable Long apartamentoId,
@@ -38,7 +36,6 @@ public class InventarioController {
         return ResponseEntity.ok(inventarioService.listarInventarioPorApartamento(apartamentoId, principal.getName()));
     }
 
-    // DELETE: Eliminar un Elemento del inventario
     @DeleteMapping("/{itemId}")
     public ResponseEntity<Void> eliminarItem(
             @PathVariable Long apartamentoId,
@@ -49,7 +46,6 @@ public class InventarioController {
         return ResponseEntity.noContent().build(); // Devuelve 204 No Content (es el estándar para Delete)
     }
 
-    // PUT: Editar un elemento existente (Solo propietario)
     @PutMapping("/{itemId}")
     public ResponseEntity<InventarioResponse> editarItem(
             @PathVariable Long apartamentoId,
@@ -61,7 +57,6 @@ public class InventarioController {
         return ResponseEntity.ok(response);
     }
 
-    // PATCH: Marcar un elemento como ROTO
     @PatchMapping("/{itemId}/roto")
     public ResponseEntity<InventarioResponse> marcarComoRoto(
             @PathVariable Long apartamentoId,

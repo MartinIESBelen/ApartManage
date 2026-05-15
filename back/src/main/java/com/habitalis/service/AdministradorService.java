@@ -41,7 +41,7 @@ public class AdministradorService {
                 usuario.getId(),
                 usuario.getEmail(),
                 usuario.getNombre(),
-                usuario.getApellidos(), // <-- AÑADIDO: Pasamos los apellidos al DTO
+                usuario.getApellidos(),
                 usuario.getRol(),
                 usuario.isBloqueado()
         );

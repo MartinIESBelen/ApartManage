@@ -17,7 +17,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
 
-//Indicamos cuales son rutas publicas y cuales son rutas privadas
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -29,13 +29,10 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .cors(Customizer.withDefaults())
-                .csrf(AbstractHttpConfigurer::disable) // Desactivar CSRF porque usamos Tokens
+                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        // RUTAS PÚBLICAS (Login y Registro)
                         .requestMatchers("/api/v1/auth/**").permitAll()
-                        // RUTAS EXCLUSIVAS DEL ADMINISTRADOR
                         .requestMatchers("/api/v1/admin/**").hasAuthority("ADMIN")
-                        // EL RESTO: Privadas
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session

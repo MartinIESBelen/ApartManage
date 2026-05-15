@@ -75,14 +75,12 @@ public class Usuario implements UserDetails {
     @Column(name = "creado_en", updatable = false)
     private LocalDateTime creadoEn;
 
-    // Un usuario puede ser propietario de varios apartamentos
     @OneToMany(mappedBy = "propietario", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     @ToString.Exclude
     @JsonIgnore
     private Set<Apartamento> apartamentos = new HashSet<>();
 
-    // Un usuario puede ser inquilino en varios contratos
     @OneToMany(mappedBy = "inquilino")
     @Builder.Default
     @ToString.Exclude

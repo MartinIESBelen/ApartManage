@@ -2,7 +2,7 @@ package com.habitalis.service;
 
 import com.habitalis.domain.Apartamento;
 import com.habitalis.domain.Incidencia;
-import com.habitalis.domain.Usuario; // <-- Importante
+import com.habitalis.domain.Usuario;
 import com.habitalis.dto.incidencia.IncidenciaRequest;
 import com.habitalis.dto.incidencia.IncidenciaResponse;
 import com.habitalis.repository.ApartamentoRepository;

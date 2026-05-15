@@ -2,7 +2,7 @@ package com.habitalis.service;
 
 import com.habitalis.domain.Apartamento;
 import com.habitalis.domain.ElementoInventario;
-import com.habitalis.domain.Usuario; // <-- Importante: Añadimos Usuario
+import com.habitalis.domain.Usuario;
 import com.habitalis.domain.enums.EstadoContrato;
 import com.habitalis.dto.inventario.InventarioRequest;
 import com.habitalis.dto.inventario.InventarioResponse;

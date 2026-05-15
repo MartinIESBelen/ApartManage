@@ -158,7 +158,7 @@ public class TransaccionService {
         );
 
         return transaccionesCrudas.stream()
-                .map(this::mapToResponse) // Asumo que ya tienes este método de mapeo creado de antes
+                .map(this::mapToResponse)
                 .collect(Collectors.toList());
     }
 

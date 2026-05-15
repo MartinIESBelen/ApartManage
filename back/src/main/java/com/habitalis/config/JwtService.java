@@ -13,34 +13,30 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
-//Se encarga de crear y leer los tokens. Contiene la clave secreta y la lógica de encriptación
+
 @Service
 public class JwtService {
-    //En producción esta clave debe estar en environment variables.
-    // Debe ser una cadena larga (256 bits) codificada en Hex o Base64.
+
     private static final String SECRET_KEY = "404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970";
     private static final long JWT_EXPIRATION = 1000 * 60 * 60; // 1 hora
     private static final long REFRESH_EXPIRATION = 1000L * 60 * 60 * 24 * 7;
 
-    // Generar accessToken solo con datos de usuario
     public String generateToken(UserDetails userDetails) {
         return generateToken(new HashMap<>(), userDetails);
     }
 
     public long getJwtExpiration() {return JWT_EXPIRATION;}
 
-    // Generar accessToken con datos extra (claims)
     public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
         return Jwts.builder()
                 .setClaims(extraClaims)
-                .setSubject(userDetails.getUsername()) // Aquí guardamos el email
+                .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + JWT_EXPIRATION)) // 24 horas de validez
+                .setExpiration(new Date(System.currentTimeMillis() + JWT_EXPIRATION))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    // Generar el Refresh Token (no lleva extraClaims, solo el usuario y dura más)
     public String generateRefreshToken(UserDetails userDetails) {
         return Jwts.builder()
                 .setSubject(userDetails.getUsername())

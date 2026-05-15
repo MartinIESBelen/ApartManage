@@ -22,7 +22,6 @@ public class ElementoInventario {
     @EqualsAndHashCode.Include
     private Long id;
 
-    // N:1 con Apartamento
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "apartamento_id", nullable = false)
     @ToString.Exclude
