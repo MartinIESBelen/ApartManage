@@ -2,7 +2,7 @@ import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ApartamentoService } from '../../../core/services/apartamento/apartamento.service';
 import { ApartamentoModel } from '../../../core/models/apartamento.model';
-import { ApartamentoCard } from '../apartamento-card/apartamento-card'; // Asegura que el nombre coincida
+import { ApartamentoCard } from '../apartamento-card/apartamento-card';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
@@ -13,9 +13,10 @@ import { RouterModule } from '@angular/router';
   templateUrl: './home.html'
 })
 export class Home implements OnInit {
-  // Ya no usamos una sola lista, la dividimos en dos:
   misPropiedades: ApartamentoModel[] = [];
   misAlquileres: ApartamentoModel[] = [];
+
+  isLoading: boolean = true;
 
   private apartamentoService = inject(ApartamentoService);
   private cd = inject(ChangeDetectorRef);
@@ -29,23 +30,26 @@ export class Home implements OnInit {
   }
 
   buscar() {
+    this.isLoading = true;
     this.apartamentoService.filtrarApartamentos(
       this.filtroNombre,
       this.filtroEstado || undefined,
       this.filtroAlertas
     ).subscribe({
       next: (data) => {
-        // Adiós al truco temporal. Ahora filtramos la realidad:
         this.misPropiedades = data.filter(apto => apto.relacion === 'PROPIETARIO');
         this.misAlquileres = data.filter(apto => apto.relacion === 'INQUILINO');
 
         console.log('Propiedades Reales:', this.misPropiedades);
         console.log('Alquileres Reales:', this.misAlquileres);
 
+        this.isLoading = false;
         this.cd.detectChanges();
       },
       error: (err) => {
         console.error('Error al filtrar los apartamentos:', err);
+        this.isLoading = false;
+        this.cd.detectChanges();
       }
     });
   }

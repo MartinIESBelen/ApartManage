@@ -40,16 +40,22 @@
         Mis Propiedades
       </h2>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        @for (apto of misPropiedades; track apto.id) {
-          <app-apartamento-card [apartamento]="apto"></app-apartamento-card>
-        } @empty {
-          <div class="col-span-full text-center py-16 bg-white rounded-xl shadow-sm border border-dashed border-habitalis-navy/20">
-            <p class="text-habitalis-navy font-medium text-lg mb-2">No se encontraron propiedades.</p>
-            <span class="text-sm text-habitalis-navy/60">Si los filtros están activos, prueba a limpiarlos.</span>
-          </div>
-        }
-      </div>
+      @if (isLoading) {
+        <div class="flex justify-center items-center py-12">
+          <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-t-2 border-habitalis-navy"></div>
+        </div>
+      } @else {
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          @for (apto of misPropiedades; track apto.id) {
+            <app-apartamento-card [apartamento]="apto"></app-apartamento-card>
+          } @empty {
+            <div class="col-span-full text-center py-16 bg-white rounded-xl shadow-sm border border-dashed border-habitalis-navy/20">
+              <p class="text-habitalis-navy font-medium text-lg mb-2">No se encontraron propiedades.</p>
+              <span class="text-sm text-habitalis-navy/60">Si los filtros están activos, prueba a limpiarlos.</span>
+            </div>
+          }
+        </div>
+      }
     </section>
 
     <section class="mb-8">
@@ -62,16 +68,22 @@
         </button>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        @for (apto of misAlquileres; track apto.id) {
-          <app-apartamento-card [apartamento]="apto"></app-apartamento-card>
-        } @empty {
-          <div class="col-span-full text-center py-16 bg-white rounded-xl shadow-sm border border-dashed border-habitalis-navy/20">
-            <p class="text-habitalis-navy font-medium text-lg mb-2">No estás vinculado a ningún alquiler.</p>
-            <span class="text-sm text-habitalis-navy/60">Introduce un código proporcionado por tu casero.</span>
-          </div>
-        }
-      </div>
+      @if (isLoading) {
+        <div class="flex justify-center items-center py-12">
+          <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-t-2 border-habitalis-navy"></div>
+        </div>
+      } @else {
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          @for (apto of misAlquileres; track apto.id) {
+            <app-apartamento-card [apartamento]="apto"></app-apartamento-card>
+          } @empty {
+            <div class="col-span-full text-center py-16 bg-white rounded-xl shadow-sm border border-dashed border-habitalis-navy/20">
+              <p class="text-habitalis-navy font-medium text-lg mb-2">No estás vinculado a ningún alquiler.</p>
+              <span class="text-sm text-habitalis-navy/60">Introduce un código proporcionado por tu casero.</span>
+            </div>
+          }
+        </div>
+      }
     </section>
 
   </div>
