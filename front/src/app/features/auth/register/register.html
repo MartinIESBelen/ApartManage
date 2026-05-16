@@ -1,8 +1,8 @@
 <div class="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8 font-sans">
 
   <div class="sm:mx-auto sm:w-full sm:max-w-md text-center">
-    <div class="mx-auto h-32 w-32 bg-white rounded-2xl flex items-center justify-center shadow-lg border-2 border-blue-100 mb-6">
-      <img src="/logos/logo-completo.jpeg" alt="Habitalis Logo Completo" class="h-full w-auto object-contain">
+    <div class="mx-auto h-32 w-32 bg-white rounded-2xl flex items-center justify-center shadow-lg border-2 border-blue-100 mb-6 p-2 overflow-hidden">
+      <img src="/logos/logo-completo.jpeg" alt="Habitalis Logo Completo" class="w-full h-full object-contain">
     </div>
 
     <h2 class="text-3xl font-extrabold text-blue-900 tracking-tight">
@@ -71,6 +71,17 @@
             <input type="date" id="fechaNacimiento" formControlName="fechaNacimiento"
                    class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                    [class.border-red-500]="fechaControl?.invalid && fechaControl?.touched">
+
+            @if (fechaControl?.invalid && fechaControl?.touched) {
+              <div>
+                @if (fechaControl?.errors?.['required']) {
+                  <p class="mt-1 text-xs text-red-500">La fecha es obligatoria.</p>
+                }
+                @if (fechaControl?.errors?.['esMenor']) {
+                  <p class="mt-1 text-xs text-red-500">Debes ser mayor de 18 años para registrarte.</p>
+                }
+              </div>
+            }
           </div>
         </div>
 

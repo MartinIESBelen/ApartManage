@@ -29,6 +29,13 @@ public class UsuarioService {
         Usuario usuario = usuarioRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
+        if (request.fechaNacimiento() != null) {
+            int edad = java.time.Period.between(request.fechaNacimiento(), java.time.LocalDate.now()).getYears();
+            if (edad < 18) {
+                throw new RuntimeException("La fecha de nacimiento no es válida. Debes ser mayor de 18 años.");
+            }
+        }
+
         usuario.setNombre(request.nombre());
         usuario.setApellidos(request.apellidos());
         usuario.setTelefono(request.telefono());

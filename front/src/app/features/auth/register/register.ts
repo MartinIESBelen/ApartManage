@@ -23,7 +23,7 @@ export class RegisterComponent {
     nombre: ['', [Validators.required, Validators.minLength(2), Validators.pattern(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/)]],
     apellidos: ['', [Validators.required, Validators.minLength(2), Validators.pattern(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/)]],
     dniPasaporte: ['', [Validators.required, Validators.pattern(/^[A-Za-z0-9]{5,20}$/)]],
-    fechaNacimiento: ['', [Validators.required]],
+    fechaNacimiento: ['', [Validators.required, this.mayorDeEdadValidator.bind(this)]],
     email: ['', [Validators.required, Validators.pattern(/^[a-zA-Z0-9._%\+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,4}$/)]],
     password: ['', [Validators.required, Validators.pattern(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*#?&]{6,}$/)]],
     passwordConfirm: ['', [Validators.required]],
@@ -45,6 +45,22 @@ export class RegisterComponent {
   get emailControl() { return this.registerForm.get('email'); }
   get passwordControl() { return this.registerForm.get('password'); }
   get passwordConfirmControl() { return this.registerForm.get('passwordConfirm'); }
+
+  private mayorDeEdadValidator(control: AbstractControl): ValidationErrors | null {
+    if (!control.value) return null;
+
+    const fechaNacimiento = new Date(control.value);
+    const hoy = new Date();
+
+    let edad = hoy.getFullYear() - fechaNacimiento.getFullYear();
+    const mes = hoy.getMonth() - fechaNacimiento.getMonth();
+
+    if (mes < 0 || (mes === 0 && hoy.getDate() < fechaNacimiento.getDate())) {
+      edad--;
+    }
+
+    return edad >= 18 ? null : { esMenor: true };
+  }
 
   onSubmit() {
     if (this.registerForm.invalid) {

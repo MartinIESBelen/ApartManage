@@ -33,6 +33,13 @@ public class AuthService {
             throw new RuntimeException("No está permitido registrar cuentas de Administrador desde esta vía.");
         }
 
+        if (request.fechaNacimiento() != null) {
+            int edad = java.time.Period.between(request.fechaNacimiento(), java.time.LocalDate.now()).getYears();
+            if (edad < 18) {
+                throw new RuntimeException("Debes ser mayor de 18 años para registrarte en la plataforma.");
+            }
+        }
+
         Usuario user = Usuario.builder()
                 .nombre(request.nombre())
                 .apellidos(request.apellidos())

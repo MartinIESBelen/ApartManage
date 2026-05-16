@@ -20,6 +20,8 @@ import { EditarPerfil } from './features/dashboard/perfil/editar-perfil/editar-p
 import { ResetPassword } from './features/dashboard/reset-password/reset-password';
 import { RecuperarPassword } from './features/dashboard/recuperar-password/recuperar-password';
 import { authGuard } from './core/guard/auth-guard';
+import {PoliticaPrivacidad} from './shared/legal/politica-privacidad/politica-privacidad';
+import {TerminosCondiciones} from './shared/legal/terminos-condiciones/terminos-condiciones';
 
 export const routes: Routes = [
 
@@ -54,6 +56,10 @@ export const routes: Routes = [
     ]
   },
 
+  { path: 'privacidad', component: PoliticaPrivacidad},
+  { path: 'terminos', component: TerminosCondiciones},
+
   { path: '', redirectTo: '/home', pathMatch: 'full' },
   { path: '**', redirectTo: '/login' }
+
 ];
