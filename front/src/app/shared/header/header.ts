@@ -12,6 +12,7 @@ import { AuthService } from '../../core/services/auth/auth.service';
 export class HeaderComponent {
   private authService = inject(AuthService);
   private router = inject(Router);
+  menuMobileAbierto: boolean = false;
 
 
   menuFinanzasAbierto: boolean = false;
@@ -26,6 +27,14 @@ export class HeaderComponent {
 
   cerrarMenuFinanzas() {
     this.menuFinanzasAbierto = false;
+  }
+
+  toggleMenuMobile() {
+    this.menuMobileAbierto = !this.menuMobileAbierto;
+  }
+
+  cerrarMenuMobile() {
+    this.menuMobileAbierto = false;
   }
 
   estaLogueado = computed(() => this.authService.obtenerToken() !== null);

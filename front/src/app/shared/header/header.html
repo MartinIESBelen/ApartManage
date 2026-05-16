@@ -1,4 +1,4 @@
-<header class="bg-white text-habitalis-navy shadow-md border-b border-habitalis-navy/10">
+<header class="relative bg-white text-habitalis-navy shadow-md border-b border-habitalis-navy/10 z-50">
 
   <div class="container mx-auto px-6 md:px-12 lg:px-20 py-6 flex justify-between items-center">
 
@@ -9,63 +9,74 @@
     </a>
 
     @if (estaLogueado()) {
-      <nav class="flex justify-center items-center gap-1 md:gap-4 font-sans">
-        <a routerLink="/home"
-           routerLinkActive="bg-habitalis-navy/10 text-habitalis-navy font-semibold"
-           [routerLinkActiveOptions]="{exact: true}"
-           class="px-3 py-2 rounded-md hover:text-habitalis-olive font-medium transition-all">Inicio</a>
+      <nav class="hidden md:flex justify-center items-center gap-1 md:gap-4 font-sans">
+        <a routerLink="/home" routerLinkActive="bg-habitalis-navy/10 text-habitalis-navy font-semibold" [routerLinkActiveOptions]="{exact: true}" class="px-3 py-2 rounded-md hover:text-habitalis-olive font-medium transition-all">Inicio</a>
 
         <div class="relative" (mouseleave)="cerrarMenuFinanzas()">
-          <button (click)="toggleMenuFinanzas()"
-                  (mouseenter)="abrirMenuFinanzas()"
-                  class="px-3 py-2 rounded-md hover:text-habitalis-olive font-medium transition-all flex items-center gap-1 focus:outline-none"
-                  [ngClass]="{'bg-habitalis-navy/10 text-habitalis-navy font-semibold': menuFinanzasAbierto}">
+          <button (click)="toggleMenuFinanzas()" (mouseenter)="abrirMenuFinanzas()" class="px-3 py-2 rounded-md hover:text-habitalis-olive font-medium transition-all flex items-center gap-1 focus:outline-none" [ngClass]="{'bg-habitalis-navy/10 text-habitalis-navy font-semibold': menuFinanzasAbierto}">
             Finanzas
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transition-transform duration-200" [ngClass]="{'rotate-180': menuFinanzasAbierto}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
             </svg>
           </button>
-
           @if (menuFinanzasAbierto) {
             <div class="absolute top-full left-0 w-48 z-50 -mt-2 pt-4">
               <div class="bg-white rounded-md shadow-sm border border-habitalis-navy/10 py-2 overflow-hidden">
-                <a routerLink="/finanzas/balance"
-                   (click)="cerrarMenuFinanzas()"
-                   class="block px-4 py-2 text-sm text-habitalis-navy hover:bg-habitalis-cream hover:text-habitalis-olive font-medium transition-colors">
-                  Balance
-                </a>
-                <a routerLink="/finanzas/nuevo-movimiento"
-                   (click)="cerrarMenuFinanzas()"
-                   class="block px-4 py-2 text-sm text-habitalis-navy hover:bg-habitalis-cream hover:text-habitalis-olive font-medium transition-colors">
-                  Nuevo Movimiento
-                </a>
+                <a routerLink="/finanzas/balance" (click)="cerrarMenuFinanzas()" class="block px-4 py-2 text-sm text-habitalis-navy hover:bg-habitalis-cream hover:text-habitalis-olive font-medium transition-colors">Balance</a>
+                <a routerLink="/finanzas/nuevo-movimiento" (click)="cerrarMenuFinanzas()" class="block px-4 py-2 text-sm text-habitalis-navy hover:bg-habitalis-cream hover:text-habitalis-olive font-medium transition-colors">Nuevo Movimiento</a>
               </div>
             </div>
           }
         </div>
 
-        <a routerLink="/contratos"
-           routerLinkActive="bg-habitalis-navy/10 text-habitalis-navy font-semibold"
-           class="px-3 py-2 rounded-md hover:text-habitalis-olive font-medium transition-all">Contratos</a>
-
-        <a routerLink="/perfil"
-           routerLinkActive="bg-habitalis-navy/10 text-habitalis-navy font-semibold"
-           class="px-3 py-2 rounded-md hover:text-habitalis-olive font-medium transition-all">Mi Perfil</a>
+        <a routerLink="/contratos" routerLinkActive="bg-habitalis-navy/10 text-habitalis-navy font-semibold" class="px-3 py-2 rounded-md hover:text-habitalis-olive font-medium transition-all">Contratos</a>
+        <a routerLink="/perfil" routerLinkActive="bg-habitalis-navy/10 text-habitalis-navy font-semibold" class="px-3 py-2 rounded-md hover:text-habitalis-olive font-medium transition-all">Mi Perfil</a>
 
         <div class="h-6 w-px bg-habitalis-navy/10 mx-2 hidden md:block"></div>
+        <button (click)="logout()" class="bg-transparent border border-habitalis-navy text-habitalis-navy hover:bg-habitalis-navy/5 px-4 py-2 rounded-lg font-medium transition-transform active:scale-95 text-sm">Cerrar Sesión</button>
+      </nav>
 
-        <button (click)="logout()"
-                class="bg-transparent border border-habitalis-navy text-habitalis-navy hover:bg-habitalis-navy/5 px-4 py-2 rounded-lg font-medium transition-transform active:scale-95 text-sm">
-          Cerrar Sesión
-        </button>
-      </nav>
+      <button (click)="toggleMenuMobile()" class="md:hidden p-2 text-habitalis-navy hover:bg-habitalis-navy/5 rounded-md focus:outline-none transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+
     } @else {
-      <nav>
-        <a routerLink="/login"
-           class="bg-habitalis-navy text-white hover:bg-habitalis-navy/90 px-4 py-2 rounded-lg font-medium transition-all">
-          Iniciar Sesión
-        </a>
+      <nav class="hidden md:block">
+        <a routerLink="/login" class="bg-habitalis-navy text-white hover:bg-habitalis-navy/90 px-4 py-2 rounded-lg font-medium transition-all">Iniciar Sesión</a>
       </nav>
+
+      <button (click)="toggleMenuMobile()" class="md:hidden p-2 text-habitalis-navy hover:bg-habitalis-navy/5 rounded-md focus:outline-none transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
     }
   </div>
+
+  @if (menuMobileAbierto) {
+    <div class="md:hidden absolute top-full left-0 w-full bg-white shadow-lg border-b border-habitalis-navy/10 flex flex-col px-6 py-4 space-y-3">
+      @if (estaLogueado()) {
+        <a routerLink="/home" (click)="cerrarMenuMobile()" class="block py-2 text-lg font-medium text-habitalis-navy hover:text-habitalis-olive">Inicio</a>
+
+        <div class="py-2">
+          <div class="text-sm uppercase tracking-wider text-habitalis-navy/50 font-bold mb-2">Finanzas</div>
+          <div class="flex flex-col pl-4 border-l-2 border-habitalis-navy/10 space-y-3">
+            <a routerLink="/finanzas/balance" (click)="cerrarMenuMobile()" class="block text-base font-medium text-habitalis-navy hover:text-habitalis-olive">Balance</a>
+            <a routerLink="/finanzas/nuevo-movimiento" (click)="cerrarMenuMobile()" class="block text-base font-medium text-habitalis-navy hover:text-habitalis-olive">Nuevo Movimiento</a>
+          </div>
+        </div>
+
+        <a routerLink="/contratos" (click)="cerrarMenuMobile()" class="block py-2 text-lg font-medium text-habitalis-navy hover:text-habitalis-olive">Contratos</a>
+        <a routerLink="/perfil" (click)="cerrarMenuMobile()" class="block py-2 text-lg font-medium text-habitalis-navy hover:text-habitalis-olive">Mi Perfil</a>
+
+        <hr class="border-habitalis-navy/10 my-2">
+
+        <button (click)="logout(); cerrarMenuMobile()" class="text-left py-2 text-lg font-medium text-red-600 hover:text-red-800">Cerrar Sesión</button>
+      } @else {
+        <a routerLink="/login" (click)="cerrarMenuMobile()" class="block py-3 text-center bg-habitalis-navy text-white rounded-lg font-medium">Iniciar Sesión</a>
+      }
+    </div>
+  }
 </header>
