@@ -2,13 +2,14 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {InventarioItem, InventarioRequest} from '../../models/inventario.model';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class InventarioService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:8080/api/v1/apartamentos';
+  private apiUrl = `${environment.apiUrl}/apartamentos`;
 
   listarInventario(apartamentoId: number): Observable<InventarioItem[]> {
     return this.http.get<InventarioItem[]>(`${this.apiUrl}/${apartamentoId}/inventario`);

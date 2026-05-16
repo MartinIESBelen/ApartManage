@@ -2,6 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { DashboardStats, FinanzasMes, TransaccionRequest, TransaccionResponse } from '../../models/finanzas.model';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -9,8 +10,8 @@ import { DashboardStats, FinanzasMes, TransaccionRequest, TransaccionResponse } 
 export class FinanzasService {
   private http = inject(HttpClient);
 
-  private apiUrlStats = 'http://localhost:8080/api/stats';
-  private apiUrlTransacciones = 'http://localhost:8080/api/transacciones';
+  private apiUrlStats = `${environment.apiUrl.replace('/api/v1', '/api')}/stats`;
+  private apiUrlTransacciones = `${environment.apiUrl.replace('/api/v1', '/api')}/transacciones`;
 
   obtenerTransacciones(pisoId: string, periodo: string): Observable<TransaccionResponse[]> {
     let params = new HttpParams().set('periodo', periodo);

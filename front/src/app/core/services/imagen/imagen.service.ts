@@ -1,4 +1,3 @@
-// src/app/core/services/imagen/imagen.service.ts
 import { Injectable, inject } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { Observable, map } from 'rxjs';

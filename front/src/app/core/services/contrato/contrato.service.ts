@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ContratoLista, ContratoDetalle, InquilinoPublico } from '../../models/contrato.model';
 import { Observable } from 'rxjs';
-
+import { environment } from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +10,7 @@ import { Observable } from 'rxjs';
 export class ContratoService {
   private http = inject(HttpClient);
 
-  private apiUrl = 'http://localhost:8080/api/v1/contratos';
+  private apiUrl = `${environment.apiUrl}/contratos`;
 
   getMisContratos(): Observable<ContratoLista[]> {
     return this.http.get<ContratoLista[]>(this.apiUrl);

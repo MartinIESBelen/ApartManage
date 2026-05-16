@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { UsuarioPerfil, UsuarioUpdate } from '../../models/usuario.model';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +11,7 @@ export class UsuarioService {
   private http = inject(HttpClient);
 
 
-  private apiUrl = 'http://localhost:8080/api/v1/usuarios';
+  private apiUrl = `${environment.apiUrl}/usuarios`;
 
   constructor() { }
 
@@ -30,7 +31,7 @@ export class UsuarioService {
   }
 
   obtenerImagenProtegida(nombreArchivo: string): Observable<Blob> {
-    return this.http.get(`http://localhost:8080/api/v1/archivos/${nombreArchivo}`, {
+    return this.http.get(`${environment.archivoUrl}/${nombreArchivo}`, {
       responseType: 'blob'
     });
   }
